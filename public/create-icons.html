@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="c" width="512" height="512"></canvas>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+ctx.fillStyle = '#07080b';
+ctx.fillRect(0,0,512,512);
+ctx.beginPath();
+ctx.arc(256,256,220,0,Math.PI*2);
+ctx.fillStyle = '#f97316';
+ctx.fill();
+ctx.fillStyle = '#000';
+ctx.font = 'bold 280px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('P', 256, 270);
+const link = document.createElement('a');
+link.download = 'icon-512.png';
+link.href = c.toDataURL();
+link.click();
+c.width = 192; c.height = 192;
+ctx.fillStyle = '#07080b';
+ctx.fillRect(0,0,192,192);
+ctx.beginPath();
+ctx.arc(96,96,82,0,Math.PI*2);
+ctx.fillStyle = '#f97316';
+ctx.fill();
+ctx.fillStyle = '#000';
+ctx.font = 'bold 105px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('P', 96, 101);
+const link2 = document.createElement('a');
+link2.download = 'icon-192.png';
+link2.href = c.toDataURL();
+link2.click();
+</script>
+</body>
+</html>
