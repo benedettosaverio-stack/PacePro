@@ -197,7 +197,7 @@ function AllureChip({ dot, label, val }) {
     <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--chip-bg)',border:'1px solid var(--chip-border)',borderRadius:99,padding:'3px 10px',fontFamily:'monospace',fontSize:11}}>
       <span style={{width:7,height:7,borderRadius:'50%',background:dot,flexShrink:0,display:'inline-block'}}/>
       <span style={{color:'rgba(255,255,255,0.35)'}}>{label}</span>
-      <span style={{color:'#fff',fontWeight:500}}>{val}</span>
+      <span style={{color:'var(--text-primary)',fontWeight:500}}>{val}</span>
     </div>
   );
 }
@@ -545,7 +545,7 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
                     {fb && (
                       <div style={{marginTop:6,background:'var(--btn-ghost-bg)',border:'1px solid var(--border)',borderRadius:10,padding:'8px 12px',fontSize:11,color:'var(--text-secondary)',display:'flex',gap:10,flexWrap:'wrap'}}>
                         <span>Effort : <span style={{color:'#f59e0b',fontWeight:600}}>{fb.effort}/10</span></span>
-                        {fb.realPace && <span>Allure : <span style={{color:'#fff',fontFamily:'monospace'}}>{fb.realPace}/km</span></span>}
+                        {fb.realPace && <span>Allure : <span style={{color:'var(--text-primary)',fontFamily:'monospace'}}>{fb.realPace}/km</span></span>}
                         {fb.sensation && <span>{fb.sensation}</span>}
                         {s.adjusted && <span style={{color:s.adjusted==='up'?'#22c55e':'#FF0040',fontWeight:600}}>{s.adjusted==='up'?'↑ Intensifié':'↓ Allégé'}</span>}
                       </div>
@@ -561,7 +561,7 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
                 </div>
                 <div style={{fontSize:16,fontWeight:700,marginBottom:4,color:'var(--text-primary)'}}>{profile.raceName} 🎯</div>
                 <div style={{fontSize:12,color:'var(--text-secondary)'}}>
-                  {profile.raceDistanceKm} km{profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : <span style={{color:'#fff',fontFamily:'monospace'}}>{paces.ef} /km</span>
+                  {profile.raceDistanceKm} km{profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : <span style={{color:'var(--text-primary)',fontFamily:'monospace'}}>{paces.ef} /km</span>
                 </div>
               </div>
             )}
