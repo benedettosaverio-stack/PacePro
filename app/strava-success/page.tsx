@@ -1,8 +1,8 @@
 'use client';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function StravaSuccess() {
+function StravaSuccessInner() {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -24,5 +24,13 @@ export default function StravaSuccess() {
         <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>Redirection...</div>
       </div>
     </div>
+  );
+}
+
+export default function StravaSuccess() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#07080b' }}/>}>
+      <StravaSuccessInner />
+    </Suspense>
   );
 }
