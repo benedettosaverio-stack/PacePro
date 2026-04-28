@@ -226,6 +226,11 @@ function SessionCard({ session, onComplete }) {
           Marquer comme terminé
         </button>
       )}
+      {session.completed && onComplete && (
+        <button onClick={()=>onComplete(session.id, true)} style={{width:'100%',background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.18)',borderRadius:12,padding:'8px 16px',color:'rgba(239,68,68,0.7)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit',marginTop:8}}>
+          ↩ Annuler la validation
+        </button>
+      )}
     </div>
   );
 }
@@ -446,9 +451,18 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
   const progress = Math.round((doneCount/totalSessions)*100);
   const week = plan[activeWeek];
   const nextSession = plan.flatMap(w=>w.sessions.map(s=>({...s,week:w.week}))).find(s=>!completed[s.id]);
-  const handleComplete = (id) => {
-    if (!completed[id]) { const s=plan.flatMap(w=>w.sessions).find(s=>s.id===id); setFeedbackSession(s); }
-    setCompleted(c=>({...c,[id]:!c[id]}));
+  const handleComplete = (id, undo = false) => {
+    if (undo) {
+      // Annulation : retire la complétion et le feedback
+      setCompleted(c => ({...c, [id]: false}));
+      setFeedbacks(f => { const next = {...f}; delete next[id]; return next; });
+      // Revert plan adjustment if it was applied for this session
+      setPlan(applyFeedback(initialPlan, id, {effort: 5})); // reset to neutral
+    } else if (!completed[id]) {
+      const s = plan.flatMap(w => w.sessions).find(s => s.id === id);
+      setFeedbackSession(s);
+      setCompleted(c => ({...c, [id]: true}));
+    }
   };
   const handleFeedback = (fb) => {
     setFeedbacks(f=>({...f,[feedbackSession.id]:fb}));
