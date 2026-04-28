@@ -358,7 +358,7 @@ function Onboarding({ onComplete }) {
   };
 
   return (
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'#07080b'}}>
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'#fff'}}>
       <div style={{width:'100%',maxWidth:460,background:'rgba(19,22,31,0.9)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:24,padding:'36px 32px'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:32}}>
           <div style={{width:34,height:34,borderRadius:10,background:'#FF0040',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:16,color:'#000'}}>P</div>
