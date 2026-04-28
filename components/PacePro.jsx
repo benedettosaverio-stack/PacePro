@@ -208,7 +208,7 @@ function AllureChip({ dot, label, val }) {
 // ─── SessionCard ──────────────────────────────────────────────────────────────
 function SessionCard({ session, onComplete }) {
   return (
-    <div <div style={{display:'flex',alignItems:'center',gap:8}}>
+<div style={{display:'flex',alignItems:'center',gap:8}}>
   {SessionIcons[session.type] ? SessionIcons[session.type]() : SessionIcons.ef()}
   {session.completed && <div style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:12}}>✓</div>}
 </div>
