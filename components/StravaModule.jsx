@@ -6,9 +6,7 @@ const btnRed = { background: '#FF0040', color: '#000', border: 'none', borderRad
 const btnGhost = { background: 'var(--btn-ghost-bg)', border: '1px solid var(--btn-ghost-border)', color: 'var(--btn-ghost-color)', borderRadius: 12, padding: '10px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' };
 
 const STRAVA_CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID;
-const REDIRECT_URI = typeof window !== 'undefined'
-  ? `${window.location.origin}/api/strava?action=callback`
-  : '';
+const CALLBACK_URL = 'https://pacepro-virid.vercel.app/api/strava?action=callback';
 
 function formatPace(metersPerSecond) {
   if (!metersPerSecond) return '—';
@@ -34,9 +32,7 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-function ActivityCard({ activity, planPaces }) {
-  const isRun = activity.type === 'Run' || activity.type === 'TrailRun';
-  const pace = formatPace(activity.average_speed);
+function ActivityCard({ activity }) {
   const typeEmoji = activity.type === 'TrailRun' ? '🏔️' : activity.type === 'Run' ? '🏃' : '🚴';
   const elevColor = activity.total_elevation_gain > 200 ? '#f59e0b' : 'var(--text-muted)';
 
@@ -50,15 +46,12 @@ function ActivityCard({ activity, planPaces }) {
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{formatDate(activity.start_date_local)}</div>
         </div>
-        {activity.map?.summary_polyline && (
-          <div style={{ width: 48, height: 48, borderRadius: 10, background: 'rgba(255,0,64,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🗺️</div>
-        )}
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
         {[
           ['Distance', formatDist(activity.distance), '#FF0040'],
           ['Durée', formatDuration(activity.moving_time), 'var(--text-primary)'],
-          ['Allure', `${pace}/km`, '#22c55e'],
+          ['Allure', `${formatPace(activity.average_speed)}/km`, '#22c55e'],
           ['D+', `${Math.round(activity.total_elevation_gain)}m`, elevColor],
         ].map(([label, value, color]) => (
           <div key={label} style={{ background: 'var(--bg-input)', borderRadius: 10, padding: '8px 10px', textAlign: 'center' }}>
@@ -71,7 +64,6 @@ function ActivityCard({ activity, planPaces }) {
         <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-muted)', display: 'flex', gap: 12 }}>
           <span>❤️ {Math.round(activity.average_heartrate)} bpm moy.</span>
           {activity.max_heartrate && <span>⬆️ {Math.round(activity.max_heartrate)} bpm max</span>}
-          {activity.suffer_score && <span>😅 Souffrance: {activity.suffer_score}</span>}
         </div>
       )}
     </div>
@@ -81,7 +73,6 @@ function ActivityCard({ activity, planPaces }) {
 function Stats({ activities }) {
   const runs = activities.filter(a => a.type === 'Run' || a.type === 'TrailRun');
   const totalKm = runs.reduce((a, r) => a + r.distance, 0) / 1000;
-  const totalTime = runs.reduce((a, r) => a + r.moving_time, 0);
   const avgPace = runs.length ? formatPace(runs.reduce((a, r) => a + r.average_speed, 0) / runs.length) : '—';
   const totalElev = runs.reduce((a, r) => a + (r.total_elevation_gain || 0), 0);
 
@@ -114,11 +105,62 @@ export default function StravaModule() {
     const savedAthlete = localStorage.getItem('strava_athlete');
     if (saved) setToken(saved);
     if (savedAthlete) try { setAthlete(JSON.parse(savedAthlete)); } catch {}
+
+    // Écoute le retour OAuth via postMessage ou URL params
+    const handleMessage = (e) => {
+      if (e.data?.type === 'strava_token') {
+        localStorage.setItem('strava_token', e.data.token);
+        if (e.data.athlete) localStorage.setItem('strava_athlete', JSON.stringify(e.data.athlete));
+        setToken(e.data.token);
+        setAthlete(e.data.athlete);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
+    // Vérifie si on revient d'un auth Strava (paramètres URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('strava_code');
+    if (code) handleStravaCode(code);
+
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   useEffect(() => {
     if (token) loadActivities();
   }, [token]);
+
+  // Écoute les appels depuis l'app Capacitor (deep link)
+  useEffect(() => {
+    const handleAppStateChange = async () => {
+      // Quand on revient sur l'app, vérifie si un token a été stocké
+      const saved = localStorage.getItem('strava_token');
+      if (saved && saved !== token) {
+        setToken(saved);
+        const savedAthlete = localStorage.getItem('strava_athlete');
+        if (savedAthlete) try { setAthlete(JSON.parse(savedAthlete)); } catch {}
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleAppStateChange);
+    window.addEventListener('focus', handleAppStateChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleAppStateChange);
+      window.removeEventListener('focus', handleAppStateChange);
+    };
+  }, [token]);
+
+  const handleStravaCode = async (code) => {
+    try {
+      const res = await fetch(`/api/strava?action=exchange&code=${code}`);
+      const data = await res.json();
+      if (data.access_token) {
+        localStorage.setItem('strava_token', data.access_token);
+        if (data.athlete) localStorage.setItem('strava_athlete', JSON.stringify(data.athlete));
+        setToken(data.access_token);
+        setAthlete(data.athlete);
+      }
+    } catch (e) {}
+  };
 
   const loadActivities = async () => {
     setLoading(true);
@@ -130,10 +172,33 @@ export default function StravaModule() {
     setLoading(false);
   };
 
-  const connectStrava = () => {
+  const connectStrava = async () => {
     const scope = 'read,activity:read_all';
-    const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://pacepro-virid.vercel.app/api/strava?action=callback')}&response_type=code&scope=${scope}`;
-    window.location.href = url;
+    const authUrl = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent(CALLBACK_URL)}&response_type=code&scope=${scope}`;
+
+    // Détecte si on est dans Capacitor (iOS natif)
+    const isCapacitor = typeof window !== 'undefined' && window.Capacitor;
+
+    if (isCapacitor) {
+      try {
+        const { Browser } = await import('@capacitor/browser');
+        await Browser.open({ url: authUrl });
+
+        // Écoute la fermeture du browser pour récupérer le token
+        Browser.addListener('browserFinished', () => {
+          const saved = localStorage.getItem('strava_token');
+          if (saved) {
+            setToken(saved);
+            const savedAthlete = localStorage.getItem('strava_athlete');
+            if (savedAthlete) try { setAthlete(JSON.parse(savedAthlete)); } catch {}
+          }
+        });
+      } catch {
+        window.open(authUrl, '_blank');
+      }
+    } else {
+      window.location.href = authUrl;
+    }
   };
 
   const disconnect = () => {
