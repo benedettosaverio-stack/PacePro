@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import MusculationModule from './MusculationModule';
 import Muscu from './Muscu';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
@@ -629,7 +628,6 @@ export default function PacePro() {
   const [view, setView] = useState('list');
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
-const [activeTab, setActiveTab] = useState('running');
   useEffect(()=>{ try { const s=localStorage.getItem('pp_plans'); if(s) setPlans(JSON.parse(s)); } catch{} },[]);
   const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} };
   const handleOnboarding = (profile) => {
@@ -681,29 +679,6 @@ const [activeTab, setActiveTab] = useState('running');
       </>
     );
   }
-  if (plans.length===0) return <><ThemeStyles/><Onboarding onComplete={handleOnboarding}/></>;
-
-return (
-  <>
-    <ThemeStyles/>
-    <div>
-      <div style={{display:'flex',position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',padding:'8px 0'}}>
-        {[['🏃','Running',false],['💪','Muscu',true]].map(([icon,label,isMuscu])=>(
-          <button key={label} onClick={()=>setActiveTab(isMuscu?'muscu':'running')}
-            style={{flex:1,background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',padding:'6px 0',display:'flex',flexDirection:'column',alignItems:'center',gap:2}}>
-            <span style={{fontSize:20}}>{icon}</span>
-            <span style={{fontSize:10,fontWeight:600,color:activeTab===(isMuscu?'muscu':'running')?'#FF0040':'var(--text-muted)'}}>{label}</span>
-          </button>
-        ))}
-      </div>
-      <div style={{paddingBottom:70}}>
-        {activeTab==='muscu'
-          ? <MusculationModule/>
-          : <PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/>
-        }
-      </div>
-    </div>
-  </>
-);
-onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></>;
+  if (plans.length===0) return <><ThemeStyles/><div style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
+  return <><ThemeStyles/><div style={{paddingBottom:60}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></>;
 }
