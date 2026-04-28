@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       'HTTP-Referer': 'https://pacepro-virid.vercel.app',
     },
     body: JSON.stringify({
-      model: 'meta-llama/llama-3.1-8b-instruct:free',
+      model: 'anthropic/claude-3-haiku',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 2000,
     })
