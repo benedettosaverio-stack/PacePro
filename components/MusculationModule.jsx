@@ -38,9 +38,12 @@ async function callGemini(prompt) {
 
 // ─── Générateur de séance par IA ──────────────────────────────────────────────
 async function generateWorkoutAI(prompt, context) {
-  const systemPrompt = `Tu es un coach de musculation expert. Génère un entraînement structuré en JSON strict.
-Contexte utilisateur : ${context}
-Demande : ${prompt}
+  const systemPrompt = `Tu es un coach musculation expert. Réponds UNIQUEMENT avec du JSON valide, sans markdown, sans backticks, sans explication.
+
+Format obligatoire :
+{"name":"Nom séance","type":"push","duration":60,"exercises":[{"name":"Exercice","muscle":"Muscle","sets":4,"reps":"8-12","rest":90,"notes":""}]}
+Types valides : push, pull, legs, full_body, upper, lower, cardio, custom
+Demande : ${prompt}`;
 
 Réponds UNIQUEMENT avec ce JSON (pas de markdown, pas d'explication) :
 {
