@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Muscu from './Muscu';
+import Muscu from './MusculationModule';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
