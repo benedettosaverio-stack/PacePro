@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Muscu from './Muscu';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
@@ -623,6 +624,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
 }
 
 export default function PacePro() {
+  const [tab, setTab] = useState('running'); // 'running' | 'muscu'
   const [view, setView] = useState('list');
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
@@ -636,18 +638,47 @@ export default function PacePro() {
     setView('dashboard');
   };
   const handleDelete = (idx) => { savePlans(plans.filter((_,i)=>i!==idx)); setView('list'); };
-  if (view==='onboarding') return <><ThemeStyles/><Onboarding onComplete={handleOnboarding}/></>;
+
+  // Bottom nav
+  const BottomNav = () => (
+    <div style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:60,paddingBottom:'env(safe-area-inset-bottom,0px)'}}>
+      {[['running','🏃','Running'],['muscu','💪','Muscu']].map(([t,icon,label])=>(
+        <button key={t} onClick={()=>setTab(t)}
+          style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',
+            color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
+          <span style={{fontSize:20}}>{icon}</span>
+          <span style={{fontSize:10,fontWeight:tab===t?700:400,letterSpacing:'0.05em'}}>{label}</span>
+        </button>
+      ))}
+    </div>
+  );
+
+  if (tab === 'muscu') {
+    return (
+      <>
+        <ThemeStyles/>
+        <div style={{paddingBottom:60}}>
+          <Muscu/>
+        </div>
+        <BottomNav/>
+      </>
+    );
+  }
+
+  // Running tab
+  if (view==='onboarding') return <><ThemeStyles/><div style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
       <>
         <ThemeStyles/>
-        <div>
-          <button onClick={()=>setView('list')} style={{position:'fixed',bottom:20,right:20,zIndex:100,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'10px 18px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
+        <div style={{paddingBottom:60}}>
+          <button onClick={()=>setView('list')} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
           <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} onReset={()=>setView('onboarding')}/>
         </div>
+        <BottomNav/>
       </>
     );
   }
-  if (plans.length===0) return <><ThemeStyles/><Onboarding onComplete={handleOnboarding}/></>;
-  return <><ThemeStyles/><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></>;
+  if (plans.length===0) return <><ThemeStyles/><div style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
+  return <><ThemeStyles/><div style={{paddingBottom:60}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></>;
 }
