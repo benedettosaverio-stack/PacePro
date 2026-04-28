@@ -156,8 +156,57 @@ function AllureChip({ dot, label, val }) {
   );
 }
 
+// ─── Icônes SVG custom ────────────────────────────────────────────────────────
+const SessionIcons = {
+  frac: () => (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/>
+      <path d="M12 24 L18 10 L24 24" stroke="#FF0040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M14 20 L22 20" stroke="#FF0040" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="18" cy="10" r="2" fill="#FF0040"/>
+    </svg>
+  ),
+  ef: () => (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="18" fill="rgba(34,197,94,0.12)"/>
+      <path d="M10 20 Q14 14 18 18 Q22 22 26 16" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <circle cx="10" cy="20" r="1.5" fill="#22c55e"/>
+      <circle cx="26" cy="16" r="1.5" fill="#22c55e"/>
+    </svg>
+  ),
+  long: () => (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="18" fill="rgba(245,158,11,0.12)"/>
+      <path d="M10 22 L14 16 L18 19 L22 13 L26 17" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      <circle cx="26" cy="17" r="2" fill="#f59e0b"/>
+    </svg>
+  ),
+  trail: () => (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="18" fill="rgba(245,158,11,0.12)"/>
+      <path d="M9 25 L18 11 L27 25" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      <path d="M13 25 L18 17 L23 25" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.4"/>
+      <circle cx="18" cy="11" r="2" fill="#f59e0b"/>
+    </svg>
+  ),
+  key: () => (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/>
+      <path d="M18 10 L20 16 L26 16 L21.5 20 L23.5 26 L18 22.5 L12.5 26 L14.5 20 L10 16 L16 16 Z" stroke="#FF0040" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(255,0,64,0.15)"/>
+    </svg>
+  ),
+  taper: () => (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="18" fill="rgba(167,139,250,0.12)"/>
+      <path d="M12 14 Q18 10 24 14 Q28 18 24 22 Q18 26 12 22 Q8 18 12 14Z" stroke="#a78bfa" strokeWidth="1.5" fill="none"/>
+      <path d="M15 18 L17 20 L21 16" stroke="#a78bfa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+};
+
 // ─── SessionCard ──────────────────────────────────────────────────────────────
 function SessionCard({ session, onComplete }) {
+  const IconComp = SessionIcons[session.type] || SessionIcons.ef;
   return (
     <div style={{background:session.completed?'rgba(34,197,94,0.04)':'rgba(10,12,18,0.9)',border:`1px solid ${session.completed?'rgba(34,197,94,0.3)':'rgba(255,255,255,0.06)'}`,borderRadius:16,padding:20,transition:'all 0.25s'}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
@@ -165,7 +214,10 @@ function SessionCard({ session, onComplete }) {
           <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:6,fontFamily:'monospace'}}>{session.day}</div>
           <span style={{display:'inline-block',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',padding:'2px 9px',borderRadius:99,background:session.tagBg,color:session.tagColor,border:`1px solid ${session.tagColor}40`}}>{session.tag}</span>
         </div>
-        {session.completed && <div style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:12}}>✓</div>}
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <IconComp/>
+          {session.completed && <div style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:12}}>✓</div>}
+        </div>
       </div>
       <div style={{fontSize:18,fontWeight:700,letterSpacing:'-0.02em',marginBottom:6}}>{session.title}</div>
       <p style={{fontSize:12,color:'rgba(255,255,255,0.4)',lineHeight:1.6,marginBottom:14}}>{session.detail}</p>
