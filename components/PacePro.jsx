@@ -1,6 +1,83 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+// ─── Thème clair/sombre automatique ──────────────────────────────────────────
+function ThemeStyles() {
+  return (
+    <style>{`
+      :root {
+        --bg-primary: #07080b;
+        --bg-card: rgba(19,22,31,0.85);
+        --bg-surface: rgba(10,12,18,0.92);
+        --bg-input: rgba(255,255,255,0.04);
+        --bg-nav: rgba(7,8,11,0.88);
+        --bg-modal: #13161f;
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255,255,255,0.45);
+        --text-muted: rgba(255,255,255,0.25);
+        --text-ultra-muted: rgba(255,255,255,0.15);
+        --border: rgba(255,255,255,0.07);
+        --border-input: rgba(255,255,255,0.10);
+        --border-nav: rgba(255,255,255,0.06);
+        --btn-ghost-bg: rgba(255,255,255,0.05);
+        --btn-ghost-border: rgba(255,255,255,0.08);
+        --btn-ghost-color: rgba(255,255,255,0.4);
+        --onboarding-bg: #07080b;
+        --session-bg: rgba(10,12,18,0.9);
+        --session-border: rgba(255,255,255,0.06);
+        --week-tabs-inactive: rgba(255,255,255,0.04);
+        --week-tabs-border: rgba(255,255,255,0.07);
+        --week-tabs-color: rgba(255,255,255,0.35);
+        --next-session-bg: rgba(255,0,64,0.06);
+        --next-session-border: rgba(255,0,64,0.2);
+        --chip-bg: rgba(255,255,255,0.04);
+        --chip-border: rgba(255,255,255,0.07);
+        --progress-track: rgba(255,255,255,0.06);
+        --svg-text: rgba(255,255,255,0.25);
+        --svg-text-val: rgba(255,255,255,0.4);
+        --plans-bg: #07080b;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg-primary: #f0f2f5;
+          --bg-card: rgba(255,255,255,0.92);
+          --bg-surface: rgba(255,255,255,0.98);
+          --bg-input: rgba(10,11,15,0.04);
+          --bg-nav: rgba(240,242,245,0.92);
+          --bg-modal: #ffffff;
+          --text-primary: #0a0b0f;
+          --text-secondary: rgba(10,11,15,0.55);
+          --text-muted: rgba(10,11,15,0.38);
+          --text-ultra-muted: rgba(10,11,15,0.22);
+          --border: rgba(10,11,15,0.09);
+          --border-input: rgba(10,11,15,0.15);
+          --border-nav: rgba(10,11,15,0.08);
+          --btn-ghost-bg: rgba(10,11,15,0.05);
+          --btn-ghost-border: rgba(10,11,15,0.10);
+          --btn-ghost-color: rgba(10,11,15,0.45);
+          --onboarding-bg: #f0f2f5;
+          --session-bg: rgba(255,255,255,0.96);
+          --session-border: rgba(10,11,15,0.08);
+          --week-tabs-inactive: rgba(10,11,15,0.05);
+          --week-tabs-border: rgba(10,11,15,0.08);
+          --week-tabs-color: rgba(10,11,15,0.38);
+          --next-session-bg: rgba(255,0,64,0.04);
+          --next-session-border: rgba(255,0,64,0.15);
+          --chip-bg: rgba(10,11,15,0.04);
+          --chip-border: rgba(10,11,15,0.08);
+          --progress-track: rgba(10,11,15,0.07);
+          --svg-text: rgba(10,11,15,0.3);
+          --svg-text-val: rgba(10,11,15,0.5);
+          --plans-bg: #f0f2f5;
+        }
+      }
+      * { box-sizing: border-box; }
+      body { background: var(--bg-primary); }
+      input, select, button { font-family: inherit; }
+    `}</style>
+  );
+}
+
 function toPace(speedKmh) {
   const mPerKm = 60 / speedKmh;
   const m = Math.floor(mPerKm);
@@ -100,10 +177,10 @@ function applyFeedback(plan, sessionId, feedback) {
   }));
 }
 
-const card = {background:'rgba(19,22,31,0.8)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:16,padding:'16px 18px'};
-const navBtnS = {background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:'8px 12px',color:'rgba(255,255,255,0.4)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
-const lbl = {fontSize:12,color:'rgba(255,255,255,0.4)',display:'block',marginBottom:8};
-const inp = () => ({background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',color:'#fff',borderRadius:12,padding:'12px 14px',width:'100%',fontSize:14,fontFamily:'inherit',outline:'none'});
+const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px 18px'};
+const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
+const lbl = {fontSize:12,color:'var(--text-secondary)',display:'block',marginBottom:8};
+const inp = () => ({background:'var(--bg-input)',border:'1px solid var(--border-input)',color:'var(--text-primary)',borderRadius:12,padding:'12px 14px',width:'100%',fontSize:14,fontFamily:'inherit',outline:'none'});
 const tog = (a) => ({background:a?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${a?'rgba(255,0,64,0.5)':'rgba(255,255,255,0.08)'}`,color:a?'#FF0040':'rgba(255,255,255,0.5)',borderRadius:12,padding:'10px 12px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'});
 
 const SessionIcons = {
@@ -117,7 +194,7 @@ const SessionIcons = {
 
 function AllureChip({ dot, label, val }) {
   return (
-    <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:99,padding:'3px 10px',fontFamily:'monospace',fontSize:11}}>
+    <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--chip-bg)',border:'1px solid var(--chip-border)',borderRadius:99,padding:'3px 10px',fontFamily:'monospace',fontSize:11}}>
       <span style={{width:7,height:7,borderRadius:'50%',background:dot,flexShrink:0,display:'inline-block'}}/>
       <span style={{color:'rgba(255,255,255,0.35)'}}>{label}</span>
       <span style={{color:'#fff',fontWeight:500}}>{val}</span>
@@ -128,10 +205,10 @@ function AllureChip({ dot, label, val }) {
 function SessionCard({ session, onComplete }) {
   const IconComp = SessionIcons[session.type] || SessionIcons.ef;
   return (
-    <div style={{background:session.completed?'rgba(34,197,94,0.04)':'rgba(10,12,18,0.9)',border:`1px solid ${session.completed?'rgba(34,197,94,0.3)':'rgba(255,255,255,0.06)'}`,borderRadius:16,padding:20,transition:'all 0.25s'}}>
+    <div style={{background:session.completed?'rgba(34,197,94,0.06)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.3)':'var(--session-border)'}`,borderRadius:16,padding:20,transition:'all 0.25s'}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
         <div>
-          <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:6,fontFamily:'monospace'}}>{session.day}</div>
+          <div style={{fontSize:10,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:6,fontFamily:'monospace'}}>{session.day}</div>
           <span style={{display:'inline-block',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',padding:'2px 9px',borderRadius:99,background:session.tagBg,color:session.tagColor,border:`1px solid ${session.tagColor}40`}}>{session.tag}</span>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
@@ -139,13 +216,13 @@ function SessionCard({ session, onComplete }) {
           {session.completed && <div style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:12}}>✓</div>}
         </div>
       </div>
-      <div style={{fontSize:18,fontWeight:700,letterSpacing:'-0.02em',marginBottom:6}}>{session.title}</div>
-      <p style={{fontSize:12,color:'rgba(255,255,255,0.4)',lineHeight:1.6,marginBottom:14}}>{session.detail}</p>
+      <div style={{fontSize:18,fontWeight:700,letterSpacing:'-0.02em',marginBottom:6,color:'var(--text-primary)'}}>{session.title}</div>
+      <p style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.6,marginBottom:14}}>{session.detail}</p>
       <div style={{display:'flex',flexDirection:'column',gap:5,marginBottom:16}}>
         {session.allures.map((a,i) => <AllureChip key={i} {...a}/>)}
       </div>
       {!session.completed && onComplete && (
-        <button onClick={()=>onComplete(session.id)} style={{width:'100%',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:'8px 16px',color:'rgba(255,255,255,0.4)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+        <button onClick={()=>onComplete(session.id)} style={{width:'100%',background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 16px',color:'var(--btn-ghost-color)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
           Marquer comme terminé
         </button>
       )}
@@ -161,14 +238,14 @@ function FeedbackModal({ session, onClose, onSubmit }) {
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      <div style={{width:'100%',maxWidth:420,background:'#13161f',border:'1px solid rgba(255,255,255,0.1)',borderRadius:20,padding:'28px 24px'}}>
-        <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>Feedback séance</div>
-        <div style={{fontSize:16,fontWeight:700,marginBottom:20}}>{session.title}</div>
+      <div style={{width:'100%',maxWidth:420,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:20,padding:'28px 24px'}}>
+        <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>Feedback séance</div>
+        <div style={{fontSize:16,fontWeight:700,marginBottom:20,color:'var(--text-primary)'}}>{session.title}</div>
         <div style={{marginBottom:20}}>
           <label style={{...lbl,marginBottom:12}}>Effort ressenti</label>
           <div style={{display:'flex',gap:4,marginBottom:8}}>
             {[1,2,3,4,5,6,7,8,9,10].map(n => (
-              <button key={n} onClick={()=>setEffort(n)} style={{flex:1,height:32,borderRadius:6,border:'none',cursor:'pointer',fontWeight:700,fontSize:11,fontFamily:'monospace',background:n<=effort?effortColors[effort]:'rgba(255,255,255,0.06)',color:n<=effort?'#000':'rgba(255,255,255,0.3)',transition:'all 0.15s'}}>{n}</button>
+              <button key={n} onClick={()=>setEffort(n)} style={{flex:1,height:32,borderRadius:6,border:'none',cursor:'pointer',fontWeight:700,fontSize:11,fontFamily:'monospace',background:n<=effort?effortColors[effort]:'var(--btn-ghost-bg)',color:n<=effort?'#000':'var(--text-muted)',transition:'all 0.15s'}}>{n}</button>
             ))}
           </div>
           <div style={{fontSize:12,color:effortColors[effort],fontWeight:600,textAlign:'center'}}>{effortLabels[effort]}</div>
@@ -176,7 +253,7 @@ function FeedbackModal({ session, onClose, onSubmit }) {
         <div style={{marginBottom:20}}>
           <label style={lbl}>Allure réelle (min:sec/km)</label>
           <input style={inp()} placeholder="Ex: 5:30" value={realPace} onChange={e=>setRealPace(e.target.value)}/>
-          <div style={{fontSize:11,color:'rgba(255,255,255,0.25)',marginTop:4}}>Laisse vide si tu n'as pas chronométré</div>
+          <div style={{fontSize:11,color:'var(--text-muted)',marginTop:4}}>Laisse vide si tu n'as pas chronométré</div>
         </div>
         <div style={{marginBottom:20}}>
           <label style={{...lbl,marginBottom:10}}>Sensations physiques</label>
@@ -189,7 +266,7 @@ function FeedbackModal({ session, onClose, onSubmit }) {
         {(effort<=4||effort>=8) && (
           <div style={{background:effort<=4?'rgba(34,197,94,0.08)':'rgba(255,0,64,0.08)',border:`1px solid ${effort<=4?'rgba(34,197,94,0.2)':'rgba(255,0,64,0.2)'}`,borderRadius:10,padding:'10px 14px',marginBottom:16,fontSize:12}}>
             <span style={{color:effort<=4?'#22c55e':'#FF0040',fontWeight:600}}>{effort<=4?'💪 Plan intensifié':'🛡️ Plan allégé'}</span>
-            <span style={{color:'rgba(255,255,255,0.4)',marginLeft:6}}>{effort<=4?'Les prochains fractionnés gagnent 2 répétitions':'Les prochains fractionnés perdent 2 répétitions'}</span>
+            <span style={{color:'var(--text-secondary)',marginLeft:6}}>{effort<=4?'Les prochains fractionnés gagnent 2 répétitions':'Les prochains fractionnés perdent 2 répétitions'}</span>
           </div>
         )}
         <div style={{display:'flex',gap:10}}>
@@ -217,18 +294,18 @@ function KpiCharts({ plan, feedbacks, completed }) {
   const avgEff = allFbs.length ? (allFbs.reduce((a,f)=>a+f.effort,0)/allFbs.length).toFixed(1) : '—';
   return (
     <div style={{...card,marginBottom:20}}>
-      <div style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:16}}>KPI — Suivi de charge</div>
+      <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:16}}>KPI — Suivi de charge</div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:20}}>
         <div>
-          <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',marginBottom:4}}>COMPLETION</div>
+          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>COMPLETION</div>
           <div style={{fontSize:22,fontWeight:800,color:'#22c55e',fontFamily:'monospace'}}>{Math.round((totalDone/totalAll)*100)}%</div>
         </div>
         <div>
-          <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',marginBottom:4}}>SÉANCES OK</div>
+          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>SÉANCES OK</div>
           <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace'}}>{totalDone}<span style={{fontSize:12,color:'rgba(255,255,255,0.3)'}}>/{totalAll}</span></div>
         </div>
         <div>
-          <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',marginBottom:4}}>EFFORT MOY.</div>
+          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>EFFORT MOY.</div>
           <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace',color:'#f59e0b'}}>{avgEff}<span style={{fontSize:12,color:'rgba(255,255,255,0.3)'}}>/10</span></div>
         </div>
       </div>
@@ -242,8 +319,8 @@ function KpiCharts({ plan, feedbacks, completed }) {
           return (
             <g key={i}>
               <rect x={x-8} y={y} width={16} height={barH} rx={3} fill={w.done===w.total&&w.total>0?effortColor:'rgba(255,255,255,0.08)'}/>
-              <text x={x} y={H+14} textAnchor="middle" fill="rgba(255,255,255,0.25)" fontSize={8} fontFamily="monospace">S{w.week}</text>
-              {w.km>0 && <text x={x} y={y-4} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize={8} fontFamily="monospace">{w.km}</text>}
+              <text x={x} y={H+14} textAnchor="middle" fill="var(--svg-text)" fontSize={8} fontFamily="monospace">S{w.week}</text>
+              {w.km>0 && <text x={x} y={y-4} textAnchor="middle" fill="var(--svg-text-val)" fontSize={8} fontFamily="monospace">{w.km}</text>}
             </g>
           );
         })}
@@ -262,7 +339,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
                 <g key={i}>
                   {nx && <line x1={x} y1={y} x2={nx} y2={ny} stroke="rgba(255,0,64,0.4)" strokeWidth={1.5}/>}
                   <circle cx={x} cy={y} r={3} fill="#FF0040"/>
-                  <text x={x} y={y-6} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize={8} fontFamily="monospace">{w.avgEffort}</text>
+                  <text x={x} y={y-6} textAnchor="middle" fill="var(--svg-text-val)" fontSize={8} fontFamily="monospace">{w.avgEffort}</text>
                 </g>
               );
             })}
@@ -332,21 +409,21 @@ function Onboarding({ onComplete }) {
     onComplete({...form,vma:finalVma,weeks:+form.weeks,raceDistanceKm:+form.raceDistanceKm,elevationM:+form.elevationM});
   };
   return (
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'#fff'}}>
-      <div style={{width:'100%',maxWidth:460,background:'rgba(19,22,31,0.97)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:24,padding:'36px 32px'}}>
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'var(--onboarding-bg)'}}>
+      <div style={{width:'100%',maxWidth:460,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:24,padding:'36px 32px'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:32}}>
           <img src="/logo.png" alt="PacePro" style={{width:36,height:36,objectFit:'contain'}}/>
-          <span style={{fontWeight:700,fontSize:18,letterSpacing:'-0.02em',color:'#fff'}}>PacePro</span>
+          <span style={{fontWeight:700,fontSize:18,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>PacePro</span>
         </div>
         <div style={{display:'flex',gap:6,marginBottom:28,alignItems:'center'}}>
           {steps.map((_,i)=><div key={i} style={{width:i===step?20:8,height:8,borderRadius:99,background:i===step?'#FF0040':i<step?'#22c55e':'rgba(255,255,255,0.15)',transition:'all 0.3s'}}/>)}
-          <span style={{fontSize:11,color:'rgba(255,255,255,0.25)',fontFamily:'monospace',marginLeft:8}}>{step+1}/{steps.length}</span>
+          <span style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',marginLeft:8}}>{step+1}/{steps.length}</span>
         </div>
-        <h2 style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4,color:'#fff'}}>{steps[step].title}</h2>
-        <p style={{fontSize:13,color:'rgba(255,255,255,0.4)',marginBottom:24}}>{steps[step].sub}</p>
+        <h2 style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4,color:'var(--text-primary)'}}>{steps[step].title}</h2>
+        <p style={{fontSize:13,color:'var(--text-secondary)',marginBottom:24}}>{steps[step].sub}</p>
         {steps[step].body}
         <div style={{display:'flex',gap:10,marginTop:28}}>
-          {step>0 && <button onClick={()=>setStep(s=>s-1)} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:'12px 16px',color:'rgba(255,255,255,0.4)',cursor:'pointer',fontFamily:'inherit'}}>←</button>}
+          {step>0 && <button onClick={()=>setStep(s=>s-1)} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'12px 16px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit'}}>←</button>}
           <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,background:'#FF0040',color:'#000',border:'none',borderRadius:12,padding:'12px 20px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',opacity:steps[step].ok?1:0.4,transition:'all 0.2s'}}>
             {step<steps.length-1?'Continuer →':'🚀 Générer mon programme'}
           </button>
@@ -382,43 +459,43 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
     <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'rgba(255,255,255,0.07)'}`,color:activeTab===v?'#FF0040':'rgba(255,255,255,0.35)'}}>{l}</button>
   );
   return (
-    <div style={{minHeight:'100vh',background:'#07080b',color:'#fff',fontFamily:'Syne,sans-serif'}}>
+    <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
-      <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(7,8,11,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+      <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderBottom:'1px solid var(--border-nav)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
           <img src="/logo.png" alt="PacePro" style={{width:32,height:32,objectFit:'contain'}}/>
           <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center'}}>
-          <span style={{fontSize:13,color:'rgba(255,255,255,0.5)'}}>{profile.name}</span>
-          <button onClick={onReset} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'4px 10px',color:'rgba(255,255,255,0.3)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>Nouveau plan</button>
+          <span style={{fontSize:13,color:'var(--text-secondary)'}}>{profile.name}</span>
+          <button onClick={onReset} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:8,padding:'4px 10px',color:'var(--btn-ghost-color)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>Nouveau plan</button>
         </div>
       </nav>
       <main style={{maxWidth:1000,margin:'0 auto',padding:'28px 20px 60px'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:12,marginBottom:20}}>
           <div style={{...card,gridColumn:'span 2'}}>
-            <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:10}}>Progression</div>
-            <div style={{fontSize:15,fontWeight:700,marginBottom:8}}>{profile.raceName} · {profile.raceDistanceKm} km{profile.elevationM>0?` D+${profile.elevationM}m`:''}</div>
-            <div style={{height:3,background:'rgba(255,255,255,0.06)',borderRadius:99}}>
+            <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:10}}>Progression</div>
+            <div style={{fontSize:15,fontWeight:700,marginBottom:8,color:'var(--text-primary)'}}>{profile.raceName} · {profile.raceDistanceKm} km{profile.elevationM>0?` D+${profile.elevationM}m`:''}</div>
+            <div style={{height:3,background:'var(--progress-track)',borderRadius:99}}>
               <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.6s'}}/>
             </div>
-            <div style={{display:'flex',justifyContent:'space-between',marginTop:6,fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'monospace'}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginTop:6,fontSize:11,color:'var(--text-muted)',fontFamily:'monospace'}}>
               <span>{doneCount}/{totalSessions} séances</span><span>{progress}%</span>
             </div>
           </div>
           <div style={card}>
             <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>VMA</div>
             <div style={{fontSize:28,fontWeight:800,color:'#FF0040',fontFamily:'monospace'}}>{profile.vma.toFixed(1)}</div>
-            <div style={{fontSize:11,color:'rgba(255,255,255,0.3)'}}>km/h</div>
+            <div style={{fontSize:11,color:'var(--text-muted)'}}>km/h</div>
           </div>
           <div style={card}>
             <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>Séances/sem.</div>
             <div style={{fontSize:20,fontWeight:800,fontFamily:'monospace'}}>{profile.sessionsPerWeek}×</div>
-            <div style={{fontSize:10,color:'rgba(255,255,255,0.25)',marginTop:2,lineHeight:1.4}}>{profile.trainingDays.join(', ')}</div>
+            <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2,lineHeight:1.4}}>{profile.trainingDays.join(', ')}</div>
           </div>
         </div>
         <div style={{...card,marginBottom:20}}>
-          <div style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Tes allures personnalisées</div>
+          <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Tes allures personnalisées</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
             {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'rgba(255,255,255,0.3)']].map(([l,v,c])=>(
               <AllureChip key={l} dot={c} label={l} val={v+' /km'}/>
@@ -426,10 +503,10 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
           </div>
         </div>
         {nextSession && (
-          <div style={{background:'rgba(255,0,64,0.06)',border:'1px solid rgba(255,0,64,0.2)',borderRadius:14,padding:'14px 18px',marginBottom:20}}>
+          <div style={{background:'var(--next-session-bg)',border:'1px solid var(--next-session-border)',borderRadius:14,padding:'14px 18px',marginBottom:20}}>
             <div style={{fontSize:10,color:'#FF0040',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'monospace',marginBottom:4}}>Prochaine séance — Semaine {nextSession.week} · {nextSession.day}</div>
-            <div style={{fontSize:15,fontWeight:700}}>{nextSession.title}</div>
-            <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',marginTop:2}}>{nextSession.detail}</div>
+            <div style={{fontSize:15,fontWeight:700,color:'var(--text-primary)'}}>{nextSession.title}</div>
+            <div style={{fontSize:12,color:'var(--text-secondary)',marginTop:2}}>{nextSession.detail}</div>
           </div>
         )}
         <div style={{display:'flex',gap:8,marginBottom:20}}>
@@ -442,7 +519,7 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
           <div>
             <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:4,marginBottom:18}}>
               {plan.map((w,i)=>(
-                <button key={i} onClick={()=>setActiveWeek(i)} style={{flexShrink:0,borderRadius:12,padding:'6px 14px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeWeek===i?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${activeWeek===i?'rgba(255,0,64,0.4)':'rgba(255,255,255,0.07)'}`,color:activeWeek===i?'#FF0040':'rgba(255,255,255,0.35)'}}>
+                <button key={i} onClick={()=>setActiveWeek(i)} style={{flexShrink:0,borderRadius:12,padding:'6px 14px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeWeek===i?'rgba(255,0,64,0.15)':'var(--week-tabs-inactive)',border:`1px solid ${activeWeek===i?'rgba(255,0,64,0.4)':'var(--week-tabs-border)'}`,color:activeWeek===i?'#FF0040':'var(--week-tabs-color)'}}>
                   S{w.week}{w.isKey?' ★':''}
                 </button>
               ))}
@@ -450,11 +527,11 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
               <button onClick={()=>setActiveWeek(w=>Math.max(0,w-1))} style={navBtnS}>←</button>
               <div style={{flex:1}}>
-                <div style={{fontSize:10,color:'rgba(255,255,255,0.2)',fontFamily:'monospace',letterSpacing:'0.1em'}}>{week.dateRange}</div>
+                <div style={{fontSize:10,color:'var(--text-ultra-muted)',fontFamily:'monospace',letterSpacing:'0.1em'}}>{week.dateRange}</div>
                 <div style={{display:'flex',alignItems:'center',gap:8,marginTop:4,flexWrap:'wrap'}}>
-                  <span style={{fontSize:17,fontWeight:700,letterSpacing:'-0.02em'}}>Semaine {week.week}</span>
+                  <span style={{fontSize:17,fontWeight:700,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>Semaine {week.week}</span>
                   <span style={{fontSize:10,fontWeight:700,padding:'2px 9px',borderRadius:99,textTransform:'uppercase',letterSpacing:'0.08em',background:week.bg,color:week.color,border:`1px solid ${week.color}40`}}>{week.label}</span>
-                  {week.weeklyKm>0 && <span style={{fontSize:10,color:'rgba(255,255,255,0.2)',fontFamily:'monospace'}}>{week.weeklyKm} km est.</span>}
+                  {week.weeklyKm>0 && <span style={{fontSize:10,color:'var(--text-ultra-muted)',fontFamily:'monospace'}}>{week.weeklyKm} km est.</span>}
                 </div>
               </div>
               <button onClick={()=>setActiveWeek(w=>Math.min(plan.length-1,w+1))} style={navBtnS}>→</button>
@@ -466,7 +543,7 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
                   <div key={s.id}>
                     <SessionCard session={{...s,completed:!!completed[s.id]}} onComplete={handleComplete}/>
                     {fb && (
-                      <div style={{marginTop:6,background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:10,padding:'8px 12px',fontSize:11,color:'rgba(255,255,255,0.4)',display:'flex',gap:10,flexWrap:'wrap'}}>
+                      <div style={{marginTop:6,background:'var(--btn-ghost-bg)',border:'1px solid var(--border)',borderRadius:10,padding:'8px 12px',fontSize:11,color:'var(--text-secondary)',display:'flex',gap:10,flexWrap:'wrap'}}>
                         <span>Effort : <span style={{color:'#f59e0b',fontWeight:600}}>{fb.effort}/10</span></span>
                         {fb.realPace && <span>Allure : <span style={{color:'#fff',fontFamily:'monospace'}}>{fb.realPace}/km</span></span>}
                         {fb.sensation && <span>{fb.sensation}</span>}
@@ -482,8 +559,8 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
                 <div style={{fontSize:10,color:'rgba(245,158,11,0.7)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>
                   {profile.raceDate?new Date(profile.raceDate).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'Jour J'}
                 </div>
-                <div style={{fontSize:16,fontWeight:700,marginBottom:4}}>{profile.raceName} 🎯</div>
-                <div style={{fontSize:12,color:'rgba(255,255,255,0.4)'}}>
+                <div style={{fontSize:16,fontWeight:700,marginBottom:4,color:'var(--text-primary)'}}>{profile.raceName} 🎯</div>
+                <div style={{fontSize:12,color:'var(--text-secondary)'}}>
                   {profile.raceDistanceKm} km{profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : <span style={{color:'#fff',fontFamily:'monospace'}}>{paces.ef} /km</span>
                 </div>
               </div>
@@ -497,8 +574,8 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
 
 function PlansList({ plans, onSelect, onNew, onDelete }) {
   return (
-    <div style={{minHeight:'100vh',background:'#07080b',color:'#fff',fontFamily:'Syne,sans-serif'}}>
-      <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(7,8,11,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+    <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
+      <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderBottom:'1px solid var(--border-nav)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
           <img src="/logo.png" alt="PacePro" style={{width:32,height:32,objectFit:'contain'}}/>
           <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
@@ -506,17 +583,17 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
         <button onClick={onNew} style={{background:'#FF0040',color:'#000',border:'none',borderRadius:10,padding:'6px 14px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Nouveau plan</button>
       </nav>
       <main style={{maxWidth:700,margin:'0 auto',padding:'32px 20px'}}>
-        <h1 style={{fontSize:24,fontWeight:800,letterSpacing:'-0.03em',marginBottom:6}}>Mes plans d'entraînement</h1>
-        <p style={{fontSize:13,color:'rgba(255,255,255,0.4)',marginBottom:28}}>{plans.length} plan{plans.length>1?'s':''} sauvegardé{plans.length>1?'s':''}</p>
+        <h1 style={{fontSize:24,fontWeight:800,letterSpacing:'-0.03em',marginBottom:6,color:'var(--text-primary)'}}>Mes plans d'entraînement</h1>
+        <p style={{fontSize:13,color:'var(--text-secondary)',marginBottom:28}}>{plans.length} plan{plans.length>1?'s':''} sauvegardé{plans.length>1?'s':''}</p>
         <div style={{display:'flex',flexDirection:'column',gap:12}}>
           {plans.map((p,i) => (
             <div key={i} style={{...card,cursor:'pointer',transition:'all 0.2s'}} onClick={()=>onSelect(i)}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
                 <div style={{flex:1}}>
-                  <div style={{fontSize:16,fontWeight:700,marginBottom:4}}>{p.profile.raceName||'Mon programme'}</div>
-                  <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',lineHeight:1.6}}>{p.profile.raceDistanceKm} km{p.profile.elevationM>0?` · D+${p.profile.elevationM}m`:''} · {p.profile.weeks} semaines · {p.profile.sessionsPerWeek}×/sem.</div>
-                  <div style={{fontSize:11,color:'rgba(255,255,255,0.25)',fontFamily:'monospace',marginTop:4}}>VMA {p.profile.vma.toFixed(1)} km/h · {p.profile.type==='trail'?'🏔️ Trail':'🏙️ Route'}{p.profile.raceDate&&` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`}</div>
-                  <div style={{fontSize:10,color:'rgba(255,255,255,0.2)',marginTop:4}}>{p.profile.trainingDays?.join(', ')}</div>
+                  <div style={{fontSize:16,fontWeight:700,marginBottom:4,color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
+                  <div style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.6}}>{p.profile.raceDistanceKm} km{p.profile.elevationM>0?` · D+${p.profile.elevationM}m`:''} · {p.profile.weeks} semaines · {p.profile.sessionsPerWeek}×/sem.</div>
+                  <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',marginTop:4}}>VMA {p.profile.vma.toFixed(1)} km/h · {p.profile.type==='trail'?'🏔️ Trail':'🏙️ Route'}{p.profile.raceDate&&` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`}</div>
+                  <div style={{fontSize:10,color:'var(--text-ultra-muted)',marginTop:4}}>{p.profile.trainingDays?.join(', ')}</div>
                 </div>
                 <div style={{display:'flex',gap:8,alignItems:'center',marginLeft:12,flexShrink:0}}>
                   <span style={{fontSize:18,fontWeight:800,color:'#FF0040'}}>→</span>
@@ -545,15 +622,18 @@ export default function PacePro() {
     setView('dashboard');
   };
   const handleDelete = (idx) => { savePlans(plans.filter((_,i)=>i!==idx)); setView('list'); };
-  if (view==='onboarding') return <Onboarding onComplete={handleOnboarding}/>;
+  if (view==='onboarding') return <><ThemeStyles/><Onboarding onComplete={handleOnboarding}/></>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
-      <div>
-        <button onClick={()=>setView('list')} style={{position:'fixed',bottom:20,right:20,zIndex:100,background:'rgba(19,22,31,0.95)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:99,padding:'10px 18px',color:'rgba(255,255,255,0.6)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
-        <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} onReset={()=>setView('onboarding')}/>
-      </div>
+      <>
+        <ThemeStyles/>
+        <div>
+          <button onClick={()=>setView('list')} style={{position:'fixed',bottom:20,right:20,zIndex:100,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'10px 18px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
+          <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} onReset={()=>setView('onboarding')}/>
+        </div>
+      </>
     );
   }
-  if (plans.length===0) return <Onboarding onComplete={handleOnboarding}/>;
-  return <PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/>;
+  if (plans.length===0) return <><ThemeStyles/><Onboarding onComplete={handleOnboarding}/></>;
+  return <><ThemeStyles/><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></>;
 }
