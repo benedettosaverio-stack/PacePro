@@ -132,7 +132,7 @@ export default function StravaModule() {
 
   const connectStrava = () => {
     const scope = 'read,activity:read_all';
-    const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/strava?action=callback')}&response_type=code&scope=${scope}`;
+    const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://pacepro-virid.vercel.app/api/strava?action=callback')}&response_type=code&scope=${scope}`;
     window.location.href = url;
   };
 
