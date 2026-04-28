@@ -22,47 +22,23 @@ const SESSION_TYPES = [
 
 // ─── Appel Gemini ─────────────────────────────────────────────────────────────
 async function callGemini(prompt) {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-  const res = await fetch(url, {
+  const res = await fetch('/api/gemini', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: 2000 }
-    })
+    body: JSON.stringify({ prompt })
   });
   const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return data.text || '';
 }
 
 // ─── Générateur de séance par IA ──────────────────────────────────────────────
 async function generateWorkoutAI(prompt, context) {
-  const systemPrompt = `Tu es un coach musculation expert. Réponds UNIQUEMENT avec du JSON valide, sans markdown, sans backticks, sans explication.
-
-Format obligatoire :
-{"name":"Nom séance","type":"push","duration":60,"exercises":[{"name":"Exercice","muscle":"Muscle","sets":4,"reps":"8-12","rest":90,"notes":""}]}
-Types valides : push, pull, legs, full_body, upper, lower, cardio, custom
-Demande : ${prompt}`;
-
-Réponds UNIQUEMENT avec ce JSON (pas de markdown, pas d'explication) :
-{
-  "name": "Nom de la séance",
-  "type": "push|pull|legs|full_body|upper|lower|cardio|custom",
-  "duration": 60,
-  "exercises": [
-    {
-      "name": "Nom exercice",
-      "muscle": "Muscle ciblé",
-      "sets": 4,
-      "reps": "8-12",
-      "rest": 90,
-      "notes": "Conseil technique optionnel"
-    }
-  ]
-}`;
+  const systemPrompt = `Tu es un coach musculation expert. Réponds UNIQUEMENT avec du JSON valide, sans markdown, sans backticks, sans explication. Format obligatoire : {"name":"Nom séance","type":"push","duration":60,"exercises":[{"name":"Exercice","muscle":"Muscle","sets":4,"reps":"8-12","rest":90,"notes":""}]} Types valides : push, pull, legs, full_body, upper, lower, cardio, custom. Demande : ${prompt}`;
   const raw = await callGemini(systemPrompt);
-  const clean = raw.replace(/```json|```/g, '').trim();
+  // Extract JSON robustly
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('No JSON found in response');
+  const clean = jsonMatch[0].trim();
   return JSON.parse(clean);
 }
 
