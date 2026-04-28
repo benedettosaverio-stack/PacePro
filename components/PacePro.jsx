@@ -72,7 +72,7 @@ function generatePlan(profile) {
         allures:[{dot:'#22c55e',label:'Sortie',val:paces.recov}] };
     }
 
-    if (phase === 'peak' && isLast) return { type:'key', tag:'Sortie clé ⭐', tagColor:'#f97316', tagBg:'rgba(249,115,22,0.15)',
+    if (phase === 'peak' && isLast) return { type:'key', tag:'Sortie clé ⭐', tagColor:'#FF0040', tagBg:'rgba(249,115,22,0.15)',
       title:`${Math.round(raceDistanceKm*0.85)} km — Répétition générale`,
       detail:`Simule le jour J. Même équipement${hasElevation?' et dénivelé':''}.`,
       allures:[{dot:'#22c55e',label:'Plat',val:paces.ef},{dot:'#a78bfa',label:'Montées',val:'marche active'}] };
@@ -97,7 +97,7 @@ function generatePlan(profile) {
         return { type:'frac', tag:'Fractionné long', tagColor:'#60a5fa', tagBg:'rgba(96,165,250,0.12)',
           title:`${blocs} × ${dur} min / ${Math.round(dur*0.4)} min`,
           detail:`Échauffement 15 min. ${blocs} blocs seuil. Récup trot.`,
-          allures:[{dot:'#f97316',label:`Effort (${dur} min)`,val:paces.threshold},{dot:'#22c55e',label:'Récup',val:paces.recov}] };
+          allures:[{dot:'#FF0040',label:`Effort (${dur} min)`,val:paces.threshold},{dot:'#22c55e',label:'Récup',val:paces.recov}] };
       }
       return { type:'frac', tag:'Fractionné court', tagColor:'#60a5fa', tagBg:'rgba(96,165,250,0.12)',
         title:`${reps} × 1 min / 1 min`,
@@ -143,7 +143,7 @@ const card = {background:'rgba(19,22,31,0.8)',border:'1px solid rgba(255,255,255
 const navBtn = {background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:'8px 12px',color:'rgba(255,255,255,0.4)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
 const lbl = {fontSize:12,color:'rgba(255,255,255,0.4)',display:'block',marginBottom:8};
 const inp = () => ({background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',color:'#fff',borderRadius:12,padding:'12px 14px',width:'100%',fontSize:14,fontFamily:'inherit',outline:'none'});
-const toggle = (active) => ({background:active?'rgba(249,115,22,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${active?'rgba(249,115,22,0.5)':'rgba(255,255,255,0.08)'}`,color:active?'#f97316':'rgba(255,255,255,0.5)',borderRadius:12,padding:'10px 12px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'});
+const toggle = (active) => ({background:active?'rgba(249,115,22,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${active?'rgba(249,115,22,0.5)':'rgba(255,255,255,0.08)'}`,color:active?'#FF0040':'rgba(255,255,255,0.5)',borderRadius:12,padding:'10px 12px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'});
 
 // ─── AllureChip ───────────────────────────────────────────────────────────────
 function AllureChip({ dot, label, val }) {
@@ -249,7 +249,7 @@ function Onboarding({ onComplete }) {
                 <label style={lbl}>Chrono (en minutes)</label>
                 <input type="number" style={inp()} placeholder="ex: 55" value={form.raceTimeMins} onChange={e=>upd('raceTimeMins',e.target.value)}/>
               </div>
-              {computedVma>0&&<div style={{background:'rgba(249,115,22,0.08)',border:'1px solid rgba(249,115,22,0.2)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'rgba(255,255,255,0.5)'}}>VMA estimée : <span style={{color:'#f97316',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
+              {computedVma>0&&<div style={{background:'rgba(249,115,22,0.08)',border:'1px solid rgba(249,115,22,0.2)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'rgba(255,255,255,0.5)'}}>VMA estimée : <span style={{color:'#FF0040',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
             </>
           )}
         </div>
@@ -309,11 +309,11 @@ function Onboarding({ onComplete }) {
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'#07080b'}}>
       <div style={{width:'100%',maxWidth:460,background:'rgba(19,22,31,0.9)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:24,padding:'36px 32px'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:32}}>
-          <div style={{width:34,height:34,borderRadius:10,background:'#f97316',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:16,color:'#000'}}>P</div>
+          <div style={{width:34,height:34,borderRadius:10,background:'#FF0040',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:16,color:'#000'}}>P</div>
           <span style={{fontWeight:700,fontSize:18,letterSpacing:'-0.02em'}}>PacePro</span>
         </div>
         <div style={{display:'flex',gap:6,marginBottom:28,alignItems:'center'}}>
-          {steps.map((_,i)=><div key={i} style={{width:i===step?20:8,height:8,borderRadius:99,background:i===step?'#f97316':i<step?'#22c55e':'rgba(255,255,255,0.15)',transition:'all 0.3s'}}/>)}
+          {steps.map((_,i)=><div key={i} style={{width:i===step?20:8,height:8,borderRadius:99,background:i===step?'#FF0040':i<step?'#22c55e':'rgba(255,255,255,0.15)',transition:'all 0.3s'}}/>)}
           <span style={{fontSize:11,color:'rgba(255,255,255,0.25)',fontFamily:'monospace',marginLeft:8}}>{step+1}/{steps.length}</span>
         </div>
         <h2 style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4}}>{steps[step].title}</h2>
@@ -322,7 +322,7 @@ function Onboarding({ onComplete }) {
         <div style={{display:'flex',gap:10,marginTop:28}}>
           {step>0&&<button onClick={()=>setStep(s=>s-1)} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:'12px 16px',color:'rgba(255,255,255,0.4)',cursor:'pointer',fontFamily:'inherit'}}>←</button>}
           <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok}
-            style={{flex:1,background:'#f97316',color:'#000',border:'none',borderRadius:12,padding:'12px 20px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',opacity:steps[step].ok?1:0.4,transition:'all 0.2s'}}>
+            style={{flex:1,background:'#FF0040',color:'#000',border:'none',borderRadius:12,padding:'12px 20px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',opacity:steps[step].ok?1:0.4,transition:'all 0.2s'}}>
             {step<steps.length-1?'Continuer →':'🚀 Générer mon programme'}
           </button>
         </div>
@@ -346,7 +346,7 @@ function Dashboard({ profile, plan, onReset }) {
     <div style={{minHeight:'100vh',background:'#07080b',color:'#fff',fontFamily:'Syne,sans-serif'}}>
       <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(7,8,11,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:30,height:30,borderRadius:8,background:'#f97316',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14,color:'#000'}}>P</div>
+          <div style={{width:30,height:30,borderRadius:8,background:'#FF0040',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14,color:'#000'}}>P</div>
           <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center'}}>
@@ -360,7 +360,7 @@ function Dashboard({ profile, plan, onReset }) {
             <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:10}}>Progression</div>
             <div style={{fontSize:15,fontWeight:700,marginBottom:8}}>{profile.raceName} · {profile.raceDistanceKm} km{profile.elevationM>0?` D+${profile.elevationM}m`:''}</div>
             <div style={{height:3,background:'rgba(255,255,255,0.06)',borderRadius:99}}>
-              <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#f97316,#fbbf24)',width:`${progress}%`,transition:'width 0.6s'}}/>
+              <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.6s'}}/>
             </div>
             <div style={{display:'flex',justifyContent:'space-between',marginTop:6,fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'monospace'}}>
               <span>{doneCount}/{totalSessions} séances</span><span>{progress}%</span>
@@ -368,7 +368,7 @@ function Dashboard({ profile, plan, onReset }) {
           </div>
           <div style={card}>
             <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>VMA</div>
-            <div style={{fontSize:28,fontWeight:800,color:'#f97316',fontFamily:'monospace'}}>{profile.vma.toFixed(1)}</div>
+            <div style={{fontSize:28,fontWeight:800,color:'#FF0040',fontFamily:'monospace'}}>{profile.vma.toFixed(1)}</div>
             <div style={{fontSize:11,color:'rgba(255,255,255,0.3)'}}>km/h</div>
           </div>
           <div style={card}>
@@ -381,7 +381,7 @@ function Dashboard({ profile, plan, onReset }) {
         <div style={{...card,marginBottom:20}}>
           <div style={{fontSize:11,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Tes allures personnalisées</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#f97316'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'rgba(255,255,255,0.3)']].map(([l,v,c])=>(
+            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'rgba(255,255,255,0.3)']].map(([l,v,c])=>(
               <AllureChip key={l} dot={c} label={l} val={v+' /km'}/>
             ))}
           </div>
@@ -389,7 +389,7 @@ function Dashboard({ profile, plan, onReset }) {
 
         {nextSession&&(
           <div style={{background:'rgba(249,115,22,0.06)',border:'1px solid rgba(249,115,22,0.2)',borderRadius:14,padding:'14px 18px',marginBottom:20}}>
-            <div style={{fontSize:10,color:'#f97316',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'monospace',marginBottom:4}}>Prochaine séance — Semaine {nextSession.week} · {nextSession.day}</div>
+            <div style={{fontSize:10,color:'#FF0040',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'monospace',marginBottom:4}}>Prochaine séance — Semaine {nextSession.week} · {nextSession.day}</div>
             <div style={{fontSize:15,fontWeight:700}}>{nextSession.title}</div>
             <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',marginTop:2}}>{nextSession.detail}</div>
           </div>
@@ -401,7 +401,7 @@ function Dashboard({ profile, plan, onReset }) {
               style={{flexShrink:0,borderRadius:12,padding:'6px 14px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',
                 background:activeWeek===i?'rgba(249,115,22,0.15)':'rgba(255,255,255,0.04)',
                 border:`1px solid ${activeWeek===i?'rgba(249,115,22,0.4)':'rgba(255,255,255,0.07)'}`,
-                color:activeWeek===i?'#f97316':'rgba(255,255,255,0.35)'}}>
+                color:activeWeek===i?'#FF0040':'rgba(255,255,255,0.35)'}}>
               S{w.week}{w.isKey?' ★':''}
             </button>
           ))}
@@ -449,10 +449,10 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
     <div style={{minHeight:'100vh',background:'#07080b',color:'#fff',fontFamily:'Syne,sans-serif'}}>
       <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(7,8,11,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:30,height:30,borderRadius:8,background:'#f97316',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14,color:'#000'}}>P</div>
+          <div style={{width:30,height:30,borderRadius:8,background:'#FF0040',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14,color:'#000'}}>P</div>
           <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
         </div>
-        <button onClick={onNew} style={{background:'#f97316',color:'#000',border:'none',borderRadius:10,padding:'6px 14px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Nouveau plan</button>
+        <button onClick={onNew} style={{background:'#FF0040',color:'#000',border:'none',borderRadius:10,padding:'6px 14px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Nouveau plan</button>
       </nav>
       <main style={{maxWidth:700,margin:'0 auto',padding:'32px 20px'}}>
         <h1 style={{fontSize:24,fontWeight:800,letterSpacing:'-0.03em',marginBottom:6}}>Mes plans d'entraînement</h1>
@@ -473,7 +473,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
                   <div style={{fontSize:10,color:'rgba(255,255,255,0.2)',marginTop:4}}>{p.profile.trainingDays?.join(', ')}</div>
                 </div>
                 <div style={{display:'flex',gap:8,alignItems:'center',marginLeft:12,flexShrink:0}}>
-                  <span style={{fontSize:18,fontWeight:800,color:'#f97316'}}>→</span>
+                  <span style={{fontSize:18,fontWeight:800,color:'#FF0040'}}>→</span>
                   <button onClick={e=>{e.stopPropagation();onDelete(i);}}
                     style={{background:'rgba(239,68,68,0.1)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:8,padding:'4px 8px',color:'rgba(239,68,68,0.6)',fontSize:11,cursor:'pointer',fontFamily:'inherit'}}>
                     Supprimer
