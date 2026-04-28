@@ -346,7 +346,7 @@ function Dashboard({ profile, plan, onReset }) {
     <div style={{minHeight:'100vh',background:'#07080b',color:'#fff',fontFamily:'Syne,sans-serif'}}>
       <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(7,8,11,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:30,height:30,borderRadius:8,background:'#FF0040',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14,color:'#000'}}>P</div>
+         <img src="/logo.png" alt="PacePro" style={{width:36,height:36,objectFit:'contain'}}/>
           <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center'}}>
@@ -449,7 +449,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
     <div style={{minHeight:'100vh',background:'#07080b',color:'#fff',fontFamily:'Syne,sans-serif'}}>
       <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(7,8,11,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:30,height:30,borderRadius:8,background:'#FF0040',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:14,color:'#000'}}>P</div>
+          <img src="/logo.png" alt="PacePro" style={{width:36,height:36,objectFit:'contain'}}/>
           <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
         </div>
         <button onClick={onNew} style={{background:'#FF0040',color:'#000',border:'none',borderRadius:10,padding:'6px 14px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Nouveau plan</button>
