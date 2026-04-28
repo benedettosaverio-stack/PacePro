@@ -42,32 +42,32 @@ function ThemeStyles() {
           --bg-primary: #f0f2f5;
           --bg-card: rgba(255,255,255,0.92);
           --bg-surface: rgba(255,255,255,0.98);
-          --bg-input: rgba(10,11,15,0.04);
+          --bg-input: rgba(10,11,15,0.06);
           --bg-nav: rgba(240,242,245,0.92);
           --bg-modal: #ffffff;
           --text-primary: #0a0b0f;
-          --text-secondary: rgba(10,11,15,0.55);
-          --text-muted: rgba(10,11,15,0.38);
-          --text-ultra-muted: rgba(10,11,15,0.22);
-          --border: rgba(10,11,15,0.09);
-          --border-input: rgba(10,11,15,0.15);
-          --border-nav: rgba(10,11,15,0.08);
-          --btn-ghost-bg: rgba(10,11,15,0.05);
-          --btn-ghost-border: rgba(10,11,15,0.10);
-          --btn-ghost-color: rgba(10,11,15,0.45);
+          --text-secondary: #444750;
+          --text-muted: #6b6f7a;
+          --text-ultra-muted: #9296a0;
+          --border: rgba(10,11,15,0.12);
+          --border-input: rgba(10,11,15,0.18);
+          --border-nav: rgba(10,11,15,0.10);
+          --btn-ghost-bg: rgba(10,11,15,0.06);
+          --btn-ghost-border: rgba(10,11,15,0.12);
+          --btn-ghost-color: #555860;
           --onboarding-bg: #f0f2f5;
           --session-bg: rgba(255,255,255,0.96);
-          --session-border: rgba(10,11,15,0.08);
-          --week-tabs-inactive: rgba(10,11,15,0.05);
-          --week-tabs-border: rgba(10,11,15,0.08);
-          --week-tabs-color: rgba(10,11,15,0.38);
+          --session-border: rgba(10,11,15,0.10);
+          --week-tabs-inactive: rgba(10,11,15,0.06);
+          --week-tabs-border: rgba(10,11,15,0.10);
+          --week-tabs-color: #6b6f7a;
           --next-session-bg: rgba(255,0,64,0.04);
-          --next-session-border: rgba(255,0,64,0.15);
-          --chip-bg: rgba(10,11,15,0.04);
-          --chip-border: rgba(10,11,15,0.08);
-          --progress-track: rgba(10,11,15,0.07);
-          --svg-text: rgba(10,11,15,0.3);
-          --svg-text-val: rgba(10,11,15,0.5);
+          --next-session-border: rgba(255,0,64,0.18);
+          --chip-bg: rgba(10,11,15,0.06);
+          --chip-border: rgba(10,11,15,0.12);
+          --progress-track: rgba(10,11,15,0.09);
+          --svg-text: #9296a0;
+          --svg-text-val: #6b6f7a;
           --plans-bg: #f0f2f5;
         }
       }
@@ -181,7 +181,7 @@ const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borde
 const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
 const lbl = {fontSize:12,color:'var(--text-secondary)',display:'block',marginBottom:8};
 const inp = () => ({background:'var(--bg-input)',border:'1px solid var(--border-input)',color:'var(--text-primary)',borderRadius:12,padding:'12px 14px',width:'100%',fontSize:14,fontFamily:'inherit',outline:'none'});
-const tog = (a) => ({background:a?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${a?'rgba(255,0,64,0.5)':'rgba(255,255,255,0.08)'}`,color:a?'#FF0040':'rgba(255,255,255,0.5)',borderRadius:12,padding:'10px 12px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'});
+const tog = (a) => ({background:a?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${a?'rgba(255,0,64,0.5)':'var(--btn-ghost-border)'}`,color:a?'#FF0040':'var(--btn-ghost-color)',borderRadius:12,padding:'10px 12px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'});
 
 const SessionIcons = {
   frac: () => (<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/><path d="M12 24 L18 10 L24 24" stroke="#FF0040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 20 L22 20" stroke="#FF0040" strokeWidth="1.5" strokeLinecap="round"/><circle cx="18" cy="10" r="2" fill="#FF0040"/></svg>),
@@ -196,7 +196,7 @@ function AllureChip({ dot, label, val }) {
   return (
     <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--chip-bg)',border:'1px solid var(--chip-border)',borderRadius:99,padding:'3px 10px',fontFamily:'monospace',fontSize:11}}>
       <span style={{width:7,height:7,borderRadius:'50%',background:dot,flexShrink:0,display:'inline-block'}}/>
-      <span style={{color:'rgba(255,255,255,0.35)'}}>{label}</span>
+      <span style={{color:'var(--text-muted)'}}>{label}</span>
       <span style={{color:'var(--text-primary)',fontWeight:500}}>{val}</span>
     </div>
   );
@@ -302,23 +302,23 @@ function KpiCharts({ plan, feedbacks, completed }) {
         </div>
         <div>
           <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>SÉANCES OK</div>
-          <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace'}}>{totalDone}<span style={{fontSize:12,color:'rgba(255,255,255,0.3)'}}>/{totalAll}</span></div>
+          <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace',color:'var(--text-primary)'}}>{totalDone}<span style={{fontSize:12,color:'var(--text-muted)'}}>/{totalAll}</span></div>
         </div>
         <div>
           <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>EFFORT MOY.</div>
-          <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace',color:'#f59e0b'}}>{avgEff}<span style={{fontSize:12,color:'rgba(255,255,255,0.3)'}}>/10</span></div>
+          <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace',color:'#f59e0b'}}>{avgEff}<span style={{fontSize:12,color:'var(--text-muted)'}}>/10</span></div>
         </div>
       </div>
-      <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',marginBottom:8}}>CHARGE HEBDOMADAIRE (km)</div>
+      <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:8}}>CHARGE HEBDOMADAIRE (km)</div>
       <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{overflow:'visible'}}>
         {weeks.map((w,i) => {
           const x = (i/(weeks.length-1||1))*(W-20)+10;
           const barH = (w.km/maxKm)*(H-10);
           const y = H - barH;
-          const effortColor = w.avgEffort ? (w.avgEffort<=4?'#22c55e':w.avgEffort>=8?'#FF0040':'#f59e0b') : 'rgba(255,255,255,0.08)';
+          const effortColor = w.avgEffort ? (w.avgEffort<=4?'#22c55e':w.avgEffort>=8?'#FF0040':'#f59e0b') : 'var(--progress-track)';
           return (
             <g key={i}>
-              <rect x={x-8} y={y} width={16} height={barH} rx={3} fill={w.done===w.total&&w.total>0?effortColor:'rgba(255,255,255,0.08)'}/>
+              <rect x={x-8} y={y} width={16} height={barH} rx={3} fill={w.done===w.total&&w.total>0?effortColor:'var(--progress-track)'}/>
               <text x={x} y={H+14} textAnchor="middle" fill="var(--svg-text)" fontSize={8} fontFamily="monospace">S{w.week}</text>
               {w.km>0 && <text x={x} y={y-4} textAnchor="middle" fill="var(--svg-text-val)" fontSize={8} fontFamily="monospace">{w.km}</text>}
             </g>
@@ -327,7 +327,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
       </svg>
       {allFbs.length>0 && (
         <div>
-          <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',marginTop:12,marginBottom:8}}>COURBE D'EFFORT RESSENTI</div>
+          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginTop:12,marginBottom:8}}>COURBE D'EFFORT RESSENTI</div>
           <svg width="100%" viewBox={`0 0 ${W} 50`}>
             {weeks.filter(w=>w.avgEffort).map((w,i,arr) => {
               const x = (i/(arr.length-1||1))*(W-20)+10;
@@ -371,12 +371,12 @@ function Onboarding({ onComplete }) {
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Comment saisir ta VMA ?</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['direct','Je connais ma VMA'],['race','Depuis un chrono récent']].map(([v,l])=><button key={v} onClick={()=>upd('vmaMode',v)} style={tog(form.vmaMode===v)}>{l}</button>)}</div></div>
         {form.vmaMode==='direct' ? (
-          <div><label style={lbl}>VMA (km/h)</label><input type="number" style={inp()} min="8" max="25" step="0.5" value={form.vma} onChange={e=>upd('vma',e.target.value)}/><p style={{fontSize:11,color:'rgba(255,255,255,0.25)',marginTop:6}}>Moyenne loisir : 12–15 km/h</p></div>
+          <div><label style={lbl}>VMA (km/h)</label><input type="number" style={inp()} min="8" max="25" step="0.5" value={form.vma} onChange={e=>upd('vma',e.target.value)}/><p style={{fontSize:11,color:'var(--text-muted)',marginTop:6}}>Moyenne loisir : 12–15 km/h</p></div>
         ) : (
           <div style={{display:'flex',flexDirection:'column',gap:12}}>
             <div><label style={lbl}>Distance récente</label><select style={inp()} value={form.raceDistKm} onChange={e=>upd('raceDistKm',e.target.value)}>{[[1,'1 km'],[3,'3 km'],[5,'5 km'],[10,'10 km'],[15,'15 km'],[21.1,'Semi-marathon'],[42.2,'Marathon']].map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div>
             <div><label style={lbl}>Chrono (en minutes)</label><input type="number" style={inp()} placeholder="ex: 55" value={form.raceTimeMins} onChange={e=>upd('raceTimeMins',e.target.value)}/></div>
-            {computedVma>0 && <div style={{background:'rgba(255,0,64,0.08)',border:'1px solid rgba(255,0,64,0.2)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'rgba(255,255,255,0.5)'}}>VMA estimée : <span style={{color:'#FF0040',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
+            {computedVma>0 && <div style={{background:'rgba(255,0,64,0.08)',border:'1px solid rgba(255,0,64,0.2)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--text-secondary)'}}>VMA estimée : <span style={{color:'#FF0040',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
           </div>
         )}
       </div>
@@ -416,7 +416,7 @@ function Onboarding({ onComplete }) {
           <span style={{fontWeight:700,fontSize:18,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>PacePro</span>
         </div>
         <div style={{display:'flex',gap:6,marginBottom:28,alignItems:'center'}}>
-          {steps.map((_,i)=><div key={i} style={{width:i===step?20:8,height:8,borderRadius:99,background:i===step?'#FF0040':i<step?'#22c55e':'rgba(255,255,255,0.15)',transition:'all 0.3s'}}/>)}
+          {steps.map((_,i)=><div key={i} style={{width:i===step?20:8,height:8,borderRadius:99,background:i===step?'#FF0040':i<step?'#22c55e':'var(--progress-track)',transition:'all 0.3s'}}/>)}
           <span style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',marginLeft:8}}>{step+1}/{steps.length}</span>
         </div>
         <h2 style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4,color:'var(--text-primary)'}}>{steps[step].title}</h2>
@@ -456,7 +456,7 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
     setFeedbackSession(null);
   };
   const tabBtn = (v,l) => (
-    <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'rgba(255,255,255,0.07)'}`,color:activeTab===v?'#FF0040':'rgba(255,255,255,0.35)'}}>{l}</button>
+    <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
   );
   return (
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
@@ -484,12 +484,12 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
             </div>
           </div>
           <div style={card}>
-            <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>VMA</div>
+            <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>VMA</div>
             <div style={{fontSize:28,fontWeight:800,color:'#FF0040',fontFamily:'monospace'}}>{profile.vma.toFixed(1)}</div>
             <div style={{fontSize:11,color:'var(--text-muted)'}}>km/h</div>
           </div>
           <div style={card}>
-            <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>Séances/sem.</div>
+            <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>Séances/sem.</div>
             <div style={{fontSize:20,fontWeight:800,fontFamily:'monospace'}}>{profile.sessionsPerWeek}×</div>
             <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2,lineHeight:1.4}}>{profile.trainingDays.join(', ')}</div>
           </div>
@@ -497,7 +497,7 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
         <div style={{...card,marginBottom:20}}>
           <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Tes allures personnalisées</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'rgba(255,255,255,0.3)']].map(([l,v,c])=>(
+            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'var(--text-muted)']].map(([l,v,c])=>(
               <AllureChip key={l} dot={c} label={l} val={v+' /km'}/>
             ))}
           </div>
