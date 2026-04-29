@@ -254,7 +254,8 @@ export default function HistoriqueModule() {
         });
         s.synced = true;
       }
-      localStorage.setItem('pp_session_logs', JSON.stringify(local));
+      // Vide le localStorage après sync — Supabase est la source de vérité
+      localStorage.setItem('pp_session_logs', JSON.stringify([]));
       const refreshed = await getSessions(user.id);
       setSessions(refreshed || []);
     } catch(e) {
@@ -342,6 +343,12 @@ export default function HistoriqueModule() {
                     if (!confirm('Supprimer cette séance ?')) return;
                     await deleteSession(s.id);
                     setSessions(prev => prev.filter(x => x.id !== s.id));
+                    // Supprime aussi du localStorage
+                    try {
+                      const logs = JSON.parse(localStorage.getItem('pp_session_logs') || '[]');
+                      const filtered = logs.filter(l => l.id !== s.id && l.workoutName !== s.workout_name);
+                      localStorage.setItem('pp_session_logs', JSON.stringify(filtered));
+                    } catch {}
                   }} />
               ))
             )}
