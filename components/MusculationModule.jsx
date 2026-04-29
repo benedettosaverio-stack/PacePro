@@ -839,8 +839,24 @@ function LiveSession({ workout, onEnd }) {
 
   useEffect(() => {
     if (phase !== 'done') return;
-    const log = { id: Date.now(), workoutId: workout.id, workoutName: workout.name, date: new Date().toISOString(), duration: elapsed };
+    // Sauvegarde dans localStorage ET Supabase
+    const log = { id: Date.now(), workoutId: workout.id, workoutName: workout.name, date: new Date().toISOString(), duration: elapsed, totalVolume: Object.entries(completed).reduce((s,[,v])=>s+(v.weight||0)*(parseInt(v.reps)||0),0), completedSets: completed, entries: workout.entries||[] };
     try { const logs = JSON.parse(localStorage.getItem('pp_session_logs') || '[]'); localStorage.setItem('pp_session_logs', JSON.stringify([log, ...logs].slice(0, 50))); } catch {}
+    // Sync directe vers Supabase si user connecté
+    try {
+      const userId = localStorage.getItem('pp_user_id');
+      if (userId) {
+        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        fetch(SUPABASE_URL + '/rest/v1/sessions', {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+          body: JSON.stringify({ user_id: userId, workout_name: workout.name, duration: elapsed, total_volume: log.totalVolume, completed_sets: completed, entries: workout.entries||[], date: new Date().toISOString() })
+        });
+        // Vide le localStorage pour éviter les doublons lors de la sync
+        localStorage.setItem('pp_session_logs', '[]');
+      }
+    } catch {}
     const token = localStorage.getItem('strava_token');
     const refreshToken = localStorage.getItem('strava_refresh_token');
     const expiresAt = parseInt(localStorage.getItem('strava_expires_at') || '0');
