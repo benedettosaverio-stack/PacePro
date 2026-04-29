@@ -3,21 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 const CLIENT_ID = process.env.STRAVA_CLIENT_ID;
 const CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
 
-// Rafraîchit le token si expiré
-async function getValidToken(token: string, refreshToken: string): Promise<{access_token: string, refresh_token: string, expires_at: number} | null> {
+async function refreshAccessToken(refreshToken: string) {
   const res = await fetch('https://www.strava.com/oauth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      refresh_token: refreshToken,
-      grant_type: 'refresh_token',
-    }),
+    body: JSON.stringify({ client_id: CLIENT_ID, client_secret: CLIENT_SECRET, refresh_token: refreshToken, grant_type: 'refresh_token' }),
   });
-  const data = await res.json();
-  if (data.access_token) return data;
-  return null;
+  return res.json();
 }
 
 export async function GET(req: NextRequest) {
@@ -33,29 +25,20 @@ export async function GET(req: NextRequest) {
     });
     const data = await res.json();
     if (data.access_token) {
-      const athlete = JSON.stringify({ id: data.athlete?.id, name: `${data.athlete?.firstname} ${data.athlete?.lastname}`, photo: data.athlete?.profile_medium });
-      const token = data.access_token;
-      const refresh = data.refresh_token;
-      const expires = data.expires_at;
-      const html = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
+      const athlete = { id: data.athlete?.id, name: `${data.athlete?.firstname} ${data.athlete?.lastname}`, photo: data.athlete?.profile_medium };
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="background:#07080b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center;">
-<div>
-  <div style="font-size:48px;margin-bottom:16px">✅</div>
-  <div style="font-size:20px;font-weight:700;margin-bottom:8px">Connexion réussie !</div>
-  <div style="font-size:14px;opacity:0.5">Retourne sur PacePro</div>
-</div>
+<div><div style="font-size:48px;margin-bottom:16px">✅</div><div style="font-size:20px;font-weight:700;margin-bottom:8px">Connexion réussie !</div><div style="font-size:14px;opacity:0.5">Retourne sur PacePro</div></div>
 <script>
-  try {
-    localStorage.setItem('strava_token', ${JSON.stringify(token)});
-    localStorage.setItem('strava_refresh_token', ${JSON.stringify(refresh)});
-    localStorage.setItem('strava_expires_at', ${JSON.stringify(String(expires))});
-    localStorage.setItem('strava_athlete', ${athlete});
-  } catch(e) {}
-  try { window.opener && window.opener.postMessage({type:'strava_token',token:${JSON.stringify(token)},athlete:${athlete}},'*'); } catch(e) {}
-  setTimeout(() => { try { window.close(); } catch(e) {} }, 1000);
-</script>
-</body></html>`;
+try {
+  localStorage.setItem('strava_token', ${JSON.stringify(data.access_token)});
+  localStorage.setItem('strava_refresh_token', ${JSON.stringify(data.refresh_token)});
+  localStorage.setItem('strava_expires_at', ${JSON.stringify(String(data.expires_at))});
+  localStorage.setItem('strava_athlete', JSON.stringify(${JSON.stringify(athlete)}));
+} catch(e) {}
+try { window.opener && window.opener.postMessage({type:'strava_token',token:${JSON.stringify(data.access_token)},athlete:${JSON.stringify(athlete)}},'*'); } catch(e) {}
+setTimeout(() => { try { window.close(); } catch(e) { window.location.href='/'; } }, 1000);
+</script></body></html>`;
       return new NextResponse(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     return new NextResponse('Erreur auth Strava', { status: 400 });
@@ -80,36 +63,34 @@ export async function POST(req: NextRequest) {
   if (action === 'create_activity') {
     const { name, duration, start_time, description } = body;
 
-    // Vérifie si le token est expiré (marge 5 min)
     let activeToken = token;
-    let newRefresh = refreshToken;
-    let newExpires = expiresAt;
+    let newRefresh = null;
+    let newExpires = null;
+    let newToken = null;
 
+    // Refresh si expiré ou expiresAt = 0
     const now = Math.floor(Date.now() / 1000);
-    if (expiresAt && now >= expiresAt - 300) {
-      // Token expiré → refresh
-      const refreshed = await getValidToken(token, refreshToken);
-      if (refreshed) {
-        activeToken = refreshed.access_token;
-        newRefresh = refreshed.refresh_token;
-        newExpires = refreshed.expires_at;
-      } else {
-        return NextResponse.json({ success: false, error: 'Token refresh failed', needsReauth: true }, { status: 401 });
+    if (!expiresAt || now >= expiresAt - 300) {
+      if (refreshToken) {
+        const refreshed = await refreshAccessToken(refreshToken);
+        if (refreshed.access_token) {
+          activeToken = refreshed.access_token;
+          newToken = refreshed.access_token;
+          newRefresh = refreshed.refresh_token;
+          newExpires = refreshed.expires_at;
+        }
       }
     }
 
     const res = await fetch('https://www.strava.com/api/v3/activities', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${activeToken}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${activeToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: name || 'Séance musculation PacePro',
+        name: name || 'Séance PacePro',
         type: 'WeightTraining',
         sport_type: 'WeightTraining',
         start_date_local: start_time || new Date().toISOString(),
-        elapsed_time: duration || 3600,
+        elapsed_time: Math.max(duration || 60, 60),
         description: description || '',
         trainer: true,
         commute: false,
@@ -118,15 +99,9 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json();
     if (data.id) {
-      return NextResponse.json({
-        success: true,
-        activity: data,
-        // Renvoie les nouveaux tokens si rafraîchis
-        newToken: activeToken !== token ? activeToken : null,
-        newRefresh: newRefresh !== refreshToken ? newRefresh : null,
-        newExpires: newExpires !== expiresAt ? newExpires : null,
-      });
+      return NextResponse.json({ success: true, activity: data, newToken, newRefresh, newExpires });
     }
+    console.error('Strava error:', JSON.stringify(data));
     return NextResponse.json({ success: false, error: data }, { status: 400 });
   }
 
