@@ -175,7 +175,7 @@ export default function StravaModule() {
   const [waitingAuth, setWaitingAuth] = useState(false);
 
   const connectStrava = async () => {
-    const scope = 'read,activity:read_all';
+    const scope = 'read,activity:read_all,activity:write';
     const authUrl = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent(CALLBACK_URL)}&response_type=code&scope=${scope}`;
     const isCapacitor = typeof window !== 'undefined' && window.Capacitor;
 
