@@ -212,7 +212,7 @@ function ExerciseEntry({ entry, index, total, onUpdate, onDelete, onMoveUp, onMo
               {entry.modifier !== 'normal' && <span style={{ fontSize:9, background:'rgba(96,165,250,0.15)', color:'#60a5fa', borderRadius:4, padding:'1px 6px', fontFamily:'monospace' }}>{INTENSITY_MODS.find(m=>m.id===entry.modifier)?.label}</span>}
             </div>
           </div>
-          <div style={{ display:'flex', gap:4', alignItems:'center' }}>
+          <div style={{ display:'flex', gap:4, alignItems:'center' }}>
             <span style={{ fontSize:11, fontFamily:'monospace', color:'var(--text-muted)' }}>{entry.sets}×{entry.reps}</span>
             {entry.weight > 0 && <span style={{ fontSize:11, fontFamily:'monospace', color:'#22c55e', marginLeft:4 }}>{entry.weight}kg</span>}
             <button onClick={() => setOpen(!open)} style={{ ...btnGhost, padding:'4px 8px', fontSize:11, marginLeft:4 }}>{open ? '▲' : '▼'}</button>
