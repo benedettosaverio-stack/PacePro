@@ -204,11 +204,19 @@ export default function HistoriqueModule() {
       // Récupère l'athlete Strava depuis localStorage
       const athleteStr = localStorage.getItem('strava_athlete');
       if (!athleteStr) { setLoading(false); return; }
-      const athlete = JSON.parse(athleteStr);
-      if (!athlete?.id) { setLoading(false); return; }
+
+      let athlete;
+      try { athlete = JSON.parse(athleteStr); } catch { setLoading(false); return; }
+
+      // Essaie les différents formats possibles
+      const stravaId = athlete?.id || athlete?.strava_id;
+      const name = athlete?.name || athlete?.firstname + ' ' + athlete?.lastname || 'Athlete';
+      const photo = athlete?.photo || athlete?.profile_medium || '';
+
+      if (!stravaId) { setLoading(false); return; }
 
       // Crée ou récupère le compte utilisateur
-      const dbUser = await upsertUser(athlete.id, athlete.name, athlete.photo);
+      const dbUser = await upsertUser(Number(stravaId), name, photo);
       if (!dbUser) { setLoading(false); return; }
 
       // Sauvegarde localement
