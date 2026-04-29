@@ -833,6 +833,34 @@ function LiveSession({ workout, onEnd }) {
 
   const addRest = (s) => setRestLeft(r => r + s);
 
+
+  const [stravaStatus, setStravaStatus] = useState('idle');
+  const startTimeRef = useRef(new Date().toISOString());
+
+  useEffect(() => {
+    if (phase !== 'done') return;
+    const log = { id: Date.now(), workoutId: workout.id, workoutName: workout.name, date: new Date().toISOString(), duration: elapsed };
+    try { const logs = JSON.parse(localStorage.getItem('pp_session_logs') || '[]'); localStorage.setItem('pp_session_logs', JSON.stringify([log, ...logs].slice(0, 50))); } catch {}
+    const token = localStorage.getItem('strava_token');
+    const refreshToken = localStorage.getItem('strava_refresh_token');
+    const expiresAt = parseInt(localStorage.getItem('strava_expires_at') || '0');
+    if (!token) { setStravaStatus('no_token'); return; }
+    setStravaStatus('syncing');
+    const desc = (workout.entries||[]).map(e => (e.exercise?.name||'') + ': ' + e.sets + 'x' + e.reps + (e.weight ? ' @ ' + e.weight + 'kg' : '')).join('\n');
+    fetch('/api/strava', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create_activity', token, refreshToken, expiresAt, name: '💪 ' + workout.name, duration: elapsed, start_time: startTimeRef.current, description: 'Séance PacePro\n\n' + desc }),
+    })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) { setStravaStatus('ok'); if (d.newToken) localStorage.setItem('strava_token', d.newToken); if (d.newRefresh) localStorage.setItem('strava_refresh_token', d.newRefresh); if (d.newExpires) localStorage.setItem('strava_expires_at', String(d.newExpires)); }
+        else if (d.needsReauth) { setStravaStatus('reauth'); }
+        else { setStravaStatus('error'); }
+      })
+      .catch(() => setStravaStatus('error'));
+  }, [phase]);
+
   if (phase === 'done') {
     const totalVol = Object.entries(completed).reduce((sum, [k, v]) => {
       const [ei] = k.split('_').map(Number);
@@ -856,6 +884,12 @@ function LiveSession({ workout, onEnd }) {
             </div>
           ))}
         </div>
+        {stravaStatus === 'syncing' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(252,76,2,0.08)', border:'1px solid rgba(252,76,2,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>🟠</span><div><div style={{ fontSize:12, fontWeight:700, color:'#FC4C02' }}>Synchronisation Strava...</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Création de l'activité</div></div></div>}
+        {stravaStatus === 'ok' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>✅</span><div><div style={{ fontSize:12, fontWeight:700, color:'#22c55e' }}>Activité créée sur Strava !</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>WeightTraining synchronisé</div></div></div>}
+        {stravaStatus === 'error' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>⚠️</span><div><div style={{ fontSize:12, fontWeight:700, color:'rgba(239,68,68,0.9)' }}>Erreur Strava</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Séance sauvegardée localement</div></div></div>}
+        {stravaStatus === 'no_token' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>🔗</span><div><div style={{ fontSize:12, fontWeight:700, color:'var(--text-primary)' }}>Strava non connecté</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Connecte Strava pour synchroniser</div></div></div>}
+        {stravaStatus === 'reauth' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(245,158,11,0.08)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>🔄</span><div><div style={{ fontSize:12, fontWeight:700, color:'#f59e0b' }}>Session Strava expirée</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Reconnecte-toi dans l'onglet Strava</div></div></div>}
+        <div style={{ width:'100%', maxWidth:340, marginBottom:10, fontSize:11, color:'var(--text-muted)', textAlign:'center', fontFamily:'monospace' }}>💾 Séance sauvegardée localement</div>
         <button onClick={onEnd} style={{ ...btnRed, width:'100%', maxWidth:340, padding:14, fontSize:14 }}>
           Terminer la séance
         </button>
