@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
     if (data.access_token) {
       const athlete = JSON.stringify({ id: data.athlete?.id, name: `${data.athlete?.firstname} ${data.athlete?.lastname}`, photo: data.athlete?.profile_medium });
       const token = data.access_token;
-      // Page HTML qui stocke le token et ferme la fenêtre
       const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="background:#07080b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center;">
@@ -30,14 +29,11 @@ export async function GET(req: NextRequest) {
 <script>
   const token = ${JSON.stringify(token)};
   const athlete = ${athlete};
-  // Stocke dans localStorage
   try {
     localStorage.setItem('strava_token', token);
     localStorage.setItem('strava_athlete', JSON.stringify(athlete));
   } catch(e) {}
-  // Envoie au parent si popup
   try { window.opener && window.opener.postMessage({type:'strava_token',token,athlete},'*'); } catch(e) {}
-  // Ferme après 1 sec
   setTimeout(() => { try { window.close(); } catch(e) {} }, 1000);
 </script>
 </body></html>`;
@@ -53,6 +49,40 @@ export async function GET(req: NextRequest) {
     });
     const data = await res.json();
     return NextResponse.json(data);
+  }
+
+  return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { action, token } = body;
+
+  // Créer une activité Strava (musculation)
+  if (action === 'create_activity') {
+    const { name, duration, start_time, description } = body;
+    const res = await fetch('https://www.strava.com/api/v3/activities', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name || 'Séance musculation PacePro',
+        type: 'WeightTraining',
+        sport_type: 'WeightTraining',
+        start_date_local: start_time || new Date().toISOString(),
+        elapsed_time: duration || 3600,
+        description: description || '',
+        trainer: true,
+        commute: false,
+      }),
+    });
+    const data = await res.json();
+    if (data.id) {
+      return NextResponse.json({ success: true, activity: data });
+    }
+    return NextResponse.json({ success: false, error: data }, { status: 400 });
   }
 
   return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
