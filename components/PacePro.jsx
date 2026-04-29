@@ -514,9 +514,14 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
     }
   };
   const handleFeedback = (fb) => {
-    setFeedbacks(f=>({...f,[feedbackSession.id]:fb}));
-    setPlan(applyFeedback(plan, feedbackSession.id, fb));
+    const newFeedbacks = {...feedbacks, [feedbackSession.id]: fb};
+    const newPlan = applyFeedback(plan, feedbackSession.id, fb);
+    setFeedbacks(newFeedbacks);
+    setPlan(newPlan);
     setFeedbackSession(null);
+    // Sauvegarde le plan mis a jour avec feedbacks
+    const updatedPlans = plans.map(p => p.id === newPlan.id ? {...newPlan, feedbacks: newFeedbacks} : p);
+    savePlans(updatedPlans);
   };
   const tabBtn = (v,l) => (
     <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
