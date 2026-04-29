@@ -1,4 +1,49 @@
 'use client';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+async function supaFetch(path, options = {}) {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+      ...options,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+        ...options.headers,
+      },
+    });
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  } catch(e) { return null; }
+}
+
+async function syncPlansToSupabase(plans) {
+  const userId = localStorage.getItem('pp_user_id');
+  if (!userId || !plans.length) return;
+  try {
+    // Supprime les anciens plans
+    await supaFetch('plans?user_id=eq.' + userId, { method: 'DELETE' });
+    // Insère les nouveaux
+    await supaFetch('plans', {
+      method: 'POST',
+      body: JSON.stringify(plans.map(p => ({ user_id: userId, plan_data: p, plan_name: p.goal || 'Plan' }))),
+    });
+  } catch(e) {}
+}
+
+async function loadPlansFromSupabase() {
+  const userId = localStorage.getItem('pp_user_id');
+  if (!userId) return null;
+  try {
+    const data = await supaFetch('plans?user_id=eq.' + userId + '&order=created_at.asc');
+    if (data && data.length > 0) return data.map(d => d.plan_data);
+    return null;
+  } catch(e) { return null; }
+}
+
 import { useState, useEffect } from 'react';
 import Muscu from './MusculationModule';
 import StravaModule from './StravaModule';
@@ -631,8 +676,19 @@ export default function PacePro() {
   const [view, setView] = useState('list');
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
-  useEffect(()=>{ try { const s=localStorage.getItem('pp_plans'); if(s) setPlans(JSON.parse(s)); } catch{} },[]);
-  const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} };
+  useEffect(()=>{
+    const init = async () => {
+      const cloudPlans = await loadPlansFromSupabase();
+      if (cloudPlans && cloudPlans.length > 0) {
+        setPlans(cloudPlans);
+        try { localStorage.setItem('pp_plans', JSON.stringify(cloudPlans)); } catch {}
+      } else {
+        try { const s = localStorage.getItem('pp_plans'); if(s) setPlans(JSON.parse(s)); } catch {}
+      }
+    };
+    init();
+  },[]);
+  const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} syncPlansToSupabase(p); };
   const handleOnboarding = (profile) => {
     const plan = generatePlan(profile);
     const newPlans = [...plans,{profile,plan}];
