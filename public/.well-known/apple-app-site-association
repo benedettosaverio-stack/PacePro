@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TON_TEAM_ID.com.pacepro.app",
+        "paths": ["/strava-callback*", "/api/strava*"]
+      }
+    ]
+  }
+}
