@@ -26,19 +26,21 @@ export async function GET(req: NextRequest) {
     const data = await res.json();
     if (data.access_token) {
       const athlete = { id: data.athlete?.id, name: `${data.athlete?.firstname} ${data.athlete?.lastname}`, photo: data.athlete?.profile_medium };
+      // Page HTML qui sauvegarde les tokens ET redirige vers l'appli
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="background:#07080b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center;">
-<div><div style="font-size:48px;margin-bottom:16px">✅</div><div style="font-size:20px;font-weight:700;margin-bottom:8px">Connexion réussie !</div><div style="font-size:14px;opacity:0.5">Retourne sur PacePro</div></div>
+<div><div style="font-size:48px;margin-bottom:16px">✅</div><div style="font-size:20px;font-weight:700;margin-bottom:8px">Connexion réussie !</div><div style="font-size:14px;opacity:0.5">Retour sur PacePro...</div></div>
 <script>
 try {
   localStorage.setItem('strava_token', ${JSON.stringify(data.access_token)});
   localStorage.setItem('strava_refresh_token', ${JSON.stringify(data.refresh_token)});
-  localStorage.setItem('strava_expires_at', ${JSON.stringify(String(data.expires_at))});
+  localStorage.setItem('strava_expires_at', '${data.expires_at}');
   localStorage.setItem('strava_athlete', JSON.stringify(${JSON.stringify(athlete)}));
 } catch(e) {}
-try { window.opener && window.opener.postMessage({type:'strava_token',token:${JSON.stringify(data.access_token)},athlete:${JSON.stringify(athlete)}},'*'); } catch(e) {}
-setTimeout(() => { try { window.close(); } catch(e) { window.location.href='/'; } }, 1000);
-</script></body></html>`;
+// Redirige vers l'appli après 1 seconde
+setTimeout(() => { window.location.href = 'https://pacepro-virid.vercel.app'; }, 1000);
+</script>
+</body></html>`;
       return new NextResponse(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     return new NextResponse('Erreur auth Strava', { status: 400 });
@@ -68,7 +70,6 @@ export async function POST(req: NextRequest) {
     let newExpires = null;
     let newToken = null;
 
-    // Refresh si expiré ou expiresAt = 0
     const now = Math.floor(Date.now() / 1000);
     if (!expiresAt || now >= expiresAt - 300) {
       if (refreshToken) {
@@ -101,7 +102,6 @@ export async function POST(req: NextRequest) {
     if (data.id) {
       return NextResponse.json({ success: true, activity: data, newToken, newRefresh, newExpires });
     }
-    console.error('Strava error:', JSON.stringify(data));
     return NextResponse.json({ success: false, error: data }, { status: 400 });
   }
 

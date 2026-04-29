@@ -17,11 +17,11 @@ function StravaSuccessInner() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#07080b', color: '#fff', fontFamily: 'Syne, sans-serif' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🔗</div>
-        <div style={{ fontSize: 18, fontWeight: 700 }}>Connexion Strava réussie !</div>
-        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>Redirection...</div>
+    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#07080b', color:'#fff', fontFamily:'Syne, sans-serif' }}>
+      <div style={{ textAlign:'center' }}>
+        <div style={{ fontSize:48, marginBottom:16 }}>✅</div>
+        <div style={{ fontSize:18, fontWeight:700 }}>Connexion réussie !</div>
+        <div style={{ fontSize:14, color:'rgba(255,255,255,0.5)', marginTop:8 }}>Redirection...</div>
       </div>
     </div>
   );
@@ -29,7 +29,7 @@ function StravaSuccessInner() {
 
 export default function StravaSuccess() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#07080b' }}/>}>
+    <Suspense fallback={<div style={{ minHeight:'100vh', background:'#07080b' }}/>}>
       <StravaSuccessInner />
     </Suspense>
   );
