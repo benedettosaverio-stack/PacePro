@@ -26,9 +26,12 @@ async function supaFetch(path, options = {}) {
 }
 
 async function upsertUser(stravaId, name, photo) {
-  const data = await supaFetch('users?on_conflict=strava_id', {
+  // D'abord cherche si l'user existe
+  const existing = await supaFetch(`users?strava_id=eq.${stravaId}&limit=1`);
+  if (existing && existing.length > 0) return existing[0];
+  // Sinon crée-le
+  const data = await supaFetch('users', {
     method: 'POST',
-    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
     body: JSON.stringify({ strava_id: stravaId, name, photo }),
   });
   return Array.isArray(data) ? data[0] : data;
