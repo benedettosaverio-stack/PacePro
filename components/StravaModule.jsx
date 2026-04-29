@@ -172,32 +172,37 @@ export default function StravaModule() {
     setLoading(false);
   };
 
+  const [waitingAuth, setWaitingAuth] = useState(false);
+
   const connectStrava = async () => {
     const scope = 'read,activity:read_all';
     const authUrl = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent(CALLBACK_URL)}&response_type=code&scope=${scope}`;
-
-    // Détecte si on est dans Capacitor (iOS natif)
     const isCapacitor = typeof window !== 'undefined' && window.Capacitor;
 
     if (isCapacitor) {
       try {
         const { Browser } = await import('@capacitor/browser');
+        setWaitingAuth(true);
         await Browser.open({ url: authUrl });
-
-        // Écoute la fermeture du browser pour récupérer le token
         Browser.addListener('browserFinished', () => {
-          const saved = localStorage.getItem('strava_token');
-          if (saved) {
-            setToken(saved);
-            const savedAthlete = localStorage.getItem('strava_athlete');
-            if (savedAthlete) try { setAthlete(JSON.parse(savedAthlete)); } catch {}
-          }
+          checkStoredToken();
         });
       } catch {
+        setWaitingAuth(true);
         window.open(authUrl, '_blank');
       }
     } else {
       window.location.href = authUrl;
+    }
+  };
+
+  const checkStoredToken = () => {
+    const saved = localStorage.getItem('strava_token');
+    if (saved) {
+      setToken(saved);
+      const savedAthlete = localStorage.getItem('strava_athlete');
+      if (savedAthlete) try { setAthlete(JSON.parse(savedAthlete)); } catch {}
+      setWaitingAuth(false);
     }
   };
 
@@ -228,9 +233,24 @@ export default function StravaModule() {
               <div key={f} style={{ ...card, textAlign: 'left', fontSize: 13, color: 'var(--text-secondary)' }}>{f}</div>
             ))}
           </div>
-          <button onClick={connectStrava} style={{ ...btnRed, width: '100%', padding: '14px', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-            <span style={{ fontSize: 20 }}>🔗</span> Connecter Strava
-          </button>
+          {!waitingAuth ? (
+            <button onClick={connectStrava} style={{ ...btnRed, width: '100%', padding: '14px', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+              <span style={{ fontSize: 20 }}>🔗</span> Connecter Strava
+            </button>
+          ) : (
+            <div>
+              <div style={{ ...card, textAlign: 'center', marginBottom: 12, borderColor: 'rgba(34,197,94,0.3)' }}>
+                <div style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: 600, marginBottom: 4 }}>Autorise PacePro sur Strava</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Une fois autorisé, reviens ici et clique le bouton ci-dessous</div>
+              </div>
+              <button onClick={checkStoredToken} style={{ ...btnRed, width: '100%', padding: '14px', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 10 }}>
+                <span style={{ fontSize: 20 }}>✅</span> J'ai autorisé Strava
+              </button>
+              <button onClick={() => setWaitingAuth(false)} style={{ ...btnGhost, width: '100%', padding: '10px', fontSize: 13 }}>
+                Annuler
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
