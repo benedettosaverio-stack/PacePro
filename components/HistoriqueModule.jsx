@@ -46,6 +46,10 @@ async function getSessions(userId) {
   return supaFetch(`sessions?user_id=eq.${userId}&order=date.desc&limit=50`);
 }
 
+async function deleteSession(sessionId) {
+  await supaFetch(`sessions?id=eq.${sessionId}`, { method: 'DELETE' });
+}
+
 function formatTime(s) {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
@@ -59,17 +63,23 @@ function formatDate(dateStr) {
 }
 
 // ─── Carte séance ─────────────────────────────────────────────────────────────
-function SessionCard({ session, onOpen }) {
+function SessionCard({ session, onOpen, onDelete }) {
   return (
-    <div onClick={onOpen} style={{ ...card, cursor:'pointer', marginBottom:10 }}>
+    <div style={{ ...card, marginBottom:10 }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8 }}>
-        <div>
+        <div onClick={onOpen} style={{ flex:1, cursor:'pointer' }}>
           <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)', marginBottom:2 }}>{session.workout_name}</div>
           <div style={{ fontSize:11, color:'var(--text-muted)' }}>{formatDate(session.date)}</div>
         </div>
-        {session.strava_activity_id && (
-          <span style={{ fontSize:10, background:'rgba(252,76,2,0.1)', color:'#FC4C02', borderRadius:6, padding:'2px 8px', fontWeight:600, fontFamily:'monospace' }}>🟠 Strava</span>
-        )}
+        <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+          {session.strava_activity_id && (
+            <span style={{ fontSize:10, background:'rgba(252,76,2,0.1)', color:'#FC4C02', borderRadius:6, padding:'2px 8px', fontWeight:600, fontFamily:'monospace' }}>🟠 Strava</span>
+          )}
+          <button onClick={e => { e.stopPropagation(); onDelete(); }}
+            style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:8, padding:'4px 8px', color:'rgba(239,68,68,0.6)', fontSize:11, cursor:'pointer', fontFamily:'inherit' }}>
+            ✕
+          </button>
+        </div>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
         {[
@@ -315,7 +325,13 @@ export default function HistoriqueModule() {
               </div>
             ) : (
               sessions.map(s => (
-                <SessionCard key={s.id} session={s} onOpen={() => setSelected(s)} />
+                <SessionCard key={s.id} session={s}
+                  onOpen={() => setSelected(s)}
+                  onDelete={async () => {
+                    if (!confirm('Supprimer cette séance ?')) return;
+                    await deleteSession(s.id);
+                    setSessions(prev => prev.filter(x => x.id !== s.id));
+                  }} />
               ))
             )}
           </>
