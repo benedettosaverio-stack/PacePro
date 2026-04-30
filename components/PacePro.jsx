@@ -1083,7 +1083,7 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
                 ? <img src={user.photo} alt="" style={{ width:64, height:64, borderRadius:'50%', objectFit:'cover', border:'3px solid rgba(255,0,64,0.3)' }} />
                 : <div style={{ width:64, height:64, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>👤</div>
               }
-              {user?.strava && <div style={{ position:'absolute', bottom:0, right:0, width:20, height:20, borderRadius:'50%', background:'#f59e0b', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, border:'2px solid var(--bg-modal)' }}>S</div>}
+              {user?.strava && <div style={{ position:'absolute', bottom:0, right:0, width:22, height:22, borderRadius:'50%', background:'#f59e0b', display:'flex', alignItems:'center', justifyContent:'center', border:'2px solid var(--bg-modal)' }}><Icon name="strava" size={12} color="#fff"/></div>}
             </div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', color:'var(--text-primary)', marginBottom:4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{user?.name || 'Athlete'}</div>
