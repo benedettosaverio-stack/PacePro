@@ -378,8 +378,9 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
 
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} className='modal-enter' style={{width:'100%',maxWidth:520,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 16px 32px'}}>
+    <div style={{position:'fixed',inset:0,zIndex:1000,display:'flex',flexDirection:'column',justifyContent:'flex-end'}} onClick={onClose}>
+      <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.5)',backdropFilter:'blur(4px)'}}/>
+      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{position:'relative',width:'100%',background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 18px 48px',maxHeight:'82vh',overflowY:'auto',zIndex:1}}>
         <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
 
         {/* Header */}
