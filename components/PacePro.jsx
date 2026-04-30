@@ -283,10 +283,161 @@ function AllureChip({ dot, label, val }) {
   );
 }
 
-function SessionCard({ session, onComplete }) {
+function SessionDetailModal({ session, feedback, vma, onClose }) {
+  if (!session) return null;
+
+  const paces = calcPaces(vma);
+
+  // Estimation distance
+  const estimateKm = (s) => {
+    const mKm = s.title.match(/(\d+)\s*km/);
+    if (mKm) return +mKm[1];
+    const mFrac = s.title.match(/(\d+)\s*×\s*(\d+)\s*min/);
+    if (mFrac) {
+      const reps = +mFrac[1], effortMin = +mFrac[2];
+      const recovMin = parseFloat((s.title.match(/\/\s*(\d+(?:\.\d+)?)\s*min/)||[])[1]||effortMin);
+      const effortKm = (vma*0.92/60)*effortMin*reps;
+      const recovKm  = (vma*0.60/60)*recovMin*reps;
+      return Math.round((effortKm + recovKm + (vma*0.65/60)*15 + (vma*0.60/60)*10)*10)/10;
+    }
+    const mMins = s.title.match(/(\d+)[–-](\d+)\s*min/);
+    if (mMins) return Math.round((vma*0.65/60)*((+mMins[1]+(+mMins[2]))/2)*10)/10;
+    const mMin = s.title.match(/(\d+)\s*min/);
+    if (mMin) return Math.round((vma*0.65/60)*+mMin[1]*10)/10;
+    return null;
+  };
+
+  // Blocs fractionné pour visualisation
+  const getFracBlocs = (s) => {
+    const mFrac = s.title.match(/(\d+)\s*×\s*(\d+)\s*min/);
+    if (!mFrac || s.type === 'ef' || s.type === 'long' || s.type === 'trail') return null;
+    const reps = +mFrac[1], effortMin = +mFrac[2];
+    const recovMin = parseFloat((s.title.match(/\/\s*(\d+(?:\.\d+)?)\s*min/)||[])[1]||effortMin);
+    const blocs = [];
+    blocs.push({ type:'warmup', min:15, color:'#22c55e', label:'Éch.' });
+    for (let i=0; i<reps; i++) {
+      blocs.push({ type:'effort', min:effortMin, color:'#FF0040', label:`E${i+1}` });
+      if (i<reps-1) blocs.push({ type:'recov', min:recovMin, color:'#60a5fa', label:'R' });
+    }
+    blocs.push({ type:'cooldown', min:10, color:'#22c55e', label:'RC' });
+    return blocs;
+  };
+
+  // Explication pédagogique
+  const getWhy = (s) => {
+    const why = {
+      frac: { title:'Pourquoi ce fractionné ?', text:'Le fractionné développe ta VMA et ta capacité à maintenir des efforts intenses. Chaque répétition sollicite ton système cardio-vasculaire à haute intensité, forçant ton corps à s'adapter. Résultat : tu cours plus vite avec moins d'effort.', benefit:'↑ VMA · ↑ Économie de course · ↑ Capacité anaérobie' },
+      ef: { title:'Pourquoi cette sortie en EF ?', text:'L'endurance fondamentale développe ton moteur aérobie de base. À allure conversation, tu optimises l'utilisation des graisses comme carburant et améliores ta récupération. C'est la fondation de tout programme sérieux.', benefit:'↑ Base aérobie · ↑ Récupération · ↑ Économie lipidique' },
+      long: { title:'Pourquoi cette sortie longue ?', text:'La sortie longue adapte ton corps aux efforts prolongés : renforcement des tendons, amélioration du stockage glycogène, adaptation mentale à la durée. Elle simule les exigences de ta course cible.', benefit:'↑ Endurance · ↑ Résistance mentale · ↑ Stockage glycogène' },
+      trail: { title:'Pourquoi ce trail dénivelé ?', text:'Le travail en dénivelé renforce les muscles stabilisateurs et améliore la technique en montée/descente. La marche active en côte préserve l'énergie tout en maintenant une haute intensité cardiaque.', benefit:'↑ Force musculaire · ↑ Technique trail · ↑ Économie en montée' },
+      key: { title:'Répétition générale ⭐', text:'Cette séance simule les conditions du jour J. Même équipement, même terrain si possible. L'objectif est de valider ta stratégie de course et de gagner en confiance.', benefit:'↑ Confiance · ✓ Stratégie validée · ↑ Préparation mentale' },
+      taper: { title:'Pourquoi cette séance légère ?', text:'En phase d'affûtage, l'objectif est de maintenir la vivacité sans accumuler de fatigue. Ton corps absorbe les adaptations des semaines précédentes. Moins c'est plus.', benefit:'↓ Fatigue · ↑ Fraîcheur · ✓ Arriver reposé' },
+    };
+    return why[s.type] || why.ef;
+  };
+
+  const estKm = estimateKm(session);
+  const blocs = getFracBlocs(session);
+  const why = getWhy(session);
+  const totalMin = blocs ? blocs.reduce((a,b)=>a+b.min,0) : null;
+  const maxMin = blocs ? Math.max(...blocs.map(b=>b.min)) : 1;
+  const effortColors = ['','#22c55e','#22c55e','#22c55e','#4ade80','#f59e0b','#f59e0b','#f59e0b','#FF0040','#FF0040','#FF0040'];
+  const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
+
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:520,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 40px',maxHeight:'88vh',overflowY:'auto'}}>
+        <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
+
+        {/* Header */}
+        <div style={{marginBottom:20,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
+          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6}}>{session.day} · {session.tag}</div>
+          <div style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',color:'var(--text-primary)',marginBottom:10}}>{session.title}</div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            {estKm && <span style={{fontSize:11,padding:'4px 10px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',fontFamily:'DM Mono, monospace',fontWeight:700}}>~{estKm} km estimés</span>}
+            {totalMin && <span style={{fontSize:11,padding:'4px 10px',borderRadius:99,background:'var(--bg-input)',color:'var(--text-secondary)',fontFamily:'DM Mono, monospace'}}>~{totalMin} min</span>}
+            {session.completed && <span style={{fontSize:11,padding:'4px 10px',borderRadius:99,background:'rgba(34,197,94,0.1)',color:'#22c55e',fontWeight:700}}>✓ Validée</span>}
+          </div>
+        </div>
+
+        {/* Visualisation blocs fractionné */}
+        {blocs && (
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Structure de la séance</div>
+            <div style={{display:'flex',gap:3,alignItems:'flex-end',height:64,marginBottom:8}}>
+              {blocs.map((b,i)=>(
+                <div key={i} style={{flex:b.min,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',gap:4}}>
+                  <div style={{width:'100%',borderRadius:'4px 4px 0 0',background:b.color,opacity:b.type==='recov'?0.5:0.9,
+                    height:`${Math.max((b.min/maxMin)*52,8)}px`,transition:'height 0.5s'}}/>
+                  {b.min>=2 && <span style={{fontSize:7,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{b.label}</span>}
+                </div>
+              ))}
+            </div>
+            <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+              {[['#22c55e','Échauffement / RC'],['#FF0040','Effort'],['#60a5fa','Récupération']].map(([color,label])=>(
+                <div key={label} style={{display:'flex',alignItems:'center',gap:5}}>
+                  <div style={{width:8,height:8,borderRadius:2,background:color}}/>
+                  <span style={{fontSize:9,color:'var(--text-muted)'}}>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Allures */}
+        <div style={{marginBottom:20}}>
+          <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:10}}>Allures cibles</div>
+          <div style={{display:'flex',flexDirection:'column',gap:6}}>
+            {session.allures.map((a,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,background:'var(--bg-input)',borderRadius:12,padding:'10px 14px'}}>
+                <span style={{width:10,height:10,borderRadius:'50%',background:a.dot,flexShrink:0}}/>
+                <span style={{fontSize:12,color:'var(--text-secondary)',flex:1}}>{a.label}</span>
+                <span style={{fontSize:14,fontFamily:'DM Mono, monospace',fontWeight:800,color:'var(--text-primary)'}}>{a.val}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Pourquoi */}
+        <div style={{background:'rgba(255,0,64,0.04)',border:'1px solid rgba(255,0,64,0.12)',borderRadius:16,padding:'16px',marginBottom:20}}>
+          <div style={{fontSize:12,fontWeight:800,color:'#FF0040',marginBottom:8}}>{why.title}</div>
+          <div style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.7,marginBottom:10}}>{why.text}</div>
+          <div style={{fontSize:10,fontFamily:'DM Mono, monospace',color:'var(--text-muted)',background:'var(--bg-input)',borderRadius:8,padding:'6px 10px'}}>{why.benefit}</div>
+        </div>
+
+        {/* Feedback si dispo */}
+        {feedback && (
+          <div style={{background:'var(--bg-input)',borderRadius:16,padding:'16px'}}>
+            <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Ton feedback</div>
+            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+              <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
+                <div style={{fontSize:22,fontWeight:800,color:effortColors[feedback.effort],fontFamily:'DM Mono, monospace'}}>{feedback.effort}/10</div>
+                <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2}}>{effortLabels[feedback.effort]}</div>
+              </div>
+              {feedback.realPace && (
+                <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
+                  <div style={{fontSize:22,fontWeight:800,color:'var(--text-primary)',fontFamily:'DM Mono, monospace'}}>{feedback.realPace}</div>
+                  <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2}}>min/km réel</div>
+                </div>
+              )}
+              {feedback.sensation && (
+                <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
+                  <div style={{fontSize:20}}>{feedback.sensation.split(' ')[0]}</div>
+                  <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2}}>{feedback.sensation.split(' ').slice(1).join(' ')}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SessionCard({ session, onComplete, onDetail }) {
   const IconComp = SessionIcons[session.type] || SessionIcons.ef;
   return (
-    <div style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',transition:'all 0.25s',position:'relative',overflow:'hidden'}}>
+    <div onClick={onDetail} style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',transition:'all 0.25s',position:'relative',overflow:'hidden',cursor:'pointer'}}>
       {session.completed && <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#22c55e',borderRadius:'20px 20px 0 0'}}/>}
       {/* Header */}
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
@@ -316,12 +467,12 @@ function SessionCard({ session, onComplete }) {
       </div>
       {/* Actions */}
       {!session.completed && onComplete && (
-        <button onClick={()=>onComplete(session.id)} style={{width:'100%',background:'linear-gradient(135deg,rgba(255,0,64,0.12),rgba(255,0,64,0.06))',border:'1px solid rgba(255,0,64,0.25)',borderRadius:12,padding:'11px 16px',color:'#FF0040',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',letterSpacing:'0.02em'}}>
+        <button onClick={e=>{e.stopPropagation();onComplete(session.id);}} style={{width:'100%',background:'linear-gradient(135deg,rgba(255,0,64,0.12),rgba(255,0,64,0.06))',border:'1px solid rgba(255,0,64,0.25)',borderRadius:12,padding:'11px 16px',color:'#FF0040',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',letterSpacing:'0.02em'}}>
           Marquer comme terminé ✓
         </button>
       )}
       {session.completed && onComplete && (
-        <button onClick={()=>onComplete(session.id, true)} style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid var(--border)',borderRadius:12,padding:'9px 16px',color:'var(--text-muted)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+        <button onClick={e=>{e.stopPropagation();onComplete(session.id, true);}} style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid var(--border)',borderRadius:12,padding:'9px 16px',color:'var(--text-muted)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
           ↩ Annuler la validation
         </button>
       )}
@@ -620,6 +771,8 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   const [completed, setCompleted] = useState(initialCompleted);
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
   const [feedbackSession, setFeedbackSession] = useState(null);
+  const [detailSession, setDetailSession] = useState(null);
+  const [detailSession, setDetailSession] = useState(null);
   const paces = calcPaces(profile.vma);
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
   const doneCount = Object.values(completed).filter(Boolean).length;
@@ -658,6 +811,8 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   return (
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
+      {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
+      {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
       {/* Hero Header */}
       <div style={{background:'linear-gradient(180deg,rgba(255,0,64,0.08) 0%,transparent 100%)',borderBottom:'1px solid var(--border-nav)',padding:'16px 20px 20px',position:'sticky',top:0,zIndex:50,backdropFilter:'blur(20px)',background:'var(--bg-nav)'}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:0}}>
@@ -763,7 +918,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                 const fb = feedbacks[s.id];
                 return (
                   <div key={s.id}>
-                    <SessionCard session={{...s,completed:!!completed[s.id]}} onComplete={handleComplete}/>
+                    <SessionCard session={{...s,completed:!!completed[s.id]}} onComplete={handleComplete} onDetail={()=>setDetailSession({...s,completed:!!completed[s.id]})}/>
                     {fb && (
                       <div style={{marginTop:6,background:'var(--btn-ghost-bg)',border:'1px solid var(--border)',borderRadius:10,padding:'8px 12px',fontSize:11,color:'var(--text-secondary)',display:'flex',gap:10,flexWrap:'wrap'}}>
                         <span>Effort : <span style={{color:'#f59e0b',fontWeight:600}}>{fb.effort}/10</span></span>
