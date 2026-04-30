@@ -847,7 +847,6 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
       {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
-      {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
       {/* Hero Header */}
       <div style={{background:'linear-gradient(180deg,rgba(255,0,64,0.08) 0%,transparent 100%)',borderBottom:'1px solid var(--border-nav)',padding:'16px 20px 20px',position:'sticky',top:0,zIndex:50,backdropFilter:'blur(20px)',background:'var(--bg-nav)'}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:0}}>
