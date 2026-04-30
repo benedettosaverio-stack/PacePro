@@ -375,68 +375,126 @@ function KpiCharts({ plan, feedbacks, completed }) {
     const done = ids.filter(id=>completed[id]).length;
     const fbs = ids.map(id=>feedbacks[id]).filter(Boolean);
     const avgEffort = fbs.length ? Math.round(fbs.reduce((a,f)=>a+f.effort,0)/fbs.length) : null;
-    return { week:w.week, km:w.weeklyKm, done, total:w.sessions.length, avgEffort };
+    return { week:w.week, km:w.weeklyKm, done, total:w.sessions.length, avgEffort, phase:w.phase, color:w.color, label:w.label };
   });
   const maxKm = Math.max(...weeks.map(w=>w.km),1);
-  const W=280, H=80;
   const totalDone = Object.values(completed).filter(Boolean).length;
   const totalAll = plan.reduce((a,w)=>a+w.sessions.length,0);
   const allFbs = Object.values(feedbacks);
-  const avgEff = allFbs.length ? (allFbs.reduce((a,f)=>a+f.effort,0)/allFbs.length).toFixed(1) : '—';
+  const avgEff = allFbs.length ? (allFbs.reduce((a,f)=>a+f.effort,0)/allFbs.length).toFixed(1) : null;
+  const completionPct = totalAll>0 ? Math.round((totalDone/totalAll)*100) : 0;
+  const effortColor = (e) => e<=3?'#22c55e':e<=6?'#f59e0b':e<=8?'#FF0040':'#ef4444';
+
   return (
-    <div style={{...card,marginBottom:20}}>
-      <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:16}}>KPI — Suivi de charge</div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:20}}>
-        <div>
-          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>COMPLETION</div>
-          <div style={{fontSize:22,fontWeight:800,color:'#22c55e',fontFamily:'monospace'}}>{Math.round((totalDone/totalAll)*100)}%</div>
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+
+      {/* KPI Cards */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+        {[
+          { label:'Complétion', value:`${completionPct}%`, sub:`${totalDone}/${totalAll} séances`, color:'#22c55e', icon:'✓' },
+          { label:'Effort moyen', value:avgEff?`${avgEff}/10`:'—', sub:avgEff?(parseFloat(avgEff)<=4?'Très facile':parseFloat(avgEff)<=6?'Modéré':parseFloat(avgEff)<=8?'Difficile':'Extrême'):'Pas encore de feedback', color:avgEff?effortColor(parseFloat(avgEff)):'var(--text-muted)', icon:'⚡' },
+          { label:'Semaines', value:`${weeks.filter(w=>w.done===w.total&&w.total>0).length}/${weeks.length}`, sub:'semaines complètes', color:'#6366f1', icon:'📅' },
+        ].map(({label,value,sub,color,icon})=>(
+          <div key={label} style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'14px 12px',textAlign:'center'}}>
+            <div style={{fontSize:18,marginBottom:6}}>{icon}</div>
+            <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>{label}</div>
+            <div style={{fontSize:20,fontWeight:800,color,fontFamily:'DM Mono, monospace',lineHeight:1,marginBottom:4}}>{value}</div>
+            <div style={{fontSize:9,color:'var(--text-muted)',lineHeight:1.3}}>{sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Barre de complétion globale */}
+      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace'}}>Progression du programme</div>
+          <div style={{fontSize:12,fontWeight:800,color:'#22c55e',fontFamily:'DM Mono, monospace'}}>{completionPct}%</div>
         </div>
-        <div>
-          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>SÉANCES OK</div>
-          <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace',color:'var(--text-primary)'}}>{totalDone}<span style={{fontSize:12,color:'var(--text-muted)'}}>/{totalAll}</span></div>
+        <div style={{height:8,background:'var(--progress-track)',borderRadius:99,overflow:'hidden',marginBottom:8}}>
+          <div style={{height:'100%',width:`${completionPct}%`,background:'linear-gradient(90deg,#22c55e,#4ade80)',borderRadius:99,transition:'width 1s cubic-bezier(0.22,1,0.36,1)'}}/>
         </div>
-        <div>
-          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:4}}>EFFORT MOY.</div>
-          <div style={{fontSize:22,fontWeight:800,fontFamily:'monospace',color:'#f59e0b'}}>{avgEff}<span style={{fontSize:12,color:'var(--text-muted)'}}>/10</span></div>
+        <div style={{display:'flex',gap:4}}>
+          {weeks.map((w,i)=>{
+            const pct = w.total>0?w.done/w.total:0;
+            return (
+              <div key={i} style={{flex:1,textAlign:'center'}}>
+                <div style={{height:4,borderRadius:99,background:pct===1?w.color:pct>0?`${w.color}60`:'var(--progress-track)',marginBottom:4,transition:'all 0.5s'}}/>
+                <div style={{fontSize:8,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>S{w.week}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
-      <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginBottom:8}}>CHARGE HEBDOMADAIRE (km)</div>
-      <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{overflow:'visible'}}>
-        {weeks.map((w,i) => {
-          const x = (i/(weeks.length-1||1))*(W-20)+10;
-          const barH = (w.km/maxKm)*(H-10);
-          const y = H - barH;
-          const effortColor = w.avgEffort ? (w.avgEffort<=4?'#22c55e':w.avgEffort>=8?'#FF0040':'#f59e0b') : 'var(--progress-track)';
-          return (
-            <g key={i}>
-              <rect x={x-8} y={y} width={16} height={barH} rx={3} fill={w.done===w.total&&w.total>0?effortColor:'var(--progress-track)'}/>
-              <text x={x} y={H+14} textAnchor="middle" fill="var(--svg-text)" fontSize={8} fontFamily="monospace">S{w.week}</text>
-              {w.km>0 && <text x={x} y={y-4} textAnchor="middle" fill="var(--svg-text-val)" fontSize={8} fontFamily="monospace">{w.km}</text>}
-            </g>
-          );
-        })}
-      </svg>
+
+      {/* Charge hebdomadaire */}
+      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+        <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace',marginBottom:16}}>Charge hebdomadaire (km)</div>
+        <div style={{display:'flex',gap:8,alignItems:'flex-end',height:80}}>
+          {weeks.map((w,i)=>{
+            const pct = w.km/maxKm;
+            const barColor = w.done===w.total&&w.total>0 ? w.color : w.done>0 ? `${w.color}80` : 'var(--progress-track)';
+            return (
+              <div key={i} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4,height:'100%',justifyContent:'flex-end'}}>
+                {w.km>0 && <div style={{fontSize:9,fontWeight:700,color:barColor,fontFamily:'DM Mono, monospace'}}>{w.km}</div>}
+                <div style={{width:'100%',borderRadius:'6px 6px 0 0',background:barColor,height:`${Math.max(pct*64,w.km>0?6:0)}px`,transition:'height 1s cubic-bezier(0.22,1,0.36,1)',position:'relative'}}>
+                  {w.done===w.total&&w.total>0 && <div style={{position:'absolute',top:-8,left:'50%',transform:'translateX(-50%)',fontSize:8}}>✓</div>}
+                </div>
+                <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textAlign:'center'}}>
+                  <div>S{w.week}</div>
+                  <div style={{fontSize:7,opacity:0.6}}>{w.done}/{w.total}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Effort par semaine */}
       {allFbs.length>0 && (
-        <div>
-          <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',marginTop:12,marginBottom:8}}>COURBE D'EFFORT RESSENTI</div>
-          <svg width="100%" viewBox={`0 0 ${W} 50`}>
-            {weeks.filter(w=>w.avgEffort).map((w,i,arr) => {
-              const x = (i/(arr.length-1||1))*(W-20)+10;
-              const y = 45-(w.avgEffort/10)*40;
-              const next = arr[i+1];
-              const nx = next?(i+1)/(arr.length-1||1)*(W-20)+10:null;
-              const ny = next?45-(next.avgEffort/10)*40:null;
+        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+          <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Effort ressenti par semaine</div>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            {weeks.map((w,i)=>{
+              const e = w.avgEffort;
+              const color = e ? effortColor(e) : 'var(--progress-track)';
               return (
-                <g key={i}>
-                  {nx && <line x1={x} y1={y} x2={nx} y2={ny} stroke="rgba(255,0,64,0.4)" strokeWidth={1.5}/>}
-                  <circle cx={x} cy={y} r={3} fill="#FF0040"/>
-                  <text x={x} y={y-6} textAnchor="middle" fill="var(--svg-text-val)" fontSize={8} fontFamily="monospace">{w.avgEffort}</text>
-                </g>
+                <div key={i} style={{flex:1,textAlign:'center'}}>
+                  <div style={{height:36,borderRadius:10,background:e?`${color}20`:'var(--bg-input)',border:`1px solid ${e?`${color}40`:'var(--border)'}`,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:4}}>
+                    <span style={{fontSize:14,fontWeight:800,color:e?color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{e||'—'}</span>
+                  </div>
+                  <div style={{fontSize:8,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>S{w.week}</div>
+                </div>
               );
             })}
-          </svg>
+          </div>
+          <div style={{display:'flex',gap:12,marginTop:12,flexWrap:'wrap'}}>
+            {[['#22c55e','Facile (1-3)'],['#f59e0b','Modéré (4-6)'],['#FF0040','Difficile (7-8)'],['#ef4444','Extrême (9-10)']].map(([color,label])=>(
+              <div key={label} style={{display:'flex',alignItems:'center',gap:5}}>
+                <div style={{width:8,height:8,borderRadius:'50%',background:color}}/>
+                <span style={{fontSize:9,color:'var(--text-muted)'}}>{label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
+
+      {/* Séances détail */}
+      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+        <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Détail par semaine</div>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {weeks.map((w,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:10}}>
+              <div style={{width:32,fontSize:10,fontWeight:700,color:w.color,fontFamily:'DM Mono, monospace',flexShrink:0}}>S{w.week}</div>
+              <div style={{flex:1,height:6,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
+                <div style={{height:'100%',width:`${w.total>0?(w.done/w.total)*100:0}%`,background:w.color,borderRadius:99,transition:'width 0.8s'}}/>
+              </div>
+              <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',width:32,textAlign:'right'}}>{w.done}/{w.total}</div>
+              <div style={{fontSize:9,padding:'2px 6px',borderRadius:99,background:`${w.color}20`,color:w.color,fontWeight:700,fontFamily:'DM Mono, monospace',width:56,textAlign:'center',flexShrink:0}}>{w.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }
