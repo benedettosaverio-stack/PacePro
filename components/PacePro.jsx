@@ -1218,7 +1218,7 @@ export default function PacePro() {
   );
 
   const ProfileBtn = () => (
-    <button onClick={() => setShowProfile(true)} style={{ position:'fixed', top:12, right:16, zIndex:150, background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:99, padding:'6px 12px 6px 8px', display:'flex', alignItems:'center', gap:8, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 2px 12px rgba(0,0,0,0.1)' }}>
+    <button onClick={() => setShowProfile(true)} style={{ position:'fixed', top:'calc(env(safe-area-inset-top, 0px) + 12px)', right:16, zIndex:150, background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:99, padding:'6px 12px 6px 8px', display:'flex', alignItems:'center', gap:8, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 2px 12px rgba(0,0,0,0.1)' }}>
       {user?.photo
         ? <img src={user.photo} alt="" style={{ width:26, height:26, borderRadius:'50%', objectFit:'cover' }} />
         : <div style={{ width:26, height:26, borderRadius:'50%', background:'rgba(219,59,61,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
