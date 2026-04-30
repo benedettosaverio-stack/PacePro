@@ -205,7 +205,38 @@ function generatePlan(profile) {
     const eff = weeks<=2 ? Math.max(sessionsPerWeek,4) : sessionsPerWeek;
     const days = weeks<=2 && eff>trainingDays.length ? [...trainingDays,...DAYS_FR.filter(d=>!trainingDays.includes(d))].slice(0,eff) : trainingDays.slice(0,eff);
     const sessions = days.map((day,si) => ({...makeSession(phase,idx,si,km), id:`w${idx+1}_s${si}`, day}));
-    const weeklyKm = sessions.reduce((a,s)=>{ const m=s.title.match(/(\d+)\s*km/); return a+(m?+m[1]:0); },0);
+    const weeklyKm = Math.round(sessions.reduce((a,s)=>{ 
+      // Distance explicite (ex: "5 km", "10 km")
+      const mKm = s.title.match(/(\d+)\s*km/);
+      if (mKm) return a + +mKm[1];
+      // Fractionné : "N × D min / R min" → estimer distance
+      const mFrac = s.title.match(/(\d+)\s*×\s*(\d+)\s*min/);
+      if (mFrac) {
+        const reps = +mFrac[1], effortMin = +mFrac[2];
+        // Vitesse effort ~VMA 90% = vma*0.92, récup ~60% = vma*0.6
+        const recovMin = parseFloat((s.title.match(/\/\s*(\d+(?:\.\d+)?)\s*min/)||[])[1]||effortMin);
+        const effortKm = (vma * 0.92 / 60) * effortMin * reps;
+        const recovKm  = (vma * 0.60 / 60) * recovMin  * reps;
+        const warmup = (vma * 0.65 / 60) * 15; // 15 min échauffement
+        const cooldown = (vma * 0.60 / 60) * 10; // 10 min retour calme
+        return a + effortKm + recovKm + warmup + cooldown;
+      }
+      // Fractionné long : "N × D min" sans récup explicite
+      const mFracLong = s.title.match(/(\d+)\s*×\s*(\d+)\s*min/);
+      if (mFracLong) {
+        const reps = +mFracLong[1], dur = +mFracLong[2];
+        return a + (vma * 0.87 / 60) * dur * reps + (vma * 0.65 / 60) * 20;
+      }
+      // "20-25 min léger" → estimer
+      const mMins = s.title.match(/(\d+)[–\-](\d+)\s*min/);
+      if (mMins) {
+        const avgMin = (+mMins[1] + +mMins[2]) / 2;
+        return a + (vma * 0.65 / 60) * avgMin;
+      }
+      const mMin = s.title.match(/(\d+)\s*min/);
+      if (mMin) return a + (vma * 0.65 / 60) * +mMin[1];
+      return a;
+    }, 0) * 10) / 10;
     return { week:idx+1, phase, ...phaseInfo[phase], dateRange:`${fmt(wStart)} – ${fmt(wEnd)}`, sessions, weeklyKm, isKey:phase==='peak' };
   });
 }
