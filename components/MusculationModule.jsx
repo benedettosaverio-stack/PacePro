@@ -498,30 +498,38 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
 function WorkoutCard({ workout, onOpen, onDelete, onDuplicate }) {
   const vol = computeVolume(workout.entries || []);
   const muscles = Object.keys(vol).filter(m => vol[m] >= 1);
+  const topMuscle = MUSCLES.find(x=>x.id===muscles[0]);
+  const accentColor = topMuscle?.color || '#FF0040';
   return (
-    <div onClick={onOpen} style={{ ...card, cursor:'pointer', transition:'all 0.15s' }}>
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8 }}>
+    <div onClick={onOpen} style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:20, padding:'18px 16px', cursor:'pointer', transition:'all 0.15s', position:'relative', overflow:'hidden' }}>
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:3, background:accentColor, borderRadius:'20px 20px 0 0' }}/>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
         <div style={{ flex:1 }}>
-          <div style={{ fontSize:14, fontWeight:700, color:'var(--text-primary)', marginBottom:3 }}>{workout.name}</div>
-          <div style={{ fontSize:11, color:'var(--text-muted)', display:'flex', gap:10 }}>
-            <span>💪 {(workout.entries||[]).length} exercices</span>
-            <span>⏱ {workout.duration} min</span>
-            {workout.aiGenerated && <span style={{ background:'rgba(96,165,250,0.1)', color:'#60a5fa', borderRadius:5, padding:'1px 6px', fontWeight:600 }}>✨ IA</span>}
+          <div style={{ fontSize:16, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text-primary)', marginBottom:6 }}>{workout.name}</div>
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+            <span style={{ fontSize:10, padding:'3px 8px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-secondary)', fontFamily:'DM Mono, monospace' }}>💪 {(workout.entries||[]).length} exercices</span>
+            <span style={{ fontSize:10, padding:'3px 8px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-secondary)', fontFamily:'DM Mono, monospace' }}>⏱ {workout.duration} min</span>
+            {workout.aiGenerated && <span style={{ fontSize:10, padding:'3px 8px', borderRadius:99, background:'rgba(96,165,250,0.1)', color:'#60a5fa', border:'1px solid rgba(96,165,250,0.2)', fontWeight:700 }}>✨ IA</span>}
           </div>
         </div>
         <div style={{ display:'flex', gap:6 }} onClick={e=>e.stopPropagation()}>
-          <button onClick={onDuplicate} style={{ ...btnGhost, padding:'4px 8px', fontSize:10 }} title="Dupliquer +surcharge">📋+</button>
-          <button onClick={onDelete} style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:8, padding:'4px 8px', color:'rgba(239,68,68,0.6)', fontSize:11, cursor:'pointer', fontFamily:'inherit' }}>✕</button>
+          <button onClick={onDuplicate} style={{ width:32, height:32, borderRadius:10, background:'var(--bg-input)', border:'1px solid var(--border)', color:'var(--text-muted)', fontSize:12, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }} title="Dupliquer +surcharge">📋</button>
+          <button onClick={onDelete} style={{ width:32, height:32, borderRadius:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', color:'rgba(239,68,68,0.6)', fontSize:14, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
         </div>
       </div>
       {muscles.length > 0 && (
         <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
-          {muscles.slice(0,6).map(m => {
+          {muscles.slice(0,5).map(m => {
             const info = MUSCLES.find(x=>x.id===m);
-            return info ? <span key={m} style={{ fontSize:9, color:info.color, background:`${info.color}15`, borderRadius:5, padding:'2px 6px', fontFamily:'monospace' }}>{info.emoji} {info.label}</span> : null;
+            return info ? (
+              <span key={m} style={{ fontSize:9, fontWeight:700, color:info.color, background:`${info.color}12`, border:`1px solid ${info.color}25`, borderRadius:99, padding:'3px 8px' }}>
+                {info.emoji} {info.label}
+              </span>
+            ) : null;
           })}
         </div>
       )}
+      <div style={{ position:'absolute', bottom:16, right:16, color:'var(--text-muted)', fontSize:16 }}>›</div>
     </div>
   );
 }
@@ -693,33 +701,53 @@ export default function MusculationModule() {
   return (
     <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:70 }}>
       <div style={{ maxWidth:700, margin:'0 auto', padding:'18px 16px 0' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
-          <div>
-            <h1 style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', marginBottom:2 }}>Musculation 💪</h1>
-            <p style={{ fontSize:12, color:'var(--text-muted)' }}>{workouts.length} séance{workouts.length!==1?'s':''}</p>
+
+        {/* Header */}
+        <div style={{ marginBottom:20 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:16 }}>
+            <div>
+              <h1 style={{ fontSize:26, fontWeight:800, letterSpacing:'-0.04em', marginBottom:4 }}>Musculation</h1>
+              <p style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>{workouts.length} séance{workouts.length!==1?'s':''} sauvegardée{workouts.length!==1?'s':''}</p>
+            </div>
+            {view==='list' && (
+              <div style={{ display:'flex', gap:8 }}>
+                <button onClick={()=>{setView('ai');setSelected(null);}} style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.2)', color:'#60a5fa', borderRadius:12, padding:'9px 14px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
+                  ✨ IA
+                </button>
+                <button onClick={()=>{setView('create');setSelected(null);setEditing(false);}} style={{ display:'flex', alignItems:'center', gap:6, background:'#FF0040', border:'none', color:'#fff', borderRadius:12, padding:'9px 14px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
+                  + Créer
+                </button>
+              </div>
+            )}
           </div>
-          {view==='list' && (
-            <div style={{ display:'flex', gap:8 }}>
-              <button onClick={()=>{setView('ai');setSelected(null);}}
-                style={{ background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:10, padding:'7px 12px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
-                ✨ IA
-              </button>
-              <button onClick={()=>{setView('create');setSelected(null);setEditing(false);}} style={{ ...btnRed, padding:'7px 12px', fontSize:12 }}>
-                + Créer
-              </button>
+
+          {/* Stats rapides si séances */}
+          {view==='list' && workouts.length>0 && (
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:4 }}>
+              {[
+                { label:'Séances', value:workouts.length, color:'#FF0040' },
+                { label:'Exercices moy.', value:workouts.length>0?Math.round(workouts.reduce((a,w)=>a+(w.entries||[]).length,0)/workouts.length):0, color:'#60a5fa' },
+                { label:'Durée moy.', value:`${workouts.length>0?Math.round(workouts.reduce((a,w)=>a+(w.duration||0),0)/workouts.length):0} min`, color:'#f59e0b' },
+              ].map(({label,value,color})=>(
+                <div key={label} style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:14, padding:'12px', textAlign:'center' }}>
+                  <div style={{ fontSize:18, fontWeight:800, color, fontFamily:'DM Mono, monospace', lineHeight:1, marginBottom:4 }}>{value}</div>
+                  <div style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.08em' }}>{label}</div>
+                </div>
+              ))}
             </div>
           )}
         </div>
 
         {view==='list' && (
           workouts.length===0 ? (
-            <div style={{ ...card, textAlign:'center', padding:'36px 20px' }}>
-              <div style={{ fontSize:36, marginBottom:10 }}>🏋️</div>
-              <div style={{ fontSize:14, fontWeight:600, marginBottom:6 }}>Aucune séance</div>
-              <p style={{ fontSize:12, color:'var(--text-muted)', marginBottom:16 }}>Crée ta première séance ou génère-la avec l'IA.</p>
+            <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:20, padding:'48px 24px', textAlign:'center', position:'relative', overflow:'hidden' }}>
+              <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle,rgba(96,165,250,0.05) 0%,transparent 70%)', pointerEvents:'none' }}/>
+              <div style={{ fontSize:52, marginBottom:16 }}>💪</div>
+              <div style={{ fontSize:18, fontWeight:800, letterSpacing:'-0.02em', marginBottom:8 }}>Aucune séance</div>
+              <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:28, lineHeight:1.6 }}>Crée ta première séance manuellement<br/>ou laisse l'IA en générer une pour toi.</p>
               <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
-                <button onClick={()=>setView('ai')} style={{ background:'rgba(96,165,250,0.1)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:10, padding:'8px 14px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>✨ IA</button>
-                <button onClick={()=>setView('create')} style={btnRed}>+ Créer</button>
+                <button onClick={()=>setView('ai')} style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:14, padding:'12px 20px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>✨ Générer avec l'IA</button>
+                <button onClick={()=>setView('create')} style={{ background:'#FF0040', border:'none', color:'#fff', borderRadius:14, padding:'12px 20px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Créer</button>
               </div>
             </div>
           ) : (
