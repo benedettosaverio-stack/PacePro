@@ -43,6 +43,23 @@ export default function HomeModule({ onNavigate }) {
           </button>
         ))}
       </div>
+      <button onClick={() => onNavigate('bilan')} style={{
+        width:'100%', maxWidth:360, marginBottom:20,
+        background:'var(--bg-card)', border:'1px solid var(--border)',
+        borderRadius:16, padding:'16px 20px', cursor:'pointer',
+        fontFamily:'Syne, sans-serif', display:'flex', alignItems:'center', justifyContent:'space-between',
+      }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <div style={{ width:36, height:36, borderRadius:10, background:'rgba(219,59,61,0.12)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <Icon name="chart" size={18} color="#DB3B3D" />
+          </div>
+          <div style={{ textAlign:'left' }}>
+            <div style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>Bilan physique</div>
+            <div style={{ fontSize:10, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.08em', marginTop:2 }}>Analyse IA · Strava</div>
+          </div>
+        </div>
+        <Icon name="arrow_right" size={16} color="var(--text-muted)" />
+      </button>
       <div style={{ display:'flex', gap:28, alignItems:'center' }}>
         {[['IA','Coaching'],['GPS','Strava sync'],['☁️','Cloud sync']].map(([val, label], i) => (
           <div key={i} style={{ display:'flex', alignItems:'center', gap:28 }}>

@@ -49,6 +49,7 @@ import HomeModule from './HomeModule';
 import HistoriqueModule from './HistoriqueModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
+import BilanModule from './BilanModule';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
@@ -819,6 +820,7 @@ export default function PacePro() {
       </>
     );
   }
+  if (tab === 'bilan') return <BilanModule onBack={() => setTab('home')} />;
   if (tab === 'home') {
     return (
       <>
