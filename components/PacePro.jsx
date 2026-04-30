@@ -89,22 +89,22 @@ function ThemeStyles() {
       }
       @media (prefers-color-scheme: light) {
         :root {
-          --bg-primary: #f0f2f5;
-          --bg-card: rgba(255,255,255,0.92);
-          --bg-surface: rgba(255,255,255,0.98);
-          --bg-input: rgba(10,11,15,0.06);
-          --bg-nav: rgba(240,242,245,0.92);
+          --bg-primary: #eef0f4;
+          --bg-card: rgba(255,255,255,0.98);
+          --bg-surface: rgba(255,255,255,1);
+          --bg-input: rgba(10,11,15,0.07);
+          --bg-nav: rgba(238,240,244,0.95);
           --bg-modal: #ffffff;
-          --text-primary: #0a0b0f;
-          --text-secondary: #444750;
-          --text-muted: #6b6f7a;
-          --text-ultra-muted: #9296a0;
-          --border: rgba(10,11,15,0.12);
-          --border-input: rgba(10,11,15,0.18);
-          --border-nav: rgba(10,11,15,0.10);
-          --btn-ghost-bg: rgba(10,11,15,0.06);
-          --btn-ghost-border: rgba(10,11,15,0.12);
-          --btn-ghost-color: #555860;
+          --text-primary: #05060a;
+          --text-secondary: #23262f;
+          --text-muted: #4a4e5a;
+          --text-ultra-muted: #6b6f7a;
+          --border: rgba(10,11,15,0.16);
+          --border-input: rgba(10,11,15,0.22);
+          --border-nav: rgba(10,11,15,0.13);
+          --btn-ghost-bg: rgba(10,11,15,0.07);
+          --btn-ghost-border: rgba(10,11,15,0.16);
+          --btn-ghost-color: #33363f;
           --onboarding-bg: #f0f2f5;
           --session-bg: rgba(255,255,255,0.96);
           --session-border: rgba(10,11,15,0.10);
