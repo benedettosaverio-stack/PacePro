@@ -843,7 +843,13 @@ export default function PacePro() {
       const a = localStorage.getItem('strava_athlete');
       if (a) {
         const athlete = JSON.parse(a);
-        if (athlete?.id) return { id: athlete.id, name: athlete.name, photo: athlete.photo, strava: true };
+        if (athlete?.id) {
+          // Assure que pp_user_id est défini pour la sync Supabase
+          if (!localStorage.getItem('pp_user_id')) {
+            localStorage.setItem('pp_user_id', String(athlete.id));
+          }
+          return { id: athlete.id, name: athlete.name, photo: athlete.photo, strava: true };
+        }
       }
       return null;
     } catch { return null; }
