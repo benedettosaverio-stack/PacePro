@@ -39,3 +39,35 @@ nav {
   padding-top: env(safe-area-inset-top, 44px) !important;
   height: calc(56px + env(safe-area-inset-top, 44px)) !important;
 }
+/* ── Layout fixe mobile ───────────────────────────────────────── */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#__next, main {
+  height: 100%;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* Scrollbar discrète */
+.app-content::-webkit-scrollbar { width: 3px; }
+.app-content::-webkit-scrollbar-track { background: transparent; }
+.app-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }

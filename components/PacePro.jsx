@@ -1223,73 +1223,71 @@ export default function PacePro() {
 
   if (tab === 'historique') {
     return (
-      <>
+      <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <div key='historique' className='tab-enter' style={{paddingBottom:60}}><HistoriqueModule/></div>
+        <div className='app-content tab-enter' style={{paddingBottom:80}}><HistoriqueModule/></div>
         <BottomNav/>
-      </>
+      </div>
     );
   }
   if (tab === 'bilan') return (
-    <>
+    <div className='app-shell'>
       <ThemeStyles/>
       <ProfileBtn/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-      <div key='bilan' className='tab-enter'><BilanModule onBack={() => setTab('home')} /></div>
-    </>
+      <div className='app-content tab-enter'><BilanModule onBack={() => setTab('home')} /></div>
+    </div>
   );
   if (tab === 'home') {
     return (
-      <>
+      <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <div key='home' className='tab-enter'><HomeModule onNavigate={setTab}/></div>
+        <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
-      </>
+      </div>
     );
   }
   if (tab === 'strava') {
     return (
-      <>
+      <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <div key='strava' className='tab-enter' style={{paddingBottom:60}}><StravaModule/></div>
+        <div className='app-content tab-enter' style={{paddingBottom:80}}><StravaModule/></div>
         <BottomNav/>
-      </>
+      </div>
     );
   }
   if (tab === 'muscu') {
     return (
-      <>
+      <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <div style={{paddingBottom:60}}>
-          <div key='muscu' className='tab-enter'><Muscu/></div>
-        </div>
+        <div className='app-content tab-enter' style={{paddingBottom:80}}><Muscu/></div>
         <BottomNav/>
-      </>
+      </div>
     );
   }
 
   // Running tab
-  if (view==='onboarding') return <><ThemeStyles/><div key='onboarding' className='tab-enter' style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
+  if (view==='onboarding') return <div className='app-shell'><ThemeStyles/><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
-      <>
+      <div className='app-shell'>
         <ThemeStyles/>
-        <div key='running' className='tab-enter' style={{paddingBottom:60}}>
+        <div className='app-content tab-enter' style={{paddingBottom:80}}>
           <button onClick={()=>setView('list')} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
           <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} initialCompleted={plans[activePlan].completed||{}} initialFeedbacks={plans[activePlan].feedbacks||{}} onReset={()=>setView('onboarding')} onSave={(newPlan, newCompleted, newFeedbacks) => { const updated = plans.map((p,i) => i===activePlan ? {...p, plan:newPlan, completed:newCompleted, feedbacks:newFeedbacks} : p); savePlans(updated); }}/>
         </div>
         <BottomNav/>
-      </>
+      </div>
     );
   }
-  if (plans.length===0) return <><ThemeStyles/><div key='onboarding' className='tab-enter' style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
-  return <><ThemeStyles/><div style={{paddingBottom:60}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></>;
+  if (plans.length===0) return <div className='app-shell'><ThemeStyles/><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
+  return <div className='app-shell'><ThemeStyles/><div className='app-content' style={{paddingBottom:80}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></div>;
 }
