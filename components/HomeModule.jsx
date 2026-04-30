@@ -22,12 +22,7 @@ export default function HomeModule({ onNavigate }) {
   return (
     <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 24px 80px', position:'relative', overflow:'hidden' }}>
       <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:'500px', height:'500px', borderRadius:'50%', background:'radial-gradient(circle, rgba(219,59,61,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
-      {athlete && (
-        <div style={{ position:'absolute', top:20, right:20, display:'flex', alignItems:'center', gap:8 }}>
-          {athlete.photo && <img src={athlete.photo} alt="" style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover' }} />}
-          <div style={{ fontSize:12, color:'var(--text-muted)' }}>{athlete.name?.split(' ')[0]}</div>
-        </div>
-      )}
+
       <div style={{ marginBottom:20 }}>
         <img src="/logo.svg" alt="PacePro" style={{ width:'clamp(100px, 22vw, 160px)', height:'clamp(100px, 22vw, 160px)', objectFit:'contain', filter:'drop-shadow(0 0 40px rgba(219,59,61,0.3))' }} />
       </div>
