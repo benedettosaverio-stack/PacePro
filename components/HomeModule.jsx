@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Icon from './Icons';
 
 export default function HomeModule({ onNavigate }) {
   const [athlete, setAthlete] = useState(null);
@@ -12,10 +13,10 @@ export default function HomeModule({ onNavigate }) {
   }, []);
 
   const nav = [
-    { id: 'running', icon: '🏃', label: 'Running' },
-    { id: 'muscu', icon: '💪', label: 'Muscu' },
-    { id: 'strava', icon: '🟠', label: 'Strava' },
-    { id: 'historique', icon: '📊', label: 'Historique' },
+    { id: 'running', icon: 'running', label: 'Running' },
+    { id: 'muscu', icon: 'muscle', label: 'Muscu' },
+    { id: 'strava', icon: 'strava', label: 'Strava' },
+    { id: 'historique', icon: 'history', label: 'Historique' },
   ];
 
   return (
@@ -37,7 +38,7 @@ export default function HomeModule({ onNavigate }) {
       <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:12, width:'100%', maxWidth:360, marginBottom:40 }}>
         {nav.map(item => (
           <button key={item.id} onClick={() => onNavigate(item.id)} style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'20px 16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
-            <span style={{ fontSize:28 }}>{item.icon}</span>
+            <Icon name={item.icon} size={28} color="var(--text-secondary)" />
             <span style={{ fontSize:12, fontWeight:700, color:'var(--text-secondary)' }}>{item.label}</span>
           </button>
         ))}
