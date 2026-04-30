@@ -1060,49 +1060,55 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
 }
 
 
-function ProfileSheet({ user, onClose, onLogout }) {
+function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
+  const stats = [
+    { label: 'Running', icon: 'running', tab: 'running', color: '#FF0040' },
+    { label: 'Muscu', icon: 'muscle', tab: 'muscu', color: '#6366f1' },
+    { label: 'Strava', icon: 'strava', tab: 'strava', color: '#f59e0b' },
+    { label: 'Historique', icon: 'history', tab: 'historique', color: '#22c55e' },
+  ];
   return (
     <>
-      <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:200, backdropFilter:'blur(4px)' }} />
-      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--bg-card)', borderRadius:'20px 20px 0 0', padding:'12px 20px 40px', fontFamily:'Syne, sans-serif' }}>
+      <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:200, backdropFilter:'blur(8px)' }} />
+      <div className='modal-enter' style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--bg-modal)', borderRadius:'28px 28px 0 0', padding:'12px 20px 48px', fontFamily:'Syne, sans-serif', maxHeight:'80vh', overflowY:'auto' }}>
         {/* Handle */}
-        <div style={{ width:36, height:4, background:'var(--border)', borderRadius:4, margin:'0 auto 20px' }} />
+        <div style={{ width:40, height:4, background:'var(--border)', borderRadius:99, margin:'0 auto 24px' }} />
 
-        {/* User info */}
-        <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:24, padding:'16px', background:'var(--bg-input)', borderRadius:16 }}>
-          {user?.photo
-            ? <img src={user.photo} alt="" style={{ width:52, height:52, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(219,59,61,0.3)' }} />
-            : <div style={{ width:52, height:52, borderRadius:'50%', background:'rgba(219,59,61,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:22 }}>👤</div>
-          }
-          <div>
-            <div style={{ fontSize:16, fontWeight:700, color:'var(--text-primary)', marginBottom:2 }}>{user?.name || 'Athlete'}</div>
-            <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>
-              {user?.strava ? '🟠 Connecté via Strava' : user?.email || 'PacePro'}
+        {/* Hero user card */}
+        <div style={{ position:'relative', marginBottom:24, borderRadius:20, overflow:'hidden' }}>
+          <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(99,102,241,0.08))', borderRadius:20 }}/>
+          <div style={{ position:'relative', padding:'20px 18px', display:'flex', alignItems:'center', gap:16 }}>
+            <div style={{ position:'relative', flexShrink:0 }}>
+              {user?.photo
+                ? <img src={user.photo} alt="" style={{ width:64, height:64, borderRadius:'50%', objectFit:'cover', border:'3px solid rgba(255,0,64,0.3)' }} />
+                : <div style={{ width:64, height:64, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>👤</div>
+              }
+              {user?.strava && <div style={{ position:'absolute', bottom:0, right:0, width:20, height:20, borderRadius:'50%', background:'#f59e0b', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, border:'2px solid var(--bg-modal)' }}>S</div>}
+            </div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', color:'var(--text-primary)', marginBottom:4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{user?.name || 'Athlete'}</div>
+              <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>
+                {user?.strava ? 'Connecté via Strava' : user?.email || 'PacePro'}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Menu items */}
-        <div style={{ display:'flex', flexDirection:'column', gap:2, marginBottom:16 }}>
-          {[
-            ['🏃', 'Module Running', null],
-            ['💪', 'Module Muscu', null],
-            ['📊', 'Historique', null],
-            ['🟠', 'Strava', null],
-          ].map(([icon, label]) => (
-            <div key={label} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:12, cursor:'pointer', color:'var(--text-primary)' }}
-              onClick={onClose}>
-              <span style={{ fontSize:20, width:28 }}>{icon}</span>
-              <span style={{ fontSize:14, fontWeight:600, flex:1 }}>{label}</span>
-              <span style={{ color:'var(--text-muted)', fontSize:16 }}>›</span>
-            </div>
+        {/* Navigation rapide */}
+        <div style={{ fontSize:10, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.12em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Navigation</div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:24 }}>
+          {stats.map(({ label, icon, tab, color }) => (
+            <button key={tab} onClick={() => { onNavigate(tab); onClose(); }} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:16, background:'var(--bg-input)', border:`1px solid var(--border)`, cursor:'pointer', fontFamily:'Syne, sans-serif', transition:'all 0.15s', textAlign:'left' }}>
+              <div style={{ width:36, height:36, borderRadius:10, background:`${color}15`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <Icon name={icon} size={18} color={color} />
+              </div>
+              <span style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>{label}</span>
+            </button>
           ))}
         </div>
 
-        <div style={{ height:1, background:'var(--border)', marginBottom:16 }} />
-
         {/* Logout */}
-        <button onClick={onLogout} style={{ width:'100%', background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:12, padding:'14px', fontSize:14, fontWeight:700, color:'rgba(239,68,68,0.9)', cursor:'pointer', fontFamily:'Syne, sans-serif' }}>
+        <button onClick={onLogout} style={{ width:'100%', background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:16, padding:'16px', fontSize:14, fontWeight:700, color:'rgba(239,68,68,0.8)', cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'0.01em' }}>
           Se déconnecter
         </button>
       </div>
@@ -1226,7 +1232,7 @@ export default function PacePro() {
       <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
-        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
+        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <div className='app-content tab-enter' style={{paddingBottom:80}}><HistoriqueModule/></div>
         <BottomNav/>
       </div>
@@ -1236,7 +1242,7 @@ export default function PacePro() {
     <div className='app-shell'>
       <ThemeStyles/>
       <ProfileBtn/>
-      {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
+      {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
       <div className='app-content tab-enter'><BilanModule onBack={() => setTab('home')} /></div>
     </div>
   );
@@ -1245,7 +1251,7 @@ export default function PacePro() {
       <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
-        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
+        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
       </div>
@@ -1256,7 +1262,7 @@ export default function PacePro() {
       <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
-        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
+        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <div className='app-content tab-enter' style={{paddingBottom:80}}><StravaModule/></div>
         <BottomNav/>
       </div>
@@ -1267,7 +1273,7 @@ export default function PacePro() {
       <div className='app-shell'>
         <ThemeStyles/>
         <ProfileBtn/>
-        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
+        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <div className='app-content tab-enter' style={{paddingBottom:80}}><Muscu/></div>
         <BottomNav/>
       </div>
