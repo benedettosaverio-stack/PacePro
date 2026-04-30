@@ -271,12 +271,31 @@ Fais un bilan physique court et percutant (5-6 lignes max), puis donne 3 recomma
           <div style={{ textAlign: 'center', padding: '16px 0', color: 'var(--text-muted)', fontSize: 13 }}>Analyse en cours…</div>
         )}
         {aiText && (
-          <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
-            {aiText}
+          <div>
+            {aiText.split('\n').map((line, i) => {
+              const trimmed = line.trim();
+              if (!trimmed) return null;
+              const isReco = /^[1-9][\.\)\-]/.test(trimmed);
+              const isTitle = /^(Bilan|Recommandation|Points?\s|État|Analyse)/i.test(trimmed) && trimmed.endsWith(':');
+              if (isTitle) return (
+                <div key={i} style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginTop: 16, marginBottom: 8 }}>{trimmed.replace(/:$/, '')}</div>
+              );
+              if (isReco) return (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+                  <div style={{ minWidth: 22, height: 22, borderRadius: 6, background: 'rgba(219,59,61,0.15)', color: '#DB3B3D', fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Mono, monospace', flexShrink: 0, marginTop: 1 }}>
+                    {trimmed[0]}
+                  </div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)' }}>{trimmed.replace(/^[1-9][\.\)\-]\s*/, '')}</div>
+                </div>
+              );
+              return (
+                <div key={i} style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)', marginBottom: 6 }}>{trimmed}</div>
+              );
+            })}
             <button onClick={getAIBilan} style={{
-              marginTop: 14, background: 'none', border: '1px solid var(--border)',
-              borderRadius: 8, padding: '6px 12px', fontSize: 11, color: 'var(--text-muted)',
-              cursor: 'pointer', fontFamily: 'Syne, sans-serif',
+              marginTop: 16, background: 'none', border: '1px solid var(--border)',
+              borderRadius: 8, padding: '7px 14px', fontSize: 11, color: 'var(--text-muted)',
+              cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', gap: 6,
             }}>↻ Régénérer</button>
           </div>
         )}
