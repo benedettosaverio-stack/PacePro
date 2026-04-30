@@ -192,7 +192,7 @@ export function Icon({ name, size = 24, color = 'currentColor', style = {} }) {
   const fn = icons[name];
   if (!fn) return null;
   return (
-    <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', ...style }}>
+    <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', overflow:'hidden', flexShrink:0, ...style }}>
       {fn(size, color)}
     </span>
   );
