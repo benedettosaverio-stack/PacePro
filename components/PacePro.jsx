@@ -43,6 +43,7 @@ async function loadPlans() {
 }
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Muscu from './MusculationModule';
 import StravaModule from './StravaModule';
 import HomeModule from './HomeModule';
@@ -377,9 +378,10 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
   const effortColors = ['','#22c55e','#22c55e','#22c55e','#4ade80','#f59e0b','#f59e0b','#f59e0b','#FF0040','#FF0040','#FF0040'];
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
 
-  return (
-    <div style={{position:'fixed',inset:0,zIndex:1000,display:'flex',flexDirection:'column',justifyContent:'flex-end'}} onClick={onClose}>
-      <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.5)',backdropFilter:'blur(4px)'}}/>
+  if (typeof document === 'undefined') return null;
+  return createPortal(
+    <div style={{position:'fixed',inset:0,zIndex:9999,display:'flex',flexDirection:'column',justifyContent:'flex-end'}} onClick={onClose}>
+      <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.5)',backdropFilter:'blur(6px)'}}/>
       <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{position:'relative',width:'100%',background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 18px 48px',maxHeight:'82vh',overflowY:'auto',zIndex:1}}>
         <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
 
@@ -468,7 +470,7 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
         )}
       </div>
     </div>
-  );
+  , document.body);
 }
 
 function SessionCard({ session, onComplete, onDetail }) {
