@@ -1,49 +1,4 @@
 'use client';
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-async function supaFetch(path, options = {}) {
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
-      ...options,
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation',
-        ...options.headers,
-      },
-    });
-    const text = await res.text();
-    return text ? JSON.parse(text) : null;
-  } catch(e) { return null; }
-}
-
-async function syncPlansToSupabase(plans) {
-  const userId = localStorage.getItem('pp_user_id');
-  if (!userId || !plans.length) return;
-  try {
-    // Supprime les anciens plans
-    await supaFetch('plans?user_id=eq.' + userId, { method: 'DELETE' });
-    // Insère les nouveaux
-    await supaFetch('plans', {
-      method: 'POST',
-      body: JSON.stringify(plans.map(p => ({ user_id: userId, plan_data: p, plan_name: p.goal || 'Plan' }))),
-    });
-  } catch(e) {}
-}
-
-async function loadPlansFromSupabase() {
-  const userId = localStorage.getItem('pp_user_id');
-  if (!userId) return null;
-  try {
-    const data = await supaFetch('plans?user_id=eq.' + userId + '&order=created_at.asc');
-    if (data && data.length > 0) return data.map(d => d.plan_data);
-    return null;
-  } catch(e) { return null; }
-}
-
 import { useState, useEffect } from 'react';
 import Muscu from './MusculationModule';
 import StravaModule from './StravaModule';
@@ -487,12 +442,12 @@ function Onboarding({ onComplete }) {
   );
 }
 
-function Dashboard({ profile, plan:initialPlan, initialCompleted={}, initialFeedbacks={}, onReset }) {
+function Dashboard({ profile, plan:initialPlan, onReset }) {
   const [plan, setPlan] = useState(initialPlan);
   const [activeWeek, setActiveWeek] = useState(0);
   const [activeTab, setActiveTab] = useState('plan');
-  const [completed, setCompleted] = useState(initialCompleted);
-  const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
+  const [completed, setCompleted] = useState({});
+  const [feedbacks, setFeedbacks] = useState({});
   const [feedbackSession, setFeedbackSession] = useState(null);
   const paces = calcPaces(profile.vma);
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
@@ -501,33 +456,22 @@ function Dashboard({ profile, plan:initialPlan, initialCompleted={}, initialFeed
   const week = plan[activeWeek];
   const nextSession = plan.flatMap(w=>w.sessions.map(s=>({...s,week:w.week}))).find(s=>!completed[s.id]);
   const handleComplete = (id, undo = false) => {
-  const handleComplete = (id, undo = false) => {
     if (undo) {
-      const newCompleted = {...completed, [id]: false};
-      const newFeedbacks = {...feedbacks}; delete newFeedbacks[id];
-      setCompleted(newCompleted);
-      setFeedbacks(newFeedbacks);
-      const newPlan = applyFeedback(initialPlan, id, {effort: 5});
-      setPlan(newPlan);
-      const updatedPlans = plans.map((p,i) => i===activePlan ? {...p, plan:newPlan, completed:newCompleted, feedbacks:newFeedbacks} : p);
-      savePlans(updatedPlans);
+      // Annulation : retire la complétion et le feedback
+      setCompleted(c => ({...c, [id]: false}));
+      setFeedbacks(f => { const next = {...f}; delete next[id]; return next; });
+      // Revert plan adjustment if it was applied for this session
+      setPlan(applyFeedback(initialPlan, id, {effort: 5})); // reset to neutral
     } else if (!completed[id]) {
-      const newCompleted = {...completed, [id]: true};
-      setCompleted(newCompleted);
-  const handleFeedback = (fb) => {
-    const newFeedbacks = {...feedbacks, [feedbackSession.id]: fb};
-    const newPlan = applyFeedback(plan, feedbackSession.id, fb);
-    setFeedbacks(newFeedbacks);
-    setPlan(newPlan);
-    setFeedbackSession(null);
-    const updatedPlans = plans.map((p,i) => i===activePlan ? {...p, plan:newPlan, feedbacks:newFeedbacks} : p);
-    savePlans(updatedPlans);
+      const s = plan.flatMap(w => w.sessions).find(s => s.id === id);
+      setFeedbackSession(s);
+      setCompleted(c => ({...c, [id]: true}));
+    }
   };
-    setPlan(newPlan);
+  const handleFeedback = (fb) => {
+    setFeedbacks(f=>({...f,[feedbackSession.id]:fb}));
+    setPlan(applyFeedback(plan, feedbackSession.id, fb));
     setFeedbackSession(null);
-    // Sauvegarde le plan mis a jour avec feedbacks
-    const updatedPlans = plans.map(p => p.id === newPlan.id ? {...newPlan, feedbacks: newFeedbacks} : p);
-    savePlans(updatedPlans);
   };
   const tabBtn = (v,l) => (
     <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
@@ -687,19 +631,8 @@ export default function PacePro() {
   const [view, setView] = useState('list');
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
-  useEffect(()=>{
-    const init = async () => {
-      const cloudPlans = await loadPlansFromSupabase();
-      if (cloudPlans && cloudPlans.length > 0) {
-        setPlans(cloudPlans);
-        try { localStorage.setItem('pp_plans', JSON.stringify(cloudPlans)); } catch {}
-      } else {
-        try { const s = localStorage.getItem('pp_plans'); if(s) setPlans(JSON.parse(s)); } catch {}
-      }
-    };
-    init();
-  },[]);
-  const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} syncPlansToSupabase(p); };
+  useEffect(()=>{ try { const s=localStorage.getItem('pp_plans'); if(s) setPlans(JSON.parse(s)); } catch{} },[]);
+  const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} };
   const handleOnboarding = (profile) => {
     const plan = generatePlan(profile);
     const newPlans = [...plans,{profile,plan}];
@@ -770,7 +703,7 @@ export default function PacePro() {
         <ThemeStyles/>
         <div style={{paddingBottom:60}}>
           <button onClick={()=>setView('list')} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
-          <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} initialCompleted={plans[activePlan].completed||{}} initialFeedbacks={plans[activePlan].feedbacks||{}} onReset={()=>setView('onboarding')}/>
+          <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} onReset={()=>setView('onboarding')}/>
         </div>
         <BottomNav/>
       </>
