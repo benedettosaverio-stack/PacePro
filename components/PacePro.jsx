@@ -681,7 +681,18 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
 export default function PacePro() {
   const [tab, setTab] = useState('home');
   const [user, setUser] = useState(() => {
-    try { const u = localStorage.getItem('pp_user'); return u ? JSON.parse(u) : null; } catch { return null; }
+    try {
+      // Vérifie d'abord pp_user (email auth)
+      const u = localStorage.getItem('pp_user');
+      if (u) return JSON.parse(u);
+      // Sinon vérifie Strava
+      const a = localStorage.getItem('strava_athlete');
+      if (a) {
+        const athlete = JSON.parse(a);
+        if (athlete?.id) return { id: athlete.id, name: athlete.name, photo: athlete.photo, strava: true };
+      }
+      return null;
+    } catch { return null; }
   });
 
   const handleAuth = (u) => setUser(u);
