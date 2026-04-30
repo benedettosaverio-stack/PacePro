@@ -846,7 +846,10 @@ export default function PacePro() {
         if (athlete?.id) {
           // Assure que pp_user_id est défini pour la sync Supabase
           if (!localStorage.getItem('pp_user_id')) {
-            localStorage.setItem('pp_user_id', String(athlete.id));
+            // Map Strava ID -> Supabase UUID
+            const stravaToSupabase = { '72640323': 'a4ca6b86-652c-4cf4-8dcc-243412260f9c' };
+            const uuid = stravaToSupabase[String(athlete.id)];
+            if (uuid) localStorage.setItem('pp_user_id', uuid);
           }
           return { id: athlete.id, name: athlete.name, photo: athlete.photo, strava: true };
         }
