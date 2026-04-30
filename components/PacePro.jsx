@@ -326,12 +326,12 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
   // Explication pédagogique
   const getWhy = (s) => {
     const why = {
-      frac: { title:'Pourquoi ce fractionné ?', text:'Le fractionné développe ta VMA et ta capacité à maintenir des efforts intenses. Chaque répétition sollicite ton système cardio-vasculaire à haute intensité, forçant ton corps à s'adapter. Résultat : tu cours plus vite avec moins d'effort.', benefit:'↑ VMA · ↑ Économie de course · ↑ Capacité anaérobie' },
-      ef: { title:'Pourquoi cette sortie en EF ?', text:'L'endurance fondamentale développe ton moteur aérobie de base. À allure conversation, tu optimises l'utilisation des graisses comme carburant et améliores ta récupération. C'est la fondation de tout programme sérieux.', benefit:'↑ Base aérobie · ↑ Récupération · ↑ Économie lipidique' },
+      frac: { title:'Pourquoi ce fractionné ?', text:'Le fractionné développe ta VMA et ta capacité à maintenir des efforts intenses. Chaque répétition sollicite ton système cardio-vasculaire à haute intensité, forçant ton corps à s\'adapter. Résultat : tu cours plus vite avec moins d\'effort.', benefit:'↑ VMA · ↑ Économie de course · ↑ Capacité anaérobie' },
+      ef: { title:'Pourquoi cette sortie en EF ?', text:'L\'endurance fondamentale développe ton moteur aérobie de base. À allure conversation, tu optimises l\'utilisation des graisses comme carburant et améliores ta récupération. C\'est la fondation de tout programme sérieux.', benefit:'↑ Base aérobie · ↑ Récupération · ↑ Économie lipidique' },
       long: { title:'Pourquoi cette sortie longue ?', text:'La sortie longue adapte ton corps aux efforts prolongés : renforcement des tendons, amélioration du stockage glycogène, adaptation mentale à la durée. Elle simule les exigences de ta course cible.', benefit:'↑ Endurance · ↑ Résistance mentale · ↑ Stockage glycogène' },
-      trail: { title:'Pourquoi ce trail dénivelé ?', text:'Le travail en dénivelé renforce les muscles stabilisateurs et améliore la technique en montée/descente. La marche active en côte préserve l'énergie tout en maintenant une haute intensité cardiaque.', benefit:'↑ Force musculaire · ↑ Technique trail · ↑ Économie en montée' },
-      key: { title:'Répétition générale ⭐', text:'Cette séance simule les conditions du jour J. Même équipement, même terrain si possible. L'objectif est de valider ta stratégie de course et de gagner en confiance.', benefit:'↑ Confiance · ✓ Stratégie validée · ↑ Préparation mentale' },
-      taper: { title:'Pourquoi cette séance légère ?', text:'En phase d'affûtage, l'objectif est de maintenir la vivacité sans accumuler de fatigue. Ton corps absorbe les adaptations des semaines précédentes. Moins c'est plus.', benefit:'↓ Fatigue · ↑ Fraîcheur · ✓ Arriver reposé' },
+      trail: { title:'Pourquoi ce trail dénivelé ?', text:'Le travail en dénivelé renforce les muscles stabilisateurs et améliore la technique en montée/descente. La marche active en côte préserve l\'énergie tout en maintenant une haute intensité cardiaque.', benefit:'↑ Force musculaire · ↑ Technique trail · ↑ Économie en montée' },
+      key: { title:'Répétition générale ⭐', text:'Cette séance simule les conditions du jour J. Même équipement, même terrain si possible. L\'objectif est de valider ta stratégie de course et de gagner en confiance.', benefit:'↑ Confiance · ✓ Stratégie validée · ↑ Préparation mentale' },
+      taper: { title:'Pourquoi cette séance légère ?', text:'En phase d\'affûtage, l\'objectif est de maintenir la vivacité sans accumuler de fatigue. Ton corps absorbe les adaptations des semaines précédentes. Moins c\'est plus.', benefit:'↓ Fatigue · ↑ Fraîcheur · ✓ Arriver reposé' },
     };
     return why[s.type] || why.ef;
   };
@@ -771,7 +771,6 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   const [completed, setCompleted] = useState(initialCompleted);
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
   const [feedbackSession, setFeedbackSession] = useState(null);
-  const [detailSession, setDetailSession] = useState(null);
   const [detailSession, setDetailSession] = useState(null);
   const paces = calcPaces(profile.vma);
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
