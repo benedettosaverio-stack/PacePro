@@ -365,13 +365,16 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
           <div style={{marginBottom:20}}>
             <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Structure de la séance</div>
             <div style={{display:'flex',gap:3,alignItems:'flex-end',height:64,marginBottom:8}}>
-              {blocs.map((b,i)=>(
-                <div key={i} style={{flex:b.min,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',gap:4}}>
-                  <div style={{width:'100%',borderRadius:'4px 4px 0 0',background:b.color,opacity:b.type==='recov'?0.5:0.9,
-                    height:`${Math.max((b.min/maxMin)*52,8)}px`,transition:'height 0.5s'}}/>
-                  {b.min>=2 && <span style={{fontSize:7,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{b.label}</span>}
-                </div>
-              ))}
+              {blocs.map((b,i)=>{
+                const heightPct = b.type==='effort' ? 1 : b.type==='warmup'||b.type==='cooldown' ? 0.35 : 0.2;
+                return (
+                  <div key={i} style={{flex:b.min,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',gap:4}}>
+                    <div style={{width:'100%',borderRadius:'4px 4px 0 0',background:b.color,opacity:b.type==='recov'?0.5:0.9,
+                      height:`${Math.max(heightPct*56,6)}px`,transition:'height 0.5s'}}/>
+                    {b.min>=2 && <span style={{fontSize:7,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{b.label}</span>}
+                  </div>
+                );
+              })}
             </div>
             <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
               {[['#22c55e','Échauffement / RC'],['#FF0040','Effort'],['#60a5fa','Récupération']].map(([color,label])=>(
