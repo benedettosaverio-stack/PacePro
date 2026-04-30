@@ -204,6 +204,8 @@ Fais un bilan physique court et percutant (5-6 lignes max), puis donne 3 recomma
     </div>
   );
 
+  if (!stats) return null;
+
   return (
     <div style={{ padding: '24px 16px 100px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', minHeight: '100vh', background: 'var(--bg-primary)' }}>
       <div style={headerStyle}>
