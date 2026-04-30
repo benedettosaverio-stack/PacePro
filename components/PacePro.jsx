@@ -379,11 +379,11 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} className='modal-enter' style={{width:'100%',maxWidth:520,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 40px',maxHeight:'88vh',overflowY:'auto'}}>
+      <div onClick={e=>e.stopPropagation()} className='modal-enter' style={{width:'100%',maxWidth:520,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 16px 32px'}}>
         <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
 
         {/* Header */}
-        <div style={{marginBottom:20,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
+        <div style={{marginBottom:12,paddingBottom:12,borderBottom:'1px solid var(--border)'}}>
           <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6}}>{session.day} · {session.tag}</div>
           <div style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',color:'var(--text-primary)',marginBottom:10}}>{session.title}</div>
           <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
@@ -395,8 +395,8 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 
         {/* Visualisation blocs fractionné */}
         {blocs && (
-          <div style={{marginBottom:20}}>
-            <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Structure de la séance</div>
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:8}}>Structure de la séance</div>
             <div style={{display:'flex',gap:3,alignItems:'flex-end',height:64,marginBottom:8}}>
               {blocs.map((b,i)=>{
                 const heightPct = b.type==='effort' ? 1 : b.type==='warmup'||b.type==='cooldown' ? 0.35 : 0.2;
@@ -421,11 +421,11 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
         )}
 
         {/* Allures */}
-        <div style={{marginBottom:20}}>
-          <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:10}}>Allures cibles</div>
+        <div style={{marginBottom:10}}>
+          <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:8}}>Allures cibles</div>
           <div style={{display:'flex',flexDirection:'column',gap:6}}>
             {session.allures.map((a,i)=>(
-              <div key={i} style={{display:'flex',alignItems:'center',gap:10,background:'var(--bg-input)',borderRadius:12,padding:'10px 14px'}}>
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,background:'var(--bg-input)',borderRadius:10,padding:'8px 12px'}}>
                 <span style={{width:10,height:10,borderRadius:'50%',background:a.dot,flexShrink:0}}/>
                 <span style={{fontSize:12,color:'var(--text-secondary)',flex:1}}>{a.label}</span>
                 <span style={{fontSize:14,fontFamily:'DM Mono, monospace',fontWeight:800,color:'var(--text-primary)'}}>{a.val}</span>
@@ -435,15 +435,15 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
         </div>
 
         {/* Pourquoi */}
-        <div style={{background:'rgba(255,0,64,0.04)',border:'1px solid rgba(255,0,64,0.12)',borderRadius:16,padding:'16px',marginBottom:20}}>
+        <div style={{background:'rgba(255,0,64,0.04)',border:'1px solid rgba(255,0,64,0.12)',borderRadius:14,padding:'12px',marginBottom:10}}>
           <div style={{fontSize:12,fontWeight:800,color:'#FF0040',marginBottom:8}}>{why.title}</div>
-          <div style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.7,marginBottom:10}}>{why.text}</div>
+          <div style={{fontSize:11,color:'var(--text-secondary)',lineHeight:1.6,marginBottom:8}}>{why.text}</div>
           <div style={{fontSize:10,fontFamily:'DM Mono, monospace',color:'var(--text-muted)',background:'var(--bg-input)',borderRadius:8,padding:'6px 10px'}}>{why.benefit}</div>
         </div>
 
         {/* Feedback si dispo */}
         {feedback && (
-          <div style={{background:'var(--bg-input)',borderRadius:16,padding:'16px'}}>
+          <div style={{background:'var(--bg-input)',borderRadius:14,padding:'12px'}}>
             <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Ton feedback</div>
             <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
               <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
