@@ -546,57 +546,82 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   return (
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
-      <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderBottom:'1px solid var(--border-nav)',padding:'0 20px',height:56,paddingBottom:'env(safe-area-inset-bottom)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <img src="/logo.png" alt="PacePro" style={{width:32,height:32,objectFit:'contain'}}/>
-          <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
+      {/* Hero Header */}
+      <div style={{background:'linear-gradient(180deg,rgba(255,0,64,0.08) 0%,transparent 100%)',borderBottom:'1px solid var(--border-nav)',padding:'16px 20px 20px',position:'sticky',top:0,zIndex:50,backdropFilter:'blur(20px)',background:'var(--bg-nav)'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:0}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <img src="/logo.png" alt="PacePro" style={{width:28,height:28,objectFit:'contain'}}/>
+            <span style={{fontWeight:800,fontSize:15,letterSpacing:'-0.02em'}}>PacePro</span>
+          </div>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <span style={{fontSize:12,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{profile.name}</span>
+            <button onClick={onReset} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:8,padding:'5px 12px',color:'var(--btn-ghost-color)',fontSize:11,cursor:'pointer',fontFamily:'inherit',fontWeight:600}}>+ Nouveau</button>
+          </div>
         </div>
-        <div style={{display:'flex',gap:8,alignItems:'center'}}>
-          <span style={{fontSize:13,color:'var(--text-secondary)'}}>{profile.name}</span>
-          <button onClick={onReset} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:8,padding:'4px 10px',color:'var(--btn-ghost-color)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>Nouveau plan</button>
-        </div>
-      </nav>
-      <main style={{maxWidth:1000,margin:'0 auto',padding:'28px 20px 60px'}}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:12,marginBottom:20}}>
-          <div style={{...card,gridColumn:'span 2'}}>
-            <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:10}}>Progression</div>
-            <div style={{fontSize:15,fontWeight:700,marginBottom:8,color:'var(--text-primary)'}}>{profile.raceName} · {profile.raceDistanceKm} km{profile.elevationM>0?` D+${profile.elevationM}m`:''}</div>
-            <div style={{height:3,background:'var(--progress-track)',borderRadius:99}}>
-              <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.6s'}}/>
+      </div>
+      <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
+        {/* Hero card */}
+        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',marginBottom:14,position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,#FF0040,#fbbf24)`,borderRadius:'20px 20px 0 0'}}/>
+          <div style={{position:'absolute',top:0,right:0,width:120,height:120,background:'radial-gradient(circle,rgba(255,0,64,0.06) 0%,transparent 70%)',pointerEvents:'none'}}/>
+          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6}}>Objectif</div>
+          <div style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4,color:'var(--text-primary)'}}>{profile.raceName||'Mon programme'}</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:14}}>
+            <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'monospace',fontWeight:700}}>{profile.raceDistanceKm} km</span>
+            {profile.elevationM>0 && <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'monospace',fontWeight:700}}>D+{profile.elevationM}m</span>}
+            {profile.raceDate && <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{new Date(profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>}
+          </div>
+          <div style={{marginBottom:8}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+              <span style={{fontSize:10,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.08em'}}>Progression globale</span>
+              <span style={{fontSize:12,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{doneCount}/{totalSessions} · {progress}%</span>
             </div>
-            <div style={{display:'flex',justifyContent:'space-between',marginTop:6,fontSize:11,color:'var(--text-muted)',fontFamily:'monospace'}}>
-              <span>{doneCount}/{totalSessions} séances</span><span>{progress}%</span>
+            <div style={{height:6,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
+              <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.8s cubic-bezier(0.22,1,0.36,1)'}}/>
             </div>
           </div>
-          <div style={card}>
-            <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>VMA</div>
-            <div style={{fontSize:28,fontWeight:800,color:'#FF0040',fontFamily:'monospace'}}>{profile.vma.toFixed(1)}</div>
-            <div style={{fontSize:11,color:'var(--text-muted)'}}>km/h</div>
-          </div>
-          <div style={card}>
-            <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>Séances/sem.</div>
-            <div style={{fontSize:20,fontWeight:800,fontFamily:'monospace'}}>{profile.sessionsPerWeek}×</div>
-            <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2,lineHeight:1.4}}>{profile.trainingDays.join(', ')}</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginTop:16}}>
+            {[
+              {label:'VMA',value:`${profile.vma.toFixed(1)}`,unit:'km/h',color:'#FF0040'},
+              {label:'Séances/sem',value:`${profile.sessionsPerWeek}×`,unit:profile.trainingDays.slice(0,2).join(', '),color:'var(--text-primary)'},
+              {label:'Programme',value:`${profile.weeks}`,unit:'semaines',color:'#f59e0b'},
+            ].map(({label,value,unit,color})=>(
+              <div key={label} style={{background:'var(--bg-input)',borderRadius:12,padding:'10px 12px',textAlign:'center'}}>
+                <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>{label}</div>
+                <div style={{fontSize:20,fontWeight:800,color,fontFamily:'DM Mono, monospace',lineHeight:1}}>{value}</div>
+                <div style={{fontSize:9,color:'var(--text-muted)',marginTop:3}}>{unit}</div>
+              </div>
+            ))}
           </div>
         </div>
-        <div style={{...card,marginBottom:20}}>
-          <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:12}}>Tes allures personnalisées</div>
-          <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'var(--text-muted)']].map(([l,v,c])=>(
-              <AllureChip key={l} dot={c} label={l} val={v+' /km'}/>
+        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px',marginBottom:14}}>
+          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:12}}>Tes allures personnalisées</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:6}}>
+            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'var(--text-muted)']].map(([l,v,col])=>(
+              <div key={l} style={{background:'var(--bg-input)',borderRadius:10,padding:'8px 10px',display:'flex',alignItems:'center',gap:8}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:col,flexShrink:0}}/>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.08em'}}>{l}</div>
+                  <div style={{fontSize:12,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{v}/km</div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
         {nextSession && (
-          <div style={{background:'var(--next-session-bg)',border:'1px solid var(--next-session-border)',borderRadius:14,padding:'14px 18px',marginBottom:20}}>
-            <div style={{fontSize:10,color:'#FF0040',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'monospace',marginBottom:4}}>Prochaine séance — Semaine {nextSession.week} · {nextSession.day}</div>
-            <div style={{fontSize:15,fontWeight:700,color:'var(--text-primary)'}}>{nextSession.title}</div>
-            <div style={{fontSize:12,color:'var(--text-secondary)',marginTop:2}}>{nextSession.detail}</div>
+          <div style={{background:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(255,0,64,0.03))',border:'1px solid rgba(255,0,64,0.2)',borderRadius:16,padding:'16px 18px',marginBottom:14,display:'flex',gap:14,alignItems:'center'}}>
+            <div style={{width:44,height:44,borderRadius:14,background:'rgba(255,0,64,0.15)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:22}}>⚡</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:9,color:'#FF0040',textTransform:'uppercase',letterSpacing:'0.15em',fontFamily:'DM Mono, monospace',marginBottom:4}}>Prochaine · S{nextSession.week} · {nextSession.day}</div>
+              <div style={{fontSize:16,fontWeight:800,letterSpacing:'-0.02em',color:'var(--text-primary)',marginBottom:2}}>{nextSession.title}</div>
+              <div style={{fontSize:11,color:'var(--text-secondary)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{nextSession.detail}</div>
+            </div>
           </div>
         )}
-        <div style={{display:'flex',gap:8,marginBottom:20}}>
-          {tabBtn('plan','📋 Programme')}
-          {tabBtn('kpi','📊 KPI')}
+        <div style={{display:'flex',gap:0,marginBottom:16,background:'var(--bg-input)',borderRadius:14,padding:4}}>
+          {[['plan','Programme'],['kpi','KPI']].map(([v,l])=>(
+            <button key={v} onClick={()=>setActiveTab(v)} style={{flex:1,borderRadius:10,padding:'9px 16px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'var(--bg-card)':'transparent',border:activeTab===v?'1px solid var(--border)':'1px solid transparent',color:activeTab===v?'var(--text-primary)':'var(--text-muted)',boxShadow:activeTab===v?'0 2px 8px rgba(0,0,0,0.15)':'none'}}>{l}</button>
+          ))}
         </div>
         {activeTab==='kpi' ? (
           <KpiCharts plan={plan} feedbacks={feedbacks} completed={completed}/>
