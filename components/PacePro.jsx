@@ -255,29 +255,42 @@ function AllureChip({ dot, label, val }) {
 function SessionCard({ session, onComplete }) {
   const IconComp = SessionIcons[session.type] || SessionIcons.ef;
   return (
-    <div style={{background:session.completed?'rgba(34,197,94,0.06)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.3)':'var(--session-border)'}`,borderRadius:16,padding:20,transition:'all 0.25s'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
+    <div style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',transition:'all 0.25s',position:'relative',overflow:'hidden'}}>
+      {session.completed && <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#22c55e',borderRadius:'20px 20px 0 0'}}/>}
+      {/* Header */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
         <div>
-          <div style={{fontSize:10,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:6,fontFamily:'monospace'}}>{session.day}</div>
-          <span style={{display:'inline-block',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',padding:'2px 9px',borderRadius:99,background:session.tagBg,color:session.tagColor,border:`1px solid ${session.tagColor}40`}}>{session.tag}</span>
+          <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6,fontFamily:'DM Mono, monospace'}}>{session.day}</div>
+          <span style={{display:'inline-flex',alignItems:'center',gap:4,fontSize:9,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 10px',borderRadius:99,background:session.tagBg,color:session.tagColor,border:`1px solid ${session.tagColor}30`}}>{session.tag}</span>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
-          <IconComp/>
-          {session.completed && <div style={{width:24,height:24,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:12}}>✓</div>}
+          {session.completed
+            ? <div style={{width:36,height:36,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:18}}>✓</div>
+            : <IconComp/>
+          }
         </div>
       </div>
-      <div style={{fontSize:18,fontWeight:700,letterSpacing:'-0.02em',marginBottom:6,color:'var(--text-primary)'}}>{session.title}</div>
-      <p style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.6,marginBottom:14}}>{session.detail}</p>
-      <div style={{display:'flex',flexDirection:'column',gap:5,marginBottom:16}}>
-        {session.allures.map((a,i) => <AllureChip key={i} {...a}/>)}
+      {/* Title */}
+      <div style={{fontSize:20,fontWeight:800,letterSpacing:'-0.03em',marginBottom:6,color:session.completed?'rgba(255,255,255,0.5)':'var(--text-primary)',textDecoration:session.completed?'line-through':'none'}}>{session.title}</div>
+      <p style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.65,marginBottom:14}}>{session.detail}</p>
+      {/* Allures */}
+      <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:16}}>
+        {session.allures.map((a,i) => (
+          <div key={i} style={{display:'flex',alignItems:'center',gap:8,background:'var(--bg-input)',borderRadius:10,padding:'7px 10px'}}>
+            <span style={{width:8,height:8,borderRadius:'50%',background:a.dot,flexShrink:0}}/>
+            <span style={{fontSize:11,color:'var(--text-muted)',flex:1}}>{a.label}</span>
+            <span style={{fontSize:12,fontFamily:'DM Mono, monospace',color:'var(--text-primary)',fontWeight:600}}>{a.val}</span>
+          </div>
+        ))}
       </div>
+      {/* Actions */}
       {!session.completed && onComplete && (
-        <button onClick={()=>onComplete(session.id)} style={{width:'100%',background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 16px',color:'var(--btn-ghost-color)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
-          Marquer comme terminé
+        <button onClick={()=>onComplete(session.id)} style={{width:'100%',background:'linear-gradient(135deg,rgba(255,0,64,0.12),rgba(255,0,64,0.06))',border:'1px solid rgba(255,0,64,0.25)',borderRadius:12,padding:'11px 16px',color:'#FF0040',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',letterSpacing:'0.02em'}}>
+          Marquer comme terminé ✓
         </button>
       )}
       {session.completed && onComplete && (
-        <button onClick={()=>onComplete(session.id, true)} style={{width:'100%',background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.18)',borderRadius:12,padding:'8px 16px',color:'rgba(239,68,68,0.7)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit',marginTop:8}}>
+        <button onClick={()=>onComplete(session.id, true)} style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid var(--border)',borderRadius:12,padding:'9px 16px',color:'var(--text-muted)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
           ↩ Annuler la validation
         </button>
       )}
@@ -647,34 +660,73 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
 function PlansList({ plans, onSelect, onNew, onDelete }) {
   return (
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
-      <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderBottom:'1px solid var(--border-nav)',padding:'0 20px',height:56,paddingBottom:'env(safe-area-inset-bottom)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+      <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderBottom:'1px solid var(--border-nav)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <img src="/logo.png" alt="PacePro" style={{width:32,height:32,objectFit:'contain'}}/>
-          <span style={{fontWeight:700,fontSize:16,letterSpacing:'-0.02em'}}>PacePro</span>
+          <img src="/logo.png" alt="PacePro" style={{width:30,height:30,objectFit:'contain'}}/>
+          <span style={{fontWeight:800,fontSize:16,letterSpacing:'-0.03em'}}>PacePro</span>
         </div>
-        <button onClick={onNew} style={{background:'#FF0040',color:'#000',border:'none',borderRadius:10,padding:'6px 14px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Nouveau plan</button>
+        <button onClick={onNew} style={{background:'#FF0040',color:'#fff',border:'none',borderRadius:12,padding:'8px 16px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',gap:6}}>
+          <span style={{fontSize:16,lineHeight:1}}>+</span> Nouveau plan
+        </button>
       </nav>
-      <main style={{maxWidth:700,margin:'0 auto',padding:'32px 20px'}}>
-        <h1 style={{fontSize:24,fontWeight:800,letterSpacing:'-0.03em',marginBottom:6,color:'var(--text-primary)'}}>Mes plans d'entraînement</h1>
-        <p style={{fontSize:13,color:'var(--text-secondary)',marginBottom:28}}>{plans.length} plan{plans.length>1?'s':''} sauvegardé{plans.length>1?'s':''}</p>
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          {plans.map((p,i) => (
-            <div key={i} style={{...card,cursor:'pointer',transition:'all 0.2s'}} onClick={()=>onSelect(i)}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:16,fontWeight:700,marginBottom:4,color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
-                  <div style={{fontSize:12,color:'var(--text-secondary)',lineHeight:1.6}}>{p.profile.raceDistanceKm} km{p.profile.elevationM>0?` · D+${p.profile.elevationM}m`:''} · {p.profile.weeks} semaines · {p.profile.sessionsPerWeek}×/sem.</div>
-                  <div style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',marginTop:4}}>VMA {p.profile.vma.toFixed(1)} km/h · {p.profile.type==='trail'?'🏔️ Trail':'🏙️ Route'}{p.profile.raceDate&&` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}`}</div>
-                  <div style={{fontSize:10,color:'var(--text-ultra-muted)',marginTop:4}}>{p.profile.trainingDays?.join(', ')}</div>
+      <main style={{maxWidth:680,margin:'0 auto',padding:'28px 16px 40px'}}>
+        <div style={{marginBottom:28}}>
+          <h1 style={{fontSize:28,fontWeight:800,letterSpacing:'-0.04em',marginBottom:4,color:'var(--text-primary)'}}>Mes programmes</h1>
+          <p style={{fontSize:12,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>{plans.length} plan{plans.length>1?'s':''} sauvegardé{plans.length>1?'s':''}</p>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          {plans.map((p,i) => {
+            const done = Object.values(p.completed||{}).filter(Boolean).length;
+            const total = p.plan?.reduce((a,w)=>a+w.sessions.length,0)||0;
+            const pct = total>0?Math.round((done/total)*100):0;
+            const currentPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
+            return (
+              <div key={i} onClick={()=>onSelect(i)} style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',cursor:'pointer',transition:'transform 0.15s, border-color 0.15s',position:'relative',overflow:'hidden'}}>
+                {/* Accent bar */}
+                <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:'20px 20px 0 0',opacity: pct>0?1:0.3}}/>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:18,fontWeight:800,letterSpacing:'-0.02em',marginBottom:6,color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
+                    <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'monospace'}}>{p.profile.raceDistanceKm} km</span>
+                      {p.profile.elevationM>0 && <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'monospace'}}>D+{p.profile.elevationM}m</span>}
+                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.weeks} sem.</span>
+                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.type==='trail'?'🏔️ Trail':'🏙️ Route'}</span>
+                    </div>
+                  </div>
+                  <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,0,64,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginLeft:12}}>
+                    <span style={{fontSize:18,fontWeight:900,color:'#FF0040'}}>›</span>
+                  </div>
                 </div>
-                <div style={{display:'flex',gap:8,alignItems:'center',marginLeft:12,flexShrink:0}}>
-                  <span style={{fontSize:18,fontWeight:800,color:'#FF0040'}}>→</span>
-                  <button onClick={e=>{e.stopPropagation();onDelete(i);}} style={{background:'rgba(239,68,68,0.1)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:8,padding:'4px 8px',color:'rgba(239,68,68,0.6)',fontSize:11,cursor:'pointer',fontFamily:'inherit'}}>Supprimer</button>
+                {/* Progress */}
+                <div style={{marginBottom:10}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+                    <span style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.08em'}}>Progression</span>
+                    <span style={{fontSize:10,color:'var(--text-primary)',fontFamily:'monospace',fontWeight:700}}>{done}/{total} séances · {pct}%</span>
+                  </div>
+                  <div style={{height:4,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
+                    <div style={{height:'100%',width:`${pct}%`,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:99,transition:'width 0.6s'}}/>
+                  </div>
+                </div>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace'}}>
+                    VMA {p.profile.vma.toFixed(1)} km/h · {p.profile.sessionsPerWeek}×/sem
+                    {p.profile.raceDate && ` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}`}
+                  </div>
+                  <button onClick={e=>{e.stopPropagation();onDelete(i);}} style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.15)',borderRadius:8,padding:'4px 10px',color:'rgba(239,68,68,0.6)',fontSize:10,cursor:'pointer',fontFamily:'inherit',fontWeight:600}}>Supprimer</button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+        {plans.length === 0 && (
+          <div style={{textAlign:'center',padding:'60px 20px',color:'var(--text-muted)'}}>
+            <div style={{fontSize:48,marginBottom:16}}>🏃</div>
+            <div style={{fontSize:16,fontWeight:700,marginBottom:8,color:'var(--text-secondary)'}}>Aucun programme</div>
+            <div style={{fontSize:13,marginBottom:24}}>Crée ton premier plan d'entraînement personnalisé</div>
+            <button onClick={onNew} style={{background:'#FF0040',color:'#fff',border:'none',borderRadius:12,padding:'12px 24px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Créer un programme</button>
+          </div>
+        )}
       </main>
     </div>
   );
