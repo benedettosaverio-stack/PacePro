@@ -1206,12 +1206,12 @@ export default function PacePro() {
 
   // Bottom nav
   const BottomNav = () => (
-    <div style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:60,paddingBottom:'env(safe-area-inset-bottom,0px)'}}>
+    <div style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:56,paddingBottom:'env(safe-area-inset-bottom,0px)'}}>
       {[['home','home','Accueil'],['running','running','Running'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['historique','history','Historique']].map(([t,icon,label])=>(
         <button key={t} onClick={()=>setTab(t)}
           className={tab===t ? 'nav-btn-active' : ''} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
-          <Icon name={icon} size={20} color={tab===t?'#FF0040':'var(--text-muted)'}/>
-          <span style={{fontSize:10,fontWeight:tab===t?700:400,letterSpacing:'0.05em'}}>{label}</span>
+          <Icon name={icon} size={22} color={tab===t?'#FF0040':'var(--text-muted)'}/>
+          <span style={{fontSize:9,fontWeight:tab===t?700:400,letterSpacing:'0.04em'}}>{label}</span>
         </button>
       ))}
     </div>
