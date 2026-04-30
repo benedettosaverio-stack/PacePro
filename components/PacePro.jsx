@@ -485,12 +485,12 @@ function Onboarding({ onComplete }) {
   );
 }
 
-function Dashboard({ profile, plan:initialPlan, onReset }) {
+function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialCompleted={}, initialFeedbacks={} }) {
   const [plan, setPlan] = useState(initialPlan);
   const [activeWeek, setActiveWeek] = useState(0);
   const [activeTab, setActiveTab] = useState('plan');
-  const [completed, setCompleted] = useState({});
-  const [feedbacks, setFeedbacks] = useState({});
+  const [completed, setCompleted] = useState(initialCompleted);
+  const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
   const [feedbackSession, setFeedbackSession] = useState(null);
   const paces = calcPaces(profile.vma);
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
@@ -500,21 +500,29 @@ function Dashboard({ profile, plan:initialPlan, onReset }) {
   const nextSession = plan.flatMap(w=>w.sessions.map(s=>({...s,week:w.week}))).find(s=>!completed[s.id]);
   const handleComplete = (id, undo = false) => {
     if (undo) {
-      // Annulation : retire la complétion et le feedback
-      setCompleted(c => ({...c, [id]: false}));
-      setFeedbacks(f => { const next = {...f}; delete next[id]; return next; });
-      // Revert plan adjustment if it was applied for this session
-      setPlan(applyFeedback(initialPlan, id, {effort: 5})); // reset to neutral
+      const newCompleted = {...completed, [id]: false};
+      const newFeedbacks = {...feedbacks};
+      delete newFeedbacks[id];
+      setCompleted(newCompleted);
+      setFeedbacks(newFeedbacks);
+      const newPlan = applyFeedback(initialPlan, id, {effort: 5});
+      setPlan(newPlan);
+      onSave && onSave(newPlan, newCompleted, newFeedbacks);
     } else if (!completed[id]) {
+      const newCompleted = {...completed, [id]: true};
+      setCompleted(newCompleted);
       const s = plan.flatMap(w => w.sessions).find(s => s.id === id);
       setFeedbackSession(s);
-      setCompleted(c => ({...c, [id]: true}));
+      onSave && onSave(plan, newCompleted, feedbacks);
     }
   };
   const handleFeedback = (fb) => {
-    setFeedbacks(f=>({...f,[feedbackSession.id]:fb}));
-    setPlan(applyFeedback(plan, feedbackSession.id, fb));
+    const newFeedbacks = {...feedbacks, [feedbackSession.id]: fb};
+    const newPlan = applyFeedback(plan, feedbackSession.id, fb);
+    setFeedbacks(newFeedbacks);
+    setPlan(newPlan);
     setFeedbackSession(null);
+    onSave && onSave(newPlan, completed, newFeedbacks);
   };
   const tabBtn = (v,l) => (
     <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
@@ -757,7 +765,7 @@ export default function PacePro() {
         <ThemeStyles/>
         <div style={{paddingBottom:60}}>
           <button onClick={()=>setView('list')} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
-          <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} onReset={()=>setView('onboarding')}/>
+          <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} initialCompleted={plans[activePlan].completed||{}} initialFeedbacks={plans[activePlan].feedbacks||{}} onReset={()=>setView('onboarding')} onSave={(newPlan, newCompleted, newFeedbacks) => { const updated = plans.map((p,i) => i===activePlan ? {...p, plan:newPlan, completed:newCompleted, feedbacks:newFeedbacks} : p); savePlans(updated); }}/>
         </div>
         <BottomNav/>
       </>
