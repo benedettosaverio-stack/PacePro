@@ -962,13 +962,38 @@ export default function PacePro() {
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
   useEffect(()=>{
+  const recalcWeeklyKm = (plans) => plans.map(p => ({
+    ...p,
+    plan: (p.plan||[]).map(week => {
+      const vma = p.profile?.vma || 12;
+      const weeklyKm = Math.round(week.sessions.reduce((a,s) => {
+        const mKm = s.title.match(/(\d+)\s*km/);
+        if (mKm) return a + +mKm[1];
+        const mFrac = s.title.match(/(\d+)\s*×\s*(\d+)\s*min/);
+        if (mFrac) {
+          const reps = +mFrac[1], effortMin = +mFrac[2];
+          const recovMin = parseFloat((s.title.match(/\/\s*(\d+(?:\.\d+)?)\s*min/)||[])[1]||effortMin);
+          const effortKm = (vma*0.92/60)*effortMin*reps;
+          const recovKm  = (vma*0.60/60)*recovMin*reps;
+          return a + effortKm + recovKm + (vma*0.65/60)*15 + (vma*0.60/60)*10;
+        }
+        const mMins = s.title.match(/(\d+)[–\-](\d+)\s*min/);
+        if (mMins) return a + (vma*0.65/60)*((+mMins[1]+(+mMins[2]))/2);
+        const mMin = s.title.match(/(\d+)\s*min/);
+        if (mMin) return a + (vma*0.65/60)*+mMin[1];
+        return a;
+      }, 0)*10)/10;
+      return { ...week, weeklyKm };
+    })
+  }));
   const init = async () => {
     const cloud = await loadPlans();
     if (cloud && cloud.length > 0) {
-      setPlans(cloud);
-      try { localStorage.setItem('pp_plans', JSON.stringify(cloud)); } catch {}
+      const recalculated = recalcWeeklyKm(cloud);
+      setPlans(recalculated);
+      try { localStorage.setItem('pp_plans', JSON.stringify(recalculated)); } catch {}
     } else {
-      try { const s = localStorage.getItem('pp_plans'); if(s) setPlans(JSON.parse(s)); } catch {}
+      try { const s = localStorage.getItem('pp_plans'); if(s) setPlans(recalcWeeklyKm(JSON.parse(s))); } catch {}
     }
   };
   init();
