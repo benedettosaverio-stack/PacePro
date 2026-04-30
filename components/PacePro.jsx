@@ -790,8 +790,7 @@ export default function PacePro() {
     <div style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:60,paddingBottom:'env(safe-area-inset-bottom,0px)'}}>
       {[['home','home','Accueil'],['running','running','Running'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['historique','history','Historique']].map(([t,icon,label])=>(
         <button key={t} onClick={()=>setTab(t)}
-          style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',
-            color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
+          className={tab===t ? 'nav-btn-active' : ''} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
           <Icon name={icon} size={20} color={tab===t?'#FF0040':'var(--text-muted)'}/>
           <span style={{fontSize:10,fontWeight:tab===t?700:400,letterSpacing:'0.05em'}}>{label}</span>
         </button>
@@ -815,7 +814,7 @@ export default function PacePro() {
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <div style={{paddingBottom:60}}><HistoriqueModule/></div>
+        <div key='historique' className='tab-enter' style={{paddingBottom:60}}><HistoriqueModule/></div>
         <BottomNav/>
       </>
     );
@@ -825,7 +824,7 @@ export default function PacePro() {
       <ThemeStyles/>
       <ProfileBtn/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-      <BilanModule onBack={() => setTab('home')} />
+      <div key='bilan' className='tab-enter'><BilanModule onBack={() => setTab('home')} /></div>
     </>
   );
   if (tab === 'home') {
@@ -834,7 +833,7 @@ export default function PacePro() {
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <HomeModule onNavigate={setTab}/>
+        <div key='home' className='tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
       </>
     );
@@ -845,7 +844,7 @@ export default function PacePro() {
         <ThemeStyles/>
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
-        <div style={{paddingBottom:60}}><StravaModule/></div>
+        <div key='strava' className='tab-enter' style={{paddingBottom:60}}><StravaModule/></div>
         <BottomNav/>
       </>
     );
@@ -857,7 +856,7 @@ export default function PacePro() {
         <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
         <div style={{paddingBottom:60}}>
-          <Muscu/>
+          <div key='muscu' className='tab-enter'><Muscu/></div>
         </div>
         <BottomNav/>
       </>
@@ -865,12 +864,12 @@ export default function PacePro() {
   }
 
   // Running tab
-  if (view==='onboarding') return <><ThemeStyles/><div style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
+  if (view==='onboarding') return <><ThemeStyles/><div key='onboarding' className='tab-enter' style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
       <>
         <ThemeStyles/>
-        <div style={{paddingBottom:60}}>
+        <div key='running' className='tab-enter' style={{paddingBottom:60}}>
           <button onClick={()=>setView('list')} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
           <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} initialCompleted={plans[activePlan].completed||{}} initialFeedbacks={plans[activePlan].feedbacks||{}} onReset={()=>setView('onboarding')} onSave={(newPlan, newCompleted, newFeedbacks) => { const updated = plans.map((p,i) => i===activePlan ? {...p, plan:newPlan, completed:newCompleted, feedbacks:newFeedbacks} : p); savePlans(updated); }}/>
         </div>
@@ -878,6 +877,6 @@ export default function PacePro() {
       </>
     );
   }
-  if (plans.length===0) return <><ThemeStyles/><div style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
+  if (plans.length===0) return <><ThemeStyles/><div key='onboarding' className='tab-enter' style={{paddingBottom:60}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></>;
   return <><ThemeStyles/><div style={{paddingBottom:60}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></>;
 }
