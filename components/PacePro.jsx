@@ -820,7 +820,14 @@ export default function PacePro() {
       </>
     );
   }
-  if (tab === 'bilan') return <BilanModule onBack={() => setTab('home')} />;
+  if (tab === 'bilan') return (
+    <>
+      <ThemeStyles/>
+      <ProfileBtn/>
+      {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} />}
+      <BilanModule onBack={() => setTab('home')} />
+    </>
+  );
   if (tab === 'home') {
     return (
       <>
