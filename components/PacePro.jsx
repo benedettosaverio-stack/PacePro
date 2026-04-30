@@ -305,42 +305,65 @@ function FeedbackModal({ session, onClose, onSubmit }) {
   const effortColors = ['','#22c55e','#22c55e','#22c55e','#4ade80','#f59e0b','#f59e0b','#f59e0b','#FF0040','#FF0040','#FF0040'];
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
-      <div style={{width:'100%',maxWidth:420,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:20,padding:'28px 24px'}}>
-        <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>Feedback séance</div>
-        <div style={{fontSize:16,fontWeight:700,marginBottom:20,color:'var(--text-primary)'}}>{session.title}</div>
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+      <div style={{width:'100%',maxWidth:480,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 36px',maxHeight:'90vh',overflowY:'auto'}}>
+        <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
+          <div style={{flex:1}}>
+            <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:4}}>Feedback séance</div>
+            <div style={{fontSize:18,fontWeight:800,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>{session.title}</div>
+          </div>
+          <button onClick={onClose} style={{width:32,height:32,borderRadius:10,background:'var(--btn-ghost-bg)',border:'1px solid var(--border)',cursor:'pointer',color:'var(--text-muted)',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+        </div>
         <div style={{marginBottom:20}}>
-          <label style={{...lbl,marginBottom:12}}>Effort ressenti</label>
-          <div style={{display:'flex',gap:4,marginBottom:8}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            <label style={{fontSize:11,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em'}}>Effort ressenti</label>
+            <span style={{fontSize:13,fontWeight:800,color:effortColors[effort],fontFamily:'DM Mono, monospace'}}>{effort}/10 — {effortLabels[effort]}</span>
+          </div>
+          <div style={{display:'flex',gap:3,marginBottom:8}}>
             {[1,2,3,4,5,6,7,8,9,10].map(n => (
-              <button key={n} onClick={()=>setEffort(n)} style={{flex:1,height:32,borderRadius:6,border:'none',cursor:'pointer',fontWeight:700,fontSize:11,fontFamily:'monospace',background:n<=effort?effortColors[effort]:'var(--btn-ghost-bg)',color:n<=effort?'#000':'var(--text-muted)',transition:'all 0.15s'}}>{n}</button>
+              <button key={n} onClick={()=>setEffort(n)} style={{flex:1,height:36,borderRadius:8,border:'none',cursor:'pointer',fontWeight:800,fontSize:11,fontFamily:'DM Mono, monospace',background:n<=effort?effortColors[effort]:'var(--bg-input)',color:n<=effort?'#000':'var(--text-muted)',transition:'all 0.15s',transform:n===effort?'scale(1.1)':'scale(1)'}}>{n}</button>
             ))}
           </div>
-          <div style={{fontSize:12,color:effortColors[effort],fontWeight:600,textAlign:'center'}}>{effortLabels[effort]}</div>
+          <div style={{height:3,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
+            <div style={{height:'100%',width:`${effort*10}%`,background:effortColors[effort],borderRadius:99,transition:'all 0.3s'}}/>
+          </div>
         </div>
         <div style={{marginBottom:20}}>
-          <label style={lbl}>Allure réelle (min:sec/km)</label>
-          <input style={inp()} placeholder="Ex: 5:30" value={realPace} onChange={e=>setRealPace(e.target.value)}/>
-          <div style={{fontSize:11,color:'var(--text-muted)',marginTop:4}}>Laisse vide si tu n'as pas chronométré</div>
+          <label style={{fontSize:11,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em',display:'block',marginBottom:8}}>Allure réelle</label>
+          <div style={{position:'relative'}}>
+            <input style={{...inp(),paddingRight:60}} placeholder="5:30" value={realPace} onChange={e=>setRealPace(e.target.value)}/>
+            <span style={{position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',fontSize:11,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',pointerEvents:'none'}}>min/km</span>
+          </div>
+          <div style={{fontSize:10,color:'var(--text-muted)',marginTop:5}}>Laisse vide si tu n'as pas chronométré</div>
         </div>
         <div style={{marginBottom:20}}>
-          <label style={{...lbl,marginBottom:10}}>Sensations physiques</label>
+          <label style={{fontSize:11,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em',display:'block',marginBottom:10}}>Sensations</label>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-            {['😴 Jambes lourdes','💨 Souffle court','💪 Jambes légères','🎯 Tout parfait','🤕 Douleur','⚡ Plein d\'énergie'].map(s => (
-              <button key={s} onClick={()=>setSensation(s)} style={{...tog(sensation===s),fontSize:11,padding:'8px 10px',textAlign:'left'}}>{s}</button>
-            ))}
+            {[['😴','Jambes lourdes'],['💨','Souffle court'],['💪','Jambes légères'],['🎯','Tout parfait'],['🤕','Douleur'],['⚡',"Plein d'énergie"]].map(([emoji,label]) => {
+              const s = `${emoji} ${label}`;
+              const sel = sensation===s;
+              return (
+                <button key={s} onClick={()=>setSensation(sel?'':s)} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 12px',borderRadius:12,border:`1px solid ${sel?'rgba(255,0,64,0.4)':'var(--border)'}`,background:sel?'rgba(255,0,64,0.08)':'var(--bg-input)',cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',textAlign:'left'}}>
+                  <span style={{fontSize:18,lineHeight:1}}>{emoji}</span>
+                  <span style={{fontSize:11,fontWeight:600,color:sel?'#FF0040':'var(--text-secondary)'}}>{label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
         {(effort<=4||effort>=8) && (
-          <div style={{background:effort<=4?'rgba(34,197,94,0.08)':'rgba(255,0,64,0.08)',border:`1px solid ${effort<=4?'rgba(34,197,94,0.2)':'rgba(255,0,64,0.2)'}`,borderRadius:10,padding:'10px 14px',marginBottom:16,fontSize:12}}>
-            <span style={{color:effort<=4?'#22c55e':'#FF0040',fontWeight:600}}>{effort<=4?'💪 Plan intensifié':'🛡️ Plan allégé'}</span>
-            <span style={{color:'var(--text-secondary)',marginLeft:6}}>{effort<=4?'Les prochains fractionnés gagnent 2 répétitions':'Les prochains fractionnés perdent 2 répétitions'}</span>
+          <div style={{display:'flex',gap:10,alignItems:'flex-start',background:effort<=4?'rgba(34,197,94,0.06)':'rgba(255,0,64,0.06)',border:`1px solid ${effort<=4?'rgba(34,197,94,0.2)':'rgba(255,0,64,0.2)'}`,borderRadius:12,padding:'12px 14px',marginBottom:16}}>
+            <span style={{fontSize:20}}>{effort<=4?'💪':'🛡️'}</span>
+            <div>
+              <div style={{fontSize:12,fontWeight:700,color:effort<=4?'#22c55e':'#FF0040',marginBottom:2}}>{effort<=4?'Plan intensifié':'Plan allégé'}</div>
+              <div style={{fontSize:11,color:'var(--text-secondary)'}}>{effort<=4?'Les prochains fractionnés gagnent 2 répétitions':'Les prochains fractionnés perdent 2 répétitions'}</div>
+            </div>
           </div>
         )}
-        <div style={{display:'flex',gap:10}}>
-          <button onClick={onClose} style={{...navBtnS,flex:1,fontSize:13}}>Annuler</button>
-          <button onClick={()=>onSubmit({effort,realPace,sensation})} style={{flex:2,background:'#FF0040',color:'#000',border:'none',borderRadius:12,padding:'12px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Valider le feedback</button>
-        </div>
+        <button onClick={()=>onSubmit({effort,realPace,sensation})} style={{width:'100%',background:'#FF0040',color:'#fff',border:'none',borderRadius:14,padding:'14px',fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit'}}>
+          Valider le feedback
+        </button>
       </div>
     </div>
   );
