@@ -124,7 +124,40 @@ function ThemeStyles() {
       * { box-sizing: border-box; }
       body { background: var(--bg-primary); }
       input, select, button { font-family: inherit; }
-    `}</style>
+      @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes navPop {
+        0%   { transform: translateY(0) scale(1); }
+        45%  { transform: translateY(-5px) scale(1.25); }
+        100% { transform: translateY(0) scale(1); }
+      }
+      @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.96); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      .tab-enter {
+        animation: fadeSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .modal-enter {
+        animation: scaleIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .nav-btn-active svg, .nav-btn-active span {
+        animation: navPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      .card-hover {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      }
+    \`}</style>
   );
 }
 
@@ -346,7 +379,7 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={onClose}>
-      <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:520,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 40px',maxHeight:'88vh',overflowY:'auto'}}>
+      <div onClick={e=>e.stopPropagation()} className='modal-enter' style={{width:'100%',maxWidth:520,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 40px',maxHeight:'88vh',overflowY:'auto'}}>
         <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
 
         {/* Header */}
@@ -440,7 +473,7 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 function SessionCard({ session, onComplete, onDetail }) {
   const IconComp = SessionIcons[session.type] || SessionIcons.ef;
   return (
-    <div onClick={onDetail} style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',transition:'all 0.25s',position:'relative',overflow:'hidden',cursor:'pointer'}}>
+    <div onClick={onDetail} className='card-hover' style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',position:'relative',overflow:'hidden',cursor:'pointer'}}>
       {session.completed && <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#22c55e',borderRadius:'20px 20px 0 0'}}/>}
       {/* Header */}
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
@@ -491,7 +524,7 @@ function FeedbackModal({ session, onClose, onSubmit }) {
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div style={{width:'100%',maxWidth:480,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 36px',maxHeight:'90vh',overflowY:'auto'}}>
+      <div className='modal-enter' style={{width:'100%',maxWidth:480,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 36px',maxHeight:'90vh',overflowY:'auto'}}>
         <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
         <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
           <div style={{flex:1}}>
@@ -975,7 +1008,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
             const pct = total>0?Math.round((done/total)*100):0;
             const currentPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
             return (
-              <div key={i} onClick={()=>onSelect(i)} style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',cursor:'pointer',transition:'transform 0.15s, border-color 0.15s',position:'relative',overflow:'hidden'}}>
+              <div key={i} onClick={()=>onSelect(i)} className='card-hover' style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',cursor:'pointer',position:'relative',overflow:'hidden'}}>
                 {/* Accent bar */}
                 <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:'20px 20px 0 0',opacity: pct>0?1:0.3}}/>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
