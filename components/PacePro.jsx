@@ -47,6 +47,7 @@ import Muscu from './MusculationModule';
 import StravaModule from './StravaModule';
 import HomeModule from './HomeModule';
 import HistoriqueModule from './HistoriqueModule';
+import AuthModule from './AuthModule';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
@@ -678,7 +679,21 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
 }
 
 export default function PacePro() {
-  const [tab, setTab] = useState('home'); // 'running' | 'muscu'
+  const [tab, setTab] = useState('home');
+  const [user, setUser] = useState(() => {
+    try { const u = localStorage.getItem('pp_user'); return u ? JSON.parse(u) : null; } catch { return null; }
+  });
+
+  const handleAuth = (u) => setUser(u);
+  const handleLogout = () => {
+    localStorage.removeItem('pp_user');
+    localStorage.removeItem('pp_user_id');
+    localStorage.removeItem('strava_token');
+    localStorage.removeItem('strava_athlete');
+    setUser(null);
+  };
+
+  if (!user) return <AuthModule onAuth={handleAuth} />; // 'running' | 'muscu'
   const [view, setView] = useState('list');
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
