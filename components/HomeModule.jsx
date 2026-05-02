@@ -178,17 +178,17 @@ export default function HomeModule({ onNavigate }) {
             {athlete && <div style={{ fontSize: 9, color: '#f59e0b', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Sync activée</div>}
           </button>
 
-          {/* Historique */}
-          <button onClick={() => onNavigate('historique')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-            <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(34,197,94,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Icon name="history" size={18} color="#22c55e" />
+          {/* Nutrition */}
+          <button onClick={() => onNavigate('nutrition')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="nutrition" size={18} color="#6366f1" />
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Historique</div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{doneSessions > 0 ? `${doneSessions} séance${doneSessions > 1 ? 's' : ''} validée${doneSessions > 1 ? 's' : ''}` : 'Voir tout'}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Nutrition</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>Macros · Hydratation</div>
             </div>
-            {doneSessions > 0 && <div style={{ fontSize: 18, fontWeight: 900, color: '#22c55e', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{doneSessions} ✓</div>}
+            <div style={{ fontSize: 9, color: '#6366f1', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Fuel & Recovery</div>
           </button>
 
         </div>
