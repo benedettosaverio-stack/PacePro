@@ -67,7 +67,7 @@ function NumberInput({ value, onChange, min, max, unit }) {
 }
 
 export default function SettingsModule({ onBack, user }) {
-  const [s, setS] = useState(() => ({
+  const [s, setS] = useState({
     weight: 70, height: 175, age: 25,
     goal: 'performance',
     vma: 14, level: 'intermediate',
@@ -75,7 +75,14 @@ export default function SettingsModule({ onBack, user }) {
     theme: 'auto',
     notifTraining: true, notifHydration: true, notifRecovery: false,
     ...loadSettings()
-  }));
+  });
+
+  useEffect(() => {
+    const saved = loadSettings();
+    if (Object.keys(saved).length > 0) {
+      setS(prev => ({ ...prev, ...saved }));
+    }
+  }, []);
   const [saved, setSaved] = useState(false);
 
   const update = (key, val) => setS(prev => ({ ...prev, [key]: val }));
