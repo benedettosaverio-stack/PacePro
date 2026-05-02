@@ -196,6 +196,11 @@ export default function FuelRecoveryHub() {
   const [activity, setActivity] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
+  const [weightLog, setWeightLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('pp_weight_log') || '[]'); } catch { return []; }
+  });
+  const [newWeight, setNewWeight] = useState('');
+  const [showWeightInput, setShowWeightInput] = useState(false);
   const [aiRequest, setAiRequest] = useState('');
   const [aiMeals, setAiMeals] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
@@ -284,6 +289,27 @@ export default function FuelRecoveryHub() {
   ];
   const meals = isPerte ? MEALS_PERTE : isPostRun ? MEALS_POST : MEALS_REST;
   const mealTag = isIntense ? 'Post-run intense' : isPostRun ? 'Post-training' : 'Jour de repos';
+
+  const addWeight = () => {
+    const val = parseFloat(newWeight);
+    if (!val || val < 30 || val > 300) return;
+    const entry = { date: new Date().toISOString().split('T')[0], weight: val };
+    const existing = weightLog.findIndex(e => e.date === entry.date);
+    const updated = existing >= 0
+      ? weightLog.map((e, i) => i === existing ? entry : e)
+      : [...weightLog, entry].slice(-60); // garder 60 jours max
+    setWeightLog(updated);
+    try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
+    setNewWeight('');
+    setShowWeightInput(false);
+    // Sync avec settings
+    try {
+      const s = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
+      s.weight = val;
+      localStorage.setItem('pp_user_settings', JSON.stringify(s));
+      localStorage.setItem('pp_nutrition_profile', JSON.stringify({...s, weight: val}));
+    } catch {}
+  };
 
   const generateAiMeals = async () => {
     if (!aiRequest.trim()) return;
@@ -406,6 +432,96 @@ export default function FuelRecoveryHub() {
         <MealCard meal={meals[0]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[0])} />
         {meals[1] && <div style={{marginTop:10}}><MealCard meal={meals[1]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[1])} /></div>}
         {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
+
+        {/* Suivi du poids */}
+        {isPerte && (
+          <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 20, padding: '18px', marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>🔥 Suivi du poids</div>
+              <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', borderRadius: 8, padding: '5px 12px', fontSize: 11, fontWeight: 700, color: '#f97316', cursor: 'pointer', fontFamily: 'inherit' }}>
+                + Peser
+              </button>
+            </div>
+
+            {showWeightInput && (
+              <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+                <input type="number" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: '#fff', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
+                <button onClick={addWeight} style={{ background: '#f97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 12, fontWeight: 800, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
+              </div>
+            )}
+
+            {weightLog.length >= 2 ? (() => {
+              const sorted = [...weightLog].sort((a,b) => a.date.localeCompare(b.date));
+              const first = sorted[0].weight;
+              const last = sorted[sorted.length-1].weight;
+              const min = Math.min(...sorted.map(e=>e.weight));
+              const max = Math.max(...sorted.map(e=>e.weight));
+              const diff = (last - first).toFixed(1);
+              const target = profile.weight || first;
+              const W = 300, H = 80;
+              const xStep = W / (sorted.length - 1);
+              const yRange = max - min || 1;
+              const toY = v => H - ((v - min) / yRange) * (H - 10) - 5;
+              const points = sorted.map((e,i) => `${i*xStep},${toY(e.weight)}`).join(' ');
+              return (
+                <div>
+                  {/* KPIs */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
+                    {[
+                      ['Actuel', `${last} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
+                      ['Évolution', `${diff > 0 ? '+' : ''}${diff} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
+                      ['Mesures', `${sorted.length}j`, '#f97316'],
+                    ].map(([l,v,col]) => (
+                      <div key={l} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: col, fontFamily: 'DM Mono, monospace' }}>{v}</div>
+                        <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginTop: 2 }}>{l}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Courbe SVG */}
+                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: '10px 8px 4px', marginBottom: 10 }}>
+                    <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{ overflow: 'visible' }}>
+                      <defs>
+                        <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f97316" stopOpacity="0.3"/>
+                          <stop offset="100%" stopColor="#f97316" stopOpacity="0"/>
+                        </linearGradient>
+                      </defs>
+                      {/* Grille */}
+                      {[0,1,2,3].map(i => (
+                        <line key={i} x1={0} y1={i*(H/3)} x2={W} y2={i*(H/3)} stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>
+                      ))}
+                      {/* Zone remplie */}
+                      <polygon points={`0,${toY(sorted[0].weight)} ${points} ${(sorted.length-1)*xStep},${H} 0,${H}`} fill="url(#weightGrad)"/>
+                      {/* Ligne */}
+                      <polyline points={points} fill="none" stroke="#f97316" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+                      {/* Points */}
+                      {sorted.map((e,i) => (
+                        <g key={i}>
+                          <circle cx={i*xStep} cy={toY(e.weight)} r={3} fill="#f97316"/>
+                          {(i === 0 || i === sorted.length-1) && (
+                            <text x={i*xStep} y={toY(e.weight)-8} textAnchor={i===0?'start':'end'} fill="rgba(255,255,255,0.6)" fontSize={8} fontFamily="monospace">{e.weight}kg</text>
+                          )}
+                        </g>
+                      ))}
+                      {/* Labels dates */}
+                      {[sorted[0], sorted[sorted.length-1]].map((e,i) => (
+                        <text key={i} x={i===0?0:(sorted.length-1)*xStep} y={H+14} textAnchor={i===0?'start':'end'} fill="rgba(255,255,255,0.25)" fontSize={7} fontFamily="monospace">
+                          {new Date(e.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
+                        </text>
+                      ))}
+                    </svg>
+                  </div>
+                  {diff < 0 && <div style={{ fontSize: 11, color: '#22c55e', textAlign: 'center', fontFamily: 'DM Mono, monospace' }}>🎯 {Math.abs(diff)} kg perdus depuis le début</div>}
+                </div>
+              );
+            })() : (
+              <div style={{ textAlign: 'center', padding: '16px 0', color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+                Ajoute au moins 2 mesures pour voir ta courbe d'évolution
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Générateur IA personnalisé */}
         <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 20, padding: '18px' }}>
