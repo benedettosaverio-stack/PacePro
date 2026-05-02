@@ -56,16 +56,14 @@ export default function HomeModule({ onNavigate }) {
         {/* Next session card */}
         {nextSession ? (
           <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#0d0608', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
-            {/* Topographic texture */}
-            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.1 }} viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
-              <ellipse cx="200" cy="175" rx="180" ry="50" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="175" rx="150" ry="40" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="175" rx="120" ry="30" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="175" rx="90" ry="20" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="175" rx="60" ry="12" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="120" cy="168" rx="80" ry="22" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
-              <ellipse cx="300" cy="170" rx="70" ry="18" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
-            </svg>
+            {/* Bokeh effect */}
+            <div style={{ position:'absolute', inset:0, overflow:'hidden', borderRadius:20 }}>
+              <div style={{ position:'absolute', width:120, height:120, borderRadius:'50%', background:'rgba(255,0,64,0.35)', filter:'blur(40px)', top:-20, left:20 }}/>
+              <div style={{ position:'absolute', width:80, height:80, borderRadius:'50%', background:'rgba(251,191,36,0.25)', filter:'blur(30px)', top:10, left:'45%' }}/>
+              <div style={{ position:'absolute', width:100, height:100, borderRadius:'50%', background:'rgba(255,0,64,0.2)', filter:'blur(35px)', bottom:-10, right:30 }}/>
+              <div style={{ position:'absolute', width:60, height:60, borderRadius:'50%', background:'rgba(99,102,241,0.2)', filter:'blur(25px)', bottom:10, left:'30%' }}/>
+              <div style={{ position:'absolute', width:40, height:40, borderRadius:'50%', background:'rgba(255,0,64,0.15)', filter:'blur(20px)', top:30, right:'20%' }}/>
+            </div>
             {/* Glow */}
             <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 200, height: 80, background: 'radial-gradient(circle, rgba(255,0,64,0.25) 0%, transparent 70%)', pointerEvents: 'none' }} />
             {/* Elevation profile */}
