@@ -53,8 +53,8 @@ function WaveHydration({ pct, color }) {
       {/* Border glow */}
       <circle cx="50" cy="50" r="46" fill="none" stroke={color} strokeWidth="1.5" opacity="0.4"/>
       {/* Text */}
-      <text x="50" y="46" textAnchor="middle" fill="white" fontSize="16" fontWeight="900" fontFamily="DM Mono, monospace">{Math.round(clipped)}%</text>
-      <text x="50" y="58" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="DM Mono, monospace">HYDRATATION</text>
+      <text x="50" y="46" textAnchor="middle" fill="var(--text-primary)" fontSize="16" fontWeight="900" fontFamily="DM Mono, monospace">{Math.round(clipped)}%</text>
+      <text x="50" y="58" textAnchor="middle" fill="var(--text-muted)" fontSize="7" fontFamily="DM Mono, monospace">HYDRATATION</text>
     </svg>
   );
 }
@@ -413,7 +413,7 @@ export default function FuelRecoveryHub() {
                 ['Calories', activity.calories ? `${activity.calories} kcal` : '—'],
               ].map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase' }}>{k}</span>
+                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase' }}>{k}</span>
                   <span style={{ fontSize: 11, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{v}</span>
                 </div>
               ))}
