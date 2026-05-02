@@ -112,22 +112,22 @@ function SectionHeader({ label, color }) {
 
 const MEALS_POST = [
   { name: 'Pasta Thon · Tomate', desc: 'Pâtes complètes, thon en boîte, sauce tomate maison, basilic frais, parmesan', kcal: 620, prot: 40, carbs: 75, fat: 12,
-    ingredients: ['200g de pâtes complètes', '1 boîte de thon au naturel (150g)', '200ml de sauce tomate', '1 gousse d'ail', 'Basilic frais', '20g de parmesan râpé', 'Sel, poivre, huile d'olive'],
-    steps: ['Cuire les pâtes al dente dans de l'eau salée (8-10 min).', 'Faire revenir l'ail émincé 1 min dans un filet d'huile d'olive.', 'Ajouter la sauce tomate et laisser mijoter 5 min à feu doux.', 'Égoutter le thon et l'incorporer à la sauce. Chauffer 2 min.', 'Mélanger les pâtes avec la sauce. Servir avec basilic et parmesan.'],
+    ingredients: ['200g de pâtes complètes', '1 boîte de thon au naturel (150g)', '200ml de sauce tomate', '1 gousse d\'ail', 'Basilic frais', '20g de parmesan râpé', 'Sel, poivre, huile d\'olive'],
+    steps: ['Cuire les pâtes al dente dans de l\'eau salée (8-10 min).', 'Faire revenir l\'ail émincé 1 min dans un filet d\'huile d\'olive.', 'Ajouter la sauce tomate et laisser mijoter 5 min à feu doux.', 'Égoutter le thon et l\'incorporer à la sauce. Chauffer 2 min.', 'Mélanger les pâtes avec la sauce. Servir avec basilic et parmesan.'],
     time: '15 min', difficulty: 'Facile', tip: 'Idéal dans les 30-60 min post-effort pour recharger le glycogène.' },
   { name: 'Bowl Poulet · Patate Douce', desc: 'Riz complet, poulet grillé, patate douce rôtie, avocat, graines de courge', kcal: 660, prot: 44, carbs: 70, fat: 18,
-    ingredients: ['150g de riz complet cuit', '150g de blanc de poulet', '1 patate douce moyenne', '½ avocat', '1 c.s. de graines de courge', 'Citron, cumin, paprika, huile d'olive'],
-    steps: ['Préchauffer le four à 200°C. Couper la patate douce en cubes, assaisonner d'huile et cumin, rôtir 20 min.', 'Assaisonner le poulet de paprika, sel et poivre. Cuire à la poêle 6-7 min de chaque côté.', 'Trancher le poulet. Disposer dans un bol : riz, poulet, patate douce, avocat en tranches.', 'Parsemer de graines de courge. Arroser de jus de citron.'],
+    ingredients: ['150g de riz complet cuit', '150g de blanc de poulet', '1 patate douce moyenne', '½ avocat', '1 c.s. de graines de courge', 'Citron, cumin, paprika, huile d\'olive'],
+    steps: ['Préchauffer le four à 200°C. Couper la patate douce en cubes, assaisonner d\'huile et cumin, rôtir 20 min.', 'Assaisonner le poulet de paprika, sel et poivre. Cuire à la poêle 6-7 min de chaque côté.', 'Trancher le poulet. Disposer dans un bol : riz, poulet, patate douce, avocat en tranches.', 'Parsemer de graines de courge. Arroser de jus de citron.'],
     time: '30 min', difficulty: 'Facile', tip: 'La patate douce est une source excellente de glucides complexes et de bêta-carotène.' },
 ];
 const MEALS_REST = [
   { name: 'Omelette · Légumes', desc: 'Œufs entiers, courgettes, poivrons, fromage de chèvre, herbes fraîches', kcal: 380, prot: 28, carbs: 12, fat: 24,
-    ingredients: ['3 œufs entiers', '½ courgette', '½ poivron rouge', '40g de fromage de chèvre', 'Ciboulette fraîche', 'Sel, poivre, huile d'olive'],
-    steps: ['Couper les légumes en petits dés. Les faire revenir 5 min dans une poêle huilée.', 'Battre les œufs avec sel et poivre. Verser sur les légumes.', 'Cuire à feu moyen 3 min. Ajouter le fromage de chèvre émietté.', 'Replier l'omelette et servir parsemée de ciboulette.'],
+    ingredients: ['3 œufs entiers', '½ courgette', '½ poivron rouge', '40g de fromage de chèvre', 'Ciboulette fraîche', 'Sel, poivre, huile d\'olive'],
+    steps: ['Couper les légumes en petits dés. Les faire revenir 5 min dans une poêle huilée.', 'Battre les œufs avec sel et poivre. Verser sur les légumes.', 'Cuire à feu moyen 3 min. Ajouter le fromage de chèvre émietté.', 'Replier l\'omelette et servir parsemée de ciboulette.'],
     time: '12 min', difficulty: 'Facile', tip: 'Riche en protéines complètes et faible en glucides — parfait pour un jour de récupération.' },
   { name: 'Salade Quinoa · Avocat', desc: 'Quinoa, avocat, tomates cerises, feta, graines de chanvre, citron', kcal: 420, prot: 18, carbs: 38, fat: 22,
-    ingredients: ['150g de quinoa cuit', '1 avocat mûr', '100g de tomates cerises', '50g de feta', '2 c.s. de graines de chanvre', 'Jus d'1 citron, huile d'olive, sel'],
-    steps: ['Rincer et cuire le quinoa 12 min dans 2x son volume d'eau. Laisser refroidir.', 'Couper les tomates en deux, l'avocat en cubes. Émietter la feta.', 'Mélanger tous les ingrédients dans un saladier.', 'Assaisonner avec citron, huile d'olive et sel. Ajouter les graines de chanvre.'],
+    ingredients: ['150g de quinoa cuit', '1 avocat mûr', '100g de tomates cerises', '50g de feta', '2 c.s. de graines de chanvre', 'Jus d\'1 citron, huile d\'olive, sel'],
+    steps: ['Rincer et cuire le quinoa 12 min dans 2x son volume d\'eau. Laisser refroidir.', 'Couper les tomates en deux, l\'avocat en cubes. Émietter la feta.', 'Mélanger tous les ingrédients dans un saladier.', 'Assaisonner avec citron, huile d\'olive et sel. Ajouter les graines de chanvre.'],
     time: '20 min', difficulty: 'Facile', tip: 'Le quinoa est une protéine complète — idéal pour la synthèse musculaire au repos.' },
 ];
 
