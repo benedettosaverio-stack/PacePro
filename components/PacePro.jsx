@@ -51,7 +51,7 @@ import HistoriqueModule from './HistoriqueModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
 import BilanModule from './BilanModule';
-import SmartNutritionModule from './SmartNutritionModule';
+import FuelRecoveryHub from './FuelRecoveryHub';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
@@ -1252,7 +1252,7 @@ export default function PacePro() {
       <ThemeStyles/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
       <AppHeader />
-      <div className='app-content tab-enter' style={{paddingBottom:80}}><SmartNutritionModule onBack={() => setTab('home')} /></div>
+      <div className='app-content tab-enter' style={{paddingBottom:80}}><FuelRecoveryHub /></div>
       <BottomNav/>
     </div>
   );
