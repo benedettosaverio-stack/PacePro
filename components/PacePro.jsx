@@ -1227,15 +1227,21 @@ export default function PacePro() {
 
   const AppHeader = ({ actions }) => (
     <div style={{ position:'sticky', top:0, zIndex:100, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)', paddingTop:'env(safe-area-inset-top, 0px)' }}>
-      <div style={{ height:52, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px' }}>
-        <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', gap:8, background:'none', border:'none', cursor:'pointer', fontFamily:'Syne, sans-serif', padding:0 }}>
+      <div style={{ height:52, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px', position:'relative' }}>
+        {/* Profil à gauche */}
+        <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', gap:8, background:'none', border:'none', cursor:'pointer', fontFamily:'Syne, sans-serif', padding:0, zIndex:1 }}>
           {user?.photo
             ? <img src={user.photo} alt="" style={{ width:30, height:30, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(255,0,64,0.3)' }} />
             : <div style={{ width:30, height:30, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
           }
-          <span style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>{user?.name?.split(' ')[0]}</span>
         </button>
-        <div style={{ display:'flex', gap:8, alignItems:'center' }}>{actions}</div>
+        {/* Logo centré */}
+        <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:6 }}>
+          <img src="/logo.svg" alt="PacePro" style={{ width:22, height:22, objectFit:'contain' }}/>
+          <span style={{ fontSize:13, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text-primary)' }}>PacePro</span>
+        </div>
+        {/* Actions à droite */}
+        <div style={{ display:'flex', gap:8, alignItems:'center', zIndex:1 }}>{actions}</div>
       </div>
     </div>
   );
