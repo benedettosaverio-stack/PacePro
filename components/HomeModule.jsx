@@ -69,10 +69,12 @@ export default function HomeModule({ onNavigate }) {
                   <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4, color: '#fff' }}>{nextSession.title}</div>
                   <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{nextSession.detail}</div>
                 </div>
-                <button onClick={e => { e.stopPropagation(); onNavigate('running'); }} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: 12, padding: '10px 14px', cursor: 'pointer', flexShrink: 0, marginLeft: 12 }}>
-                  <span style={{ fontSize: 12, fontWeight: 900, color: '#0d0608', letterSpacing: '0.05em' }}>START</span>
-                  <span style={{ fontSize: 14, color: '#FF0040' }}>▶</span>
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,0,64,0.15)', border: '1px solid rgba(255,0,64,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width={14} height={14} viewBox="0 0 24 24" fill="#FF0040"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                  <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Go</span>
+                </div>
               </div>
             </div>
             {/* Elevation profile progress — inspired by UTMB */}
