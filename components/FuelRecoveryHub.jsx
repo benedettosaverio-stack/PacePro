@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Icon from './Icons';
 
 function getToken() {
@@ -133,7 +134,6 @@ const MEALS_REST = [
 // ── Recipe Sheet ────────────────────────────────────────────────────────────
 function RecipeSheet({ meal, tag, accent, onClose }) {
   if (!meal) return null;
-  const { createPortal } = require('react-dom');
   return createPortal(
     <div style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', flexDirection:'column', justifyContent:'flex-end' }} onClick={onClose}>
       <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(6px)' }}/>
