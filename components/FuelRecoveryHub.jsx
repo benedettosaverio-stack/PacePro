@@ -21,7 +21,30 @@ function useTypewriter(text, speed = 22) {
       setDisplayed(text.slice(0, i));
       if (i >= text.length) clearInterval(t);
     }, speed);
-    return () => clearInterval(t);
+    const generateAiMeals = async () => {
+    if (!aiRequest.trim()) return;
+    setAiLoading(true);
+    setAiMeals([]);
+    setShowAiMeals(true);
+    const prompt = `Tu es un nutritionniste expert en sport. L'utilisateur veut : "${aiRequest}".
+Ses macros disponibles aujourd'hui : ${carbs}g glucides, ${protein}g protéines, ${fat}g lipides, ${kcal} kcal total.
+Mode : ${isIntense ? 'post-entraînement intense' : isPostRun ? 'post-entraînement modéré' : 'jour de repos'}.
+Génère exactement 3 recettes adaptées. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après :
+[{"name":"...","desc":"...","ingredients":["..."],"steps":["..."],"kcal":0,"prot":0,"carbs":0,"fat":0,"time":"...","tip":"..."}]`;
+    try {
+      const res = await fetch('/api/gemini', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt }) });
+      const d = await res.json();
+      const text = d.text || '';
+      const clean = text.replace(/\`\`\`json|\`\`\`/g, '').trim();
+      const meals = JSON.parse(clean);
+      setAiMeals(meals);
+    } catch {
+      setAiMeals([{ name:'Erreur', desc:'Impossible de générer les recettes. Réessaie.', ingredients:[], steps:[], kcal:0, prot:0, carbs:0, fat:0, time:'—', tip:'' }]);
+    }
+    setAiLoading(false);
+  };
+
+  return () => clearInterval(t);
   }, [text]);
   return displayed;
 }
@@ -196,6 +219,10 @@ export default function FuelRecoveryHub() {
   const [activity, setActivity] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
+  const [aiRequest, setAiRequest] = useState('');
+  const [aiMeals, setAiMeals] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [showAiMeals, setShowAiMeals] = useState(false);
   const [water, setWater] = useState(() => { try { return parseInt(localStorage.getItem('pp_water') || '0'); } catch { return 0; } });
   const [profile, setProfile] = useState(() => { try { return JSON.parse(localStorage.getItem('pp_nutrition_profile') || '{}'); } catch { return {}; } });
 
@@ -349,6 +376,37 @@ export default function FuelRecoveryHub() {
         <MealCard meal={meals[0]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[0])} />
         {meals[1] && <div style={{marginTop:10}}><MealCard meal={meals[1]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[1])} /></div>}
         {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
+
+        {/* Générateur IA personnalisé */}
+        <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 20, padding: '18px' }}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10 }}>✦ Créer mes propres recettes</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 12, lineHeight: 1.5 }}>Ces repas ne te conviennent pas ? Dis à l'IA ce dont tu as envie et elle crée 3 recettes adaptées à tes macros.</div>
+          <textarea
+            value={aiRequest}
+            onChange={e => setAiRequest(e.target.value)}
+            placeholder="Ex: j'ai envie de quelque chose d'asiatique avec du riz, léger et rapide à faire..."
+            style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '12px 14px', color: '#fff', fontSize: 12, fontFamily: 'Syne, sans-serif', outline: 'none', resize: 'none', minHeight: 72, lineHeight: 1.6, boxSizing: 'border-box' }}
+          />
+          <button onClick={generateAiMeals} disabled={aiLoading || !aiRequest.trim()} style={{ width: '100%', marginTop: 10, background: aiLoading ? 'rgba(99,102,241,0.3)' : 'linear-gradient(135deg, #6366f1, #4f46e5)', border: 'none', borderRadius: 12, padding: '13px', fontSize: 13, fontWeight: 800, color: '#fff', cursor: aiLoading ? 'not-allowed' : 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {aiLoading ? '⏳ Génération en cours...' : '✨ Générer 3 recettes personnalisées'}
+          </button>
+        </div>
+
+        {/* Recettes IA générées */}
+        {showAiMeals && (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 12 }}>Recettes générées pour toi</div>
+            {aiLoading ? (
+              <div style={{ textAlign: 'center', padding: '20px', color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>L'IA cuisine pour toi...</div>
+            ) : (
+              aiMeals.map((meal, i) => (
+                <div key={i} style={{ marginBottom: 10 }}>
+                  <MealCard meal={meal} tag="Recette IA" accent="#6366f1" onClick={() => setSelectedMeal(meal)} />
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
       </div>
 
