@@ -55,16 +55,51 @@ export default function HomeModule({ onNavigate }) {
 
         {/* Next session card */}
         {nextSession ? (
-          <div onClick={() => onNavigate('running')} style={{ background: 'linear-gradient(135deg, rgba(255,0,64,0.12), rgba(255,0,64,0.04))', border: '1px solid rgba(255,0,64,0.2)', borderRadius: 20, padding: '18px', marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius: '20px 20px 0 0' }} />
-            <div style={{ fontSize: 9, color: '#FF0040', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>⚡ Prochaine séance · S{nextSession.week} · {nextSession.day}</div>
-            <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 4 }}>{nextSession.title}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 14 }}>{nextSession.detail}</div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden', marginRight: 12 }}>
-                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius: 99 }} />
+          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#0d0608', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
+            {/* Topographic texture */}
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.12 }} viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
+              <ellipse cx="200" cy="140" rx="180" ry="60" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="140" rx="150" ry="48" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="140" rx="120" ry="36" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="140" rx="90" ry="25" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="140" rx="60" ry="16" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="140" rx="30" ry="8" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="120" cy="130" rx="80" ry="30" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
+              <ellipse cx="300" cy="135" rx="70" ry="25" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
+            </svg>
+            {/* Glow */}
+            <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 200, height: 80, background: 'radial-gradient(circle, rgba(255,0,64,0.25) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            {/* Elevation profile */}
+            <svg style={{ position: 'absolute', bottom: 0, left: 0, right: 0, width: '100%', opacity: 0.6 }} viewBox="0 0 400 60" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="elev" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FF0040" stopOpacity="0.6"/>
+                  <stop offset="100%" stopColor="#FF0040" stopOpacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 60 L0 45 Q20 42 40 38 Q70 30 100 35 Q130 40 160 28 Q190 16 220 20 Q250 24 280 18 Q310 12 340 22 Q370 32 400 28 L400 60 Z" fill="url(#elev)"/>
+              <path d="M0 45 Q20 42 40 38 Q70 30 100 35 Q130 40 160 28 Q190 16 220 20 Q250 24 280 18 Q310 12 340 22 Q370 32 400 28" fill="none" stroke="#FF0040" strokeWidth="1.5"/>
+              {/* Dot on peak */}
+              <circle cx="310" cy="12" r="3" fill="#FF0040"/>
+              <line x1="310" y1="12" x2="310" y2="60" stroke="#FF0040" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.4"/>
+            </svg>
+            {/* Content */}
+            <div style={{ position: 'relative', zIndex: 1, padding: '16px 16px 48px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 9, color: 'rgba(255,0,64,0.8)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>‹ Prochaine séance · S{nextSession.week} · {nextSession.day}</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4, color: '#fff' }}>{nextSession.title}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{nextSession.detail}</div>
+                </div>
+                <button onClick={e => { e.stopPropagation(); onNavigate('running'); }} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: 12, padding: '10px 14px', cursor: 'pointer', flexShrink: 0, marginLeft: 12 }}>
+                  <span style={{ fontSize: 12, fontWeight: 900, color: '#0d0608', letterSpacing: '0.05em' }}>START</span>
+                  <span style={{ fontSize: 14, color: '#FF0040' }}>▶</span>
+                </button>
               </div>
-              <span style={{ fontSize: 11, fontFamily: 'DM Mono, monospace', color: '#FF0040', fontWeight: 700 }}>{progress}%</span>
+            </div>
+            {/* Progress bar */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3 }}>
+              <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg,#FF0040,#fbbf24)' }} />
             </div>
           </div>
         ) : (
