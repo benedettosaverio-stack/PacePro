@@ -709,16 +709,6 @@ export default function MusculationModule() {
               <h1 style={{ fontSize:26, fontWeight:800, letterSpacing:'-0.04em', marginBottom:4 }}>Musculation</h1>
               <p style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>{workouts.length} séance{workouts.length!==1?'s':''} sauvegardée{workouts.length!==1?'s':''}</p>
             </div>
-            {view==='list' && (
-              <div style={{ display:'flex', gap:8 }}>
-                <button onClick={()=>{setView('ai');setSelected(null);}} style={{ display:'flex', alignItems:'center', gap:6, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.2)', color:'#60a5fa', borderRadius:12, padding:'9px 14px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
-                  ✨ IA
-                </button>
-                <button onClick={()=>{setView('create');setSelected(null);setEditing(false);}} style={{ display:'flex', alignItems:'center', gap:6, background:'#FF0040', border:'none', color:'#fff', borderRadius:12, padding:'9px 14px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
-                  + Créer
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Stats rapides si séances */}
