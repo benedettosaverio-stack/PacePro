@@ -871,19 +871,6 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
       {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
-      {/* Hero Header */}
-      <div style={{background:'linear-gradient(180deg,rgba(255,0,64,0.08) 0%,transparent 100%)',borderBottom:'1px solid var(--border-nav)',padding:'16px 20px 20px',position:'sticky',top:0,zIndex:50,backdropFilter:'blur(20px)',background:'var(--bg-nav)'}}>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:0}}>
-          <div style={{display:'flex',alignItems:'center',gap:10}}>
-            <img src="/logo.png" alt="PacePro" style={{width:28,height:28,objectFit:'contain'}}/>
-            <span style={{fontWeight:800,fontSize:15,letterSpacing:'-0.02em'}}>PacePro</span>
-          </div>
-          <div style={{display:'flex',gap:8,alignItems:'center'}}>
-            <span style={{fontSize:12,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{profile.name}</span>
-            <button onClick={onReset} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:8,padding:'5px 12px',color:'var(--btn-ghost-color)',fontSize:11,cursor:'pointer',fontFamily:'inherit',fontWeight:600}}>+ Nouveau</button>
-          </div>
-        </div>
-      </div>
       <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
         {/* Hero card */}
         <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',marginBottom:14,position:'relative',overflow:'hidden'}}>
@@ -1010,15 +997,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
 function PlansList({ plans, onSelect, onNew, onDelete }) {
   return (
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
-      <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderBottom:'1px solid var(--border-nav)',padding:'0 20px',height:56,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <img src="/logo.png" alt="PacePro" style={{width:30,height:30,objectFit:'contain'}}/>
-          <span style={{fontWeight:800,fontSize:16,letterSpacing:'-0.03em'}}>PacePro</span>
-        </div>
-        <button onClick={onNew} style={{background:'#FF0040',color:'#fff',border:'none',borderRadius:12,padding:'8px 16px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',gap:6}}>
-          <span style={{fontSize:16,lineHeight:1}}>+</span> Nouveau plan
-        </button>
-      </nav>
+
       <main style={{maxWidth:680,margin:'0 auto',padding:'28px 16px 40px'}}>
         <div style={{marginBottom:28}}>
           <h1 style={{fontSize:28,fontWeight:800,letterSpacing:'-0.04em',marginBottom:4,color:'var(--text-primary)'}}>Mes programmes</h1>
