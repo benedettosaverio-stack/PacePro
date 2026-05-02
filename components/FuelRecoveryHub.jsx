@@ -69,9 +69,8 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
         <span style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'DM Mono, monospace' }}>{label}</span>
         <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
       </div>
-      <div style={{ height: 6, background: 'var(--progress-track)', borderRadius: 99, overflow: 'hidden', position: 'relative' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-card)', borderRadius: 99 }}/>
-        <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 99, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)', boxShadow: `0 0 8px ${color}60` }}/>
+      <div style={{ height: 7, background: 'var(--progress-track)', borderRadius: 99, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 99, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)' }}/>
       </div>
     </div>
   );
@@ -359,7 +358,7 @@ export default function FuelRecoveryHub() {
 
         {/* ── HYDRATATION ── */}
         <SectionHeader label="Hydratation" color={waterColor} />
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${waterColor}20`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
+        <div style={{ background: 'var(--bg-card)', border: `1px solid ${waterColor}30`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 16 }}>
             {/* Wave circle */}
             <div style={{ width: 100, height: 100, flexShrink: 0 }}>
@@ -370,7 +369,7 @@ export default function FuelRecoveryHub() {
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontFamily: 'DM Mono, monospace' }}>/ {(waterGoalMl/1000).toFixed(1)}L objectif</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {[[250,'+ 25cl'],[500,'+ 50cl']].map(([ml, label]) => (
-                  <button key={ml} onClick={() => addWater(ml)} style={{ flex: 1, background: `${waterColor}15`, border: `1px solid ${waterColor}30`, borderRadius: 10, padding: '8px', fontSize: 11, fontWeight: 700, color: waterColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s' }}>{label}</button>
+                  <button key={ml} onClick={() => addWater(ml)} style={{ flex: 1, background: `${waterColor}20`, border: `1px solid ${waterColor}30`, borderRadius: 10, padding: '8px', fontSize: 11, fontWeight: 700, color: waterColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s' }}>{label}</button>
                 ))}
                 <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 10, padding: '8px 10px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'inherit' }}>↺</button>
               </div>
@@ -386,7 +385,7 @@ export default function FuelRecoveryHub() {
 
         {/* ── ÉNERGIE & MACROS ── */}
         <SectionHeader label="Énergie & Macros" color={energyColor} />
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${energyColor}20`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
+        <div style={{ background: 'var(--bg-card)', border: `1px solid ${energyColor}30`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
           {/* Analyse IA */}
           <div style={{ marginBottom: 16, background: 'var(--bg-card)', borderRadius: 14, padding: '12px 14px', borderLeft: `3px solid ${energyColor}` }}>
             <div style={{ fontSize: 8, color: energyColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 6 }}>✦ ANALYSE IA</div>
