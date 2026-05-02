@@ -1201,7 +1201,7 @@ export default function PacePro() {
     <>
       <AuthModule onAuth={handleAuth} />
       {showSplash && (
-        <div style={{ position:'fixed', inset:0, background:'#07080b', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
+        <div style={{ position:'fixed', inset:0, background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
           <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
           <img src="/logo.svg" alt="PacePro" className="splash-logo" style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
           <div className="splash-text" style={{ textAlign:'center', marginBottom:48 }}>
@@ -1304,7 +1304,7 @@ export default function PacePro() {
 
   // Splash overlay pour utilisateurs connectés
   const SplashOverlay = () => showSplash ? (
-    <div style={{ position:'fixed', inset:0, background:'#07080b', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
+    <div style={{ position:'fixed', inset:0, background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
       <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
       <img src="/logo.svg" alt="PacePro" className="splash-logo" style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
       <div className="splash-text" style={{ textAlign:'center', marginBottom:48 }}>

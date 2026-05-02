@@ -66,11 +66,11 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'DM Mono, monospace' }}>{label}</span>
-        <span style={{ fontSize: 12, fontWeight: 800, color: '#fff', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'DM Mono, monospace' }}>{label}</span>
+        <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
       </div>
       <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 99, overflow: 'hidden', position: 'relative' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.03)', borderRadius: 99 }}/>
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-card)', borderRadius: 99 }}/>
         <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 99, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)', boxShadow: `0 0 8px ${color}60` }}/>
       </div>
     </div>
@@ -80,16 +80,16 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
 // ── Meal card ────────────────────────────────────────────────────────────────
 function MealCard({ meal, tag, accent, onClick }) {
   return (
-    <div onClick={onClick} style={{ borderRadius: 16, padding: '14px 16px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${accent}25`, position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
+    <div onClick={onClick} style={{ borderRadius: 16, padding: '14px 16px', background: 'var(--bg-card)', border: `1px solid ${accent}25`, position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
       <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle, ${accent}12 0%, transparent 70%)`, pointerEvents: 'none' }}/>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', flex: 1, marginRight: 8 }}>{meal.name}</div>
+        <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', flex: 1, marginRight: 8 }}>{meal.name}</div>
         <span style={{ fontSize: 8, fontWeight: 700, padding: '3px 7px', borderRadius: 99, background: `${accent}20`, color: accent, border: `1px solid ${accent}40`, fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{tag}</span>
       </div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 10, lineHeight: 1.5 }}>{meal.desc}</div>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10, lineHeight: 1.5 }}>{meal.desc}</div>
       <div style={{ display: 'flex', gap: 6 }}>
         {[['Kcal', meal.kcal, '#fff'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
-          <div key={l} style={{ flex: 1, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 4px', textAlign: 'center' }}>
+          <div key={l} style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 8, padding: '6px 4px', textAlign: 'center' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: c, fontFamily: 'DM Mono, monospace' }}>{v}</div>
             <div style={{ fontSize: 7, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginTop: 1 }}>{l}</div>
           </div>
@@ -137,39 +137,39 @@ function RecipeSheet({ meal, tag, accent, onClose }) {
   return createPortal(
     <div style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', flexDirection:'column', justifyContent:'flex-end' }} onClick={onClose}>
       <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(6px)' }}/>
-      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{ position:'relative', width:'100%', background:'#13161f', borderRadius:'24px 24px 0 0', padding:'12px 20px 48px', maxHeight:'85vh', overflowY:'auto', zIndex:1 }}>
+      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{ position:'relative', width:'100%', background:'var(--bg-modal)', borderRadius:'24px 24px 0 0', padding:'12px 20px 48px', maxHeight:'85vh', overflowY:'auto', zIndex:1 }}>
         <div style={{ width:36, height:4, background:'rgba(255,255,255,0.15)', borderRadius:99, margin:'0 auto 16px' }}/>
         {/* Header */}
         <div style={{ marginBottom:16, paddingBottom:14, borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
           <div style={{ fontSize:9, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>{tag}</div>
-          <div style={{ fontSize:22, fontWeight:900, color:'#fff', letterSpacing:'-0.03em', marginBottom:4 }}>{meal.name}</div>
+          <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.03em', marginBottom:4 }}>{meal.name}</div>
           <div style={{ display:'flex', gap:12 }}>
-            <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>⏱ {meal.time}</span>
-            <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>👨‍🍳 {meal.difficulty}</span>
+            <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>⏱ {meal.time}</span>
+            <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>👨‍🍳 {meal.difficulty}</span>
           </div>
         </div>
         {/* Macros */}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:20 }}>
           {[['Kcal', meal.kcal, '#fff'], ['Prot.', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip.', `${meal.fat}g`, '#a78bfa']].map(([l,v,c]) => (
-            <div key={l} style={{ background:'rgba(255,255,255,0.05)', borderRadius:12, padding:'10px 8px', textAlign:'center' }}>
+            <div key={l} style={{ background:'var(--bg-input)', borderRadius:12, padding:'10px 8px', textAlign:'center' }}>
               <div style={{ fontSize:15, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
-              <div style={{ fontSize:8, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
+              <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
             </div>
           ))}
         </div>
         {/* Ingrédients */}
         <div style={{ marginBottom:20 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Ingrédients</div>
+          <div style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Ingrédients</div>
           {meal.ingredients.map((ing, i) => (
             <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ width:6, height:6, borderRadius:'50%', background:accent, flexShrink:0 }}/>
-              <span style={{ fontSize:13, color:'rgba(255,255,255,0.8)' }}>{ing}</span>
+              <span style={{ fontSize:13, color:'var(--text-secondary)' }}>{ing}</span>
             </div>
           ))}
         </div>
         {/* Étapes */}
         <div style={{ marginBottom:20 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Préparation</div>
+          <div style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Préparation</div>
           {meal.steps.map((step, i) => (
             <div key={i} style={{ display:'flex', gap:12, marginBottom:12, alignItems:'flex-start' }}>
               <div style={{ width:24, height:24, borderRadius:8, background:`${accent}20`, border:`1px solid ${accent}40`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
@@ -182,7 +182,7 @@ function RecipeSheet({ meal, tag, accent, onClose }) {
         {/* Tip */}
         <div style={{ background:`${accent}10`, border:`1px solid ${accent}25`, borderRadius:14, padding:'12px 14px' }}>
           <div style={{ fontSize:9, color:accent, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', fontFamily:'DM Mono, monospace', marginBottom:6 }}>💡 Conseil nutritionnel</div>
-          <div style={{ fontSize:12, color:'rgba(255,255,255,0.7)', lineHeight:1.6 }}>{meal.tip}</div>
+          <div style={{ fontSize:12, color:'var(--text-secondary)', lineHeight:1.6 }}>{meal.tip}</div>
         </div>
       </div>
     </div>,
@@ -333,7 +333,7 @@ export default function FuelRecoveryHub() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#07080b', color: '#fff', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
 
       {/* Background */}
       <div style={{ position: 'fixed', top: 0, inset: 0, pointerEvents: 'none', zIndex: 0 }}>
@@ -353,7 +353,7 @@ export default function FuelRecoveryHub() {
           </div>
           <div style={{ display:'flex', gap:6, alignItems:'center' }}>
             {isPerte && <span style={{ fontSize:9, padding:'2px 7px', borderRadius:99, background:'rgba(255,100,0,0.15)', color:'#f97316', border:'1px solid rgba(255,100,0,0.3)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>-{deficit} kcal déficit</span>}
-            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace' }}>{kcal} kcal/j</span>
+            <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{kcal} kcal/j</span>
           </div>
         </div>
 
@@ -366,13 +366,13 @@ export default function FuelRecoveryHub() {
               <WaveHydration pct={waterPct} color={waterColor} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 28, fontWeight: 900, fontFamily: 'DM Mono, monospace', color: '#fff', lineHeight: 1 }}>{(water/1000).toFixed(1)}<span style={{ fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.4)' }}>L</span></div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginBottom: 12, fontFamily: 'DM Mono, monospace' }}>/ {(waterGoalMl/1000).toFixed(1)}L objectif</div>
+              <div style={{ fontSize: 28, fontWeight: 900, fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)', lineHeight: 1 }}>{(water/1000).toFixed(1)}<span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text-muted)' }}>L</span></div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontFamily: 'DM Mono, monospace' }}>/ {(waterGoalMl/1000).toFixed(1)}L objectif</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {[[250,'+ 25cl'],[500,'+ 50cl']].map(([ml, label]) => (
                   <button key={ml} onClick={() => addWater(ml)} style={{ flex: 1, background: `${waterColor}15`, border: `1px solid ${waterColor}30`, borderRadius: 10, padding: '8px', fontSize: 11, fontWeight: 700, color: waterColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s' }}>{label}</button>
                 ))}
-                <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '8px 10px', fontSize: 11, color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontFamily: 'inherit' }}>↺</button>
+                <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 10, padding: '8px 10px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'inherit' }}>↺</button>
               </div>
             </div>
           </div>
@@ -388,9 +388,9 @@ export default function FuelRecoveryHub() {
         <SectionHeader label="Énergie & Macros" color={energyColor} />
         <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${energyColor}20`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
           {/* Analyse IA */}
-          <div style={{ marginBottom: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 14, padding: '12px 14px', borderLeft: `3px solid ${energyColor}` }}>
+          <div style={{ marginBottom: 16, background: 'var(--bg-card)', borderRadius: 14, padding: '12px 14px', borderLeft: `3px solid ${energyColor}` }}>
             <div style={{ fontSize: 8, color: energyColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 6 }}>✦ ANALYSE IA</div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, minHeight: 40 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, minHeight: 40 }}>
               {status === 'loading' ? 'Analyse en cours...' : typedAI}
               {status === 'done' && typedAI.length < aiText.length && <span style={{ opacity: 0.5 }}>|</span>}
             </div>
@@ -398,13 +398,13 @@ export default function FuelRecoveryHub() {
 
           {/* Expand/collapse activité */}
           {activity && (
-            <button onClick={() => setExpanded(!expanded)} style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '10px 14px', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: expanded ? 12 : 0, transition: 'all 0.3s' }}>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontFamily: 'DM Mono, monospace' }}>Détails de l'analyse</span>
+            <button onClick={() => setExpanded(!expanded)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 12, padding: '10px 14px', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: expanded ? 12 : 0, transition: 'all 0.3s' }}>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>Détails de l'analyse</span>
               <span style={{ fontSize: 12, color: energyColor, transition: 'transform 0.3s', display: 'inline-block', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
             </button>
           )}
           {expanded && activity && (
-            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '12px', marginBottom: 12, animation: 'fadeSlideUp 0.25s ease both' }}>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: '12px', marginBottom: 12, animation: 'fadeSlideUp 0.25s ease both' }}>
               {[
                 ['Activité', activity.name],
                 ['Distance', `${distKm.toFixed(1)} km`],
@@ -415,7 +415,7 @@ export default function FuelRecoveryHub() {
               ].map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                   <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase' }}>{k}</span>
-                  <span style={{ fontSize: 11, color: '#fff', fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{v}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{v}</span>
                 </div>
               ))}
             </div>
@@ -446,8 +446,8 @@ export default function FuelRecoveryHub() {
 
             {showWeightInput && (
               <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-                <input type="number" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: '#fff', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
-                <button onClick={addWeight} style={{ background: '#f97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 12, fontWeight: 800, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
+                <input type="number" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
+                <button onClick={addWeight} style={{ background: '#f97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
               </div>
             )}
 
@@ -470,7 +470,7 @@ export default function FuelRecoveryHub() {
                   {/* KPIs */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-                <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace' }}>{sorted.length} mesure{sorted.length>1?'s':''}</div>
+                <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{sorted.length} mesure{sorted.length>1?'s':''}</div>
                 <button onClick={() => { setWeightLog([]); try { localStorage.removeItem('pp_weight_log'); } catch {} }} style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:8, padding:'3px 10px', fontSize:10, color:'rgba(239,68,68,0.6)', cursor:'pointer', fontFamily:'inherit' }}>Tout effacer</button>
               </div>
                     {[
@@ -478,9 +478,9 @@ export default function FuelRecoveryHub() {
                       ['Évolution', `${diff > 0 ? '+' : ''}${diff} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
                       ['Mesures', `${sorted.length}j`, '#f97316'],
                     ].map(([l,v,col]) => (
-                      <div key={l} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
+                      <div key={l} style={{ background: 'var(--bg-input)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
                         <div style={{ fontSize: 15, fontWeight: 800, color: col, fontFamily: 'DM Mono, monospace' }}>{v}</div>
-                        <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginTop: 2 }}>{l}</div>
+                        <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 2 }}>{l}</div>
                       </div>
                     ))}
                   </div>
@@ -513,7 +513,7 @@ export default function FuelRecoveryHub() {
                   <div style={{ maxHeight:120, overflowY:'auto' }}>
                     {[...sorted].reverse().map((e,i) => (
                       <div key={e.ts||i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-                        <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>{e.date}</span>
+                        <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{e.date}</span>
                         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                           <span style={{ fontSize:12, fontWeight:700, color:'#f97316', fontFamily:'DM Mono, monospace' }}>{e.weight} kg</span>
                           <button onClick={() => {
@@ -528,7 +528,7 @@ export default function FuelRecoveryHub() {
                 </div>
               );
             })() : (
-              <div style={{ textAlign: 'center', padding: '16px 0', color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+              <div style={{ textAlign: 'center', padding: '16px 0', color: 'var(--text-muted)', fontSize: 12 }}>
                 Ajoute une 2ème mesure dans quelques jours pour voir ta courbe d'évolution
               </div>
             )}
@@ -537,14 +537,14 @@ export default function FuelRecoveryHub() {
         {/* Générateur IA personnalisé */}
         <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 20, padding: '18px' }}>
           <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10 }}>✦ Créer mes propres recettes</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 12, lineHeight: 1.5 }}>Ces repas ne te conviennent pas ? Dis à l'IA ce dont tu as envie et elle crée 3 recettes adaptées à tes macros.</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.5 }}>Ces repas ne te conviennent pas ? Dis à l'IA ce dont tu as envie et elle crée 3 recettes adaptées à tes macros.</div>
           <textarea
             value={aiRequest}
             onChange={e => setAiRequest(e.target.value)}
             placeholder="Ex: j'ai envie de quelque chose d'asiatique avec du riz, léger et rapide à faire..."
-            style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '12px 14px', color: '#fff', fontSize: 12, fontFamily: 'Syne, sans-serif', outline: 'none', resize: 'none', minHeight: 72, lineHeight: 1.6, boxSizing: 'border-box' }}
+            style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 12, padding: '12px 14px', color: 'var(--text-primary)', fontSize: 12, fontFamily: 'Syne, sans-serif', outline: 'none', resize: 'none', minHeight: 72, lineHeight: 1.6, boxSizing: 'border-box' }}
           />
-          <button onClick={generateAiMeals} disabled={aiLoading || !aiRequest.trim()} style={{ width: '100%', marginTop: 10, background: aiLoading ? 'rgba(99,102,241,0.3)' : 'linear-gradient(135deg, #6366f1, #4f46e5)', border: 'none', borderRadius: 12, padding: '13px', fontSize: 13, fontWeight: 800, color: '#fff', cursor: aiLoading ? 'not-allowed' : 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <button onClick={generateAiMeals} disabled={aiLoading || !aiRequest.trim()} style={{ width: '100%', marginTop: 10, background: aiLoading ? 'rgba(99,102,241,0.3)' : 'linear-gradient(135deg, #6366f1, #4f46e5)', border: 'none', borderRadius: 12, padding: '13px', fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', cursor: aiLoading ? 'not-allowed' : 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             {aiLoading ? '⏳ Génération en cours...' : '✨ Générer 3 recettes personnalisées'}
           </button>
         </div>
@@ -554,7 +554,7 @@ export default function FuelRecoveryHub() {
           <div style={{ marginTop: 12 }}>
             <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 12 }}>Recettes générées pour toi</div>
             {aiLoading ? (
-              <div style={{ textAlign: 'center', padding: '20px', color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>L'IA cuisine pour toi...</div>
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: 13 }}>L'IA cuisine pour toi...</div>
             ) : (
               aiMeals.map((meal, i) => (
                 <div key={i} style={{ marginBottom: 10 }}>

@@ -27,15 +27,15 @@ function Section({ title, color, children }) {
 
 function NutritionCard({ title, items, color, icon }) {
   return (
-    <div style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${color}25`, borderRadius: 16, padding: '14px 16px', marginBottom: 10 }}>
+    <div style={{ background: 'var(--bg-input)', border: `1px solid ${color}25`, borderRadius: 16, padding: '14px 16px', marginBottom: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <span style={{ fontSize: 18 }}>{icon}</span>
-        <span style={{ fontSize: 13, fontWeight: 800, color: '#fff' }}>{title}</span>
+        <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>{title}</span>
       </div>
       {items.map((item, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
           <div style={{ width: 5, height: 5, borderRadius: '50%', background: color, flexShrink: 0, marginTop: 5 }}/>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{item}</span>
+          <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item}</span>
         </div>
       ))}
     </div>
@@ -52,8 +52,8 @@ function TimelineRow({ time, label, detail, color }) {
         <div style={{ width: 1, flex: 1, background: `${color}20`, marginTop: 4 }}/>
       </div>
       <div style={{ paddingTop: 8, flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 3 }}>{label}</div>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{detail}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{label}</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>{detail}</div>
       </div>
     </div>
   );
@@ -146,11 +146,11 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
   return createPortal(
     <div style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', flexDirection:'column', justifyContent:'flex-end' }} onClick={onClose}>
       <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.7)', backdropFilter:'blur(8px)' }}/>
-      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{ position:'relative', width:'100%', background:'#0d0f14', borderRadius:'24px 24px 0 0', padding:'12px 20px 48px', maxHeight:'90vh', overflowY:'auto', zIndex:1 }}>
+      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{ position:'relative', width:'100%', background:'var(--bg-primary)', borderRadius:'24px 24px 0 0', padding:'12px 20px 48px', maxHeight:'90vh', overflowY:'auto', zIndex:1 }}>
 
         {/* Handle + close */}
         <div style={{ display:'flex', alignItems:'center', marginBottom:16 }}>
-          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', padding:'4px 8px 4px 0', color:'rgba(255,255,255,0.4)', display:'flex', alignItems:'center', gap:4 }}>
+          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', padding:'4px 8px 4px 0', color:'var(--text-muted)', display:'flex', alignItems:'center', gap:4 }}>
             <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             <span style={{ fontSize:11, fontFamily:'DM Mono, monospace' }}>retour</span>
           </button>
@@ -163,17 +163,17 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
         {/* Header */}
         <div style={{ marginBottom:20 }}>
           <div style={{ fontSize:9, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Stratégie nutritionnelle · {strat.label}</div>
-          <div style={{ fontSize:22, fontWeight:900, color:'#fff', letterSpacing:'-0.03em', marginBottom:8 }}>{profile.raceName || 'Ma course'}</div>
+          <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.03em', marginBottom:8 }}>{profile.raceName || 'Ma course'}</div>
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:`${accent}15`, color:accent, border:`1px solid ${accent}30`, fontFamily:'DM Mono, monospace', fontWeight:700 }}>{profile.raceDistanceKm} km</span>
             {profile.elevationM > 0 && <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'rgba(245,158,11,0.1)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>D+{profile.elevationM}m</span>}
-            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'rgba(255,255,255,0.06)', color:'rgba(255,255,255,0.5)', fontFamily:'DM Mono, monospace' }}>~{strat.estTimeStr}</span>
+            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>~{strat.estTimeStr}</span>
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'rgba(255,0,64,0.1)', color:'#FF0040', fontFamily:'DM Mono, monospace' }}>~{strat.kcalRace} kcal</span>
           </div>
         </div>
 
         {/* Tabs */}
-        <div style={{ display:'flex', background:'rgba(255,255,255,0.04)', borderRadius:14, padding:4, gap:3, marginBottom:20 }}>
+        <div style={{ display:'flex', background:'var(--bg-input)', borderRadius:14, padding:4, gap:3, marginBottom:20 }}>
           {[['avant','Avant'],['pendant','Pendant'],['apres','Après'],['conseils','Conseils']].map(([v,l]) => (
             <button key={v} onClick={() => setTab(v)} style={{ flex:1, padding:'8px 4px', borderRadius:10, border:'none', cursor:'pointer', fontFamily:'Syne, sans-serif', fontSize:11, fontWeight:700, transition:'all 0.2s', background:tab===v?accent:'transparent', color:tab===v?'#fff':'rgba(255,255,255,0.4)' }}>{l}</button>
           ))}
@@ -183,16 +183,16 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
         {tab === 'avant' && (
           <div>
             <Section title="J-3 à J-1 · Charge glucidique" color={accent}>
-              <div style={{ background:'rgba(255,255,255,0.03)', border:`1px solid ${accent}20`, borderRadius:16, padding:'16px' }}>
+              <div style={{ background:'var(--bg-card)', border:`1px solid ${accent}20`, borderRadius:16, padding:'16px' }}>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10, marginBottom:14 }}>
                   {[['Glucides',`${strat.jMinus3.carbs}g/j`,accent],['Protéines',`${strat.jMinus3.prot}g/j`,'#FF0040'],['Lipides',`${strat.jMinus3.fat}g/j`,'#a78bfa'],['Calories',`${strat.jMinus3.kcal} kcal`,'#fff']].map(([l,v,c])=>(
-                    <div key={l} style={{ background:'rgba(255,255,255,0.04)', borderRadius:10, padding:'10px', textAlign:'center' }}>
+                    <div key={l} style={{ background:'var(--bg-input)', borderRadius:10, padding:'10px', textAlign:'center' }}>
                       <div style={{ fontSize:16, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
-                      <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
+                      <div style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', lineHeight:1.6 }}>Augmente progressivement les glucides. Réduis les fibres et les graisses à J-1. Hydrate-toi abondamment.</div>
+                <div style={{ fontSize:11, color:'var(--text-muted)', lineHeight:1.6 }}>Augmente progressivement les glucides. Réduis les fibres et les graisses à J-1. Hydrate-toi abondamment.</div>
               </div>
             </Section>
             <Section title="Matin de la course" color="#38bdf8">
@@ -202,13 +202,13 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
               <div style={{ background:'rgba(34,197,94,0.05)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:16, padding:'14px 16px' }}>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:8, marginBottom:10 }}>
                   {[['Glucides',`${strat.jMinus1.carbs}g`,accent],['Protéines',`${strat.jMinus1.prot}g`,'#FF0040']].map(([l,v,c])=>(
-                    <div key={l} style={{ background:'rgba(255,255,255,0.04)', borderRadius:10, padding:'10px', textAlign:'center' }}>
+                    <div key={l} style={{ background:'var(--bg-input)', borderRadius:10, padding:'10px', textAlign:'center' }}>
                       <div style={{ fontSize:18, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
-                      <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
+                      <div style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>Pasta, riz blanc, pain — evite les sauces lourdes. Dîner léger à 19h max.</div>
+                <div style={{ fontSize:11, color:'var(--text-muted)' }}>Pasta, riz blanc, pain — evite les sauces lourdes. Dîner léger à 19h max.</div>
               </div>
             </Section>
           </div>
@@ -247,14 +247,14 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
             </Section>
             <Section title="Repas de récupération" color={accent}>
               <div style={{ background:`${accent}08`, border:`1px solid ${accent}20`, borderRadius:16, padding:'14px 16px' }}>
-                <div style={{ fontSize:13, fontWeight:700, color:'#fff', marginBottom:6 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)', marginBottom:6 }}>
                   {strat.cat === 'sprint' ? 'Bowl protéiné · Riz + Poulet' :
                    strat.cat === 'dix' ? 'Pasta Bolognaise · Salade verte' :
                    strat.cat === 'semi' ? 'Pizza complète + dessert sucré' :
                    strat.cat === 'marathon' ? 'Repas festif libre — tu l\'as mérité !' :
                    'Bouillon, soupe, aliments doux — digestion prioritaire'}
                 </div>
-                <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', lineHeight:1.6 }}>
+                <div style={{ fontSize:11, color:'var(--text-muted)', lineHeight:1.6 }}>
                   Fais-toi plaisir tout en rechargeant. Priorité aux glucides complexes et protéines de qualité dans les 2h.
                 </div>
               </div>
@@ -267,7 +267,7 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
           <div>
             <Section title="Conseils clés" color={accent}>
               {strat.tips.map((tip, i) => (
-                <div key={i} style={{ background:'rgba(255,255,255,0.03)', border:`1px solid ${accent}15`, borderRadius:14, padding:'12px 14px', marginBottom:10, display:'flex', gap:10, alignItems:'flex-start' }}>
+                <div key={i} style={{ background:'var(--bg-card)', border:`1px solid ${accent}15`, borderRadius:14, padding:'12px 14px', marginBottom:10, display:'flex', gap:10, alignItems:'flex-start' }}>
                   <span style={{ fontSize:16 }}>{'💡⚠️🎯🔥⚡'.split('').filter((_,j)=>j%2===0)[i%3]}</span>
                   <span style={{ fontSize:12, color:'rgba(255,255,255,0.75)', lineHeight:1.6 }}>{tip}</span>
                 </div>
