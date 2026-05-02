@@ -48,9 +48,9 @@ export default function HomeModule({ onNavigate }) {
       <div style={{ position: 'relative', zIndex: 1 }}>
 
         {/* Greeting */}
-        <div style={{ marginBottom: 28, paddingTop: 8 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>{greeting}</div>
-          <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1 }}>{firstName} 👋</div>
+        <div style={{ marginBottom: 24, paddingTop: 8, paddingRight: 120 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>{greeting}</div>
+          <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1 }}>{firstName} 👋</div>
         </div>
 
         {/* Next session card */}
