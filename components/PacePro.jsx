@@ -1229,7 +1229,7 @@ export default function PacePro() {
 
   // Bottom nav
   const BottomNav = () => (
-    <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:'calc(56px + env(safe-area-inset-bottom, 20px))',paddingBottom:'env(safe-area-inset-bottom, 20px)',alignItems:'flex-start',paddingTop:'8px'}}>
+    <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:56,paddingBottom:0,alignItems:'center'}}>
       {[['home','home','Accueil'],['running','running','Running'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['historique','history','Historique']].map(([t,icon,label])=>(
         <button key={t} onClick={()=>setTab(t)}
           className={tab===t ? 'nav-btn-active' : ''} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
