@@ -49,8 +49,8 @@ const icons = {
   ),
   nutrition: (s, c) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z"/>
-      <circle cx="12" cy="9" r="2.5"/>
+      <path d="M12 2c0 0 1-2 3-2"/>
+      <path d="M8.5 5C5 5 3 8 3 11c0 5 3 10 6 10 1.5 0 2-.5 3-.5s1.5.5 3 .5c3 0 6-5 6-10 0-3-2-6-5.5-6C14 5 13 6 12 6s-2-1-3.5-1z"/>
     </svg>
   ),
   // Actions
