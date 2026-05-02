@@ -234,7 +234,8 @@ export default function FuelRecoveryHub() {
     try { localStorage.setItem('pp_water', String(next)); } catch {}
   };
 
-  const w = profile.weight || 70;
+  const lastWeightEntry = weightLog.length > 0 ? [...weightLog].sort((a,b) => a.date.localeCompare(b.date)).slice(-1)[0].weight : null;
+  const w = lastWeightEntry || profile.weight || 70;
   const isPostRun = !!activity;
   const isIntense = activity && (activity.moving_time > 3600 || activity.total_elevation_gain > 50 || activity.average_heartrate > 140);
   const elevation = activity?.total_elevation_gain || 0;
@@ -291,23 +292,25 @@ export default function FuelRecoveryHub() {
   const mealTag = isIntense ? 'Post-run intense' : isPostRun ? 'Post-training' : 'Jour de repos';
 
   const addWeight = () => {
-    const val = parseFloat(newWeight);
+    const val = parseFloat(newWeight.replace(',', '.'));
     if (!val || val < 30 || val > 300) return;
-    const entry = { date: new Date().toISOString().split('T')[0], weight: val };
-    const existing = weightLog.findIndex(e => e.date === entry.date);
+    const today = new Date().toISOString().split('T')[0];
+    const entry = { date: today, weight: val };
+    const existing = weightLog.findIndex(e => e.date === today);
     const updated = existing >= 0
       ? weightLog.map((e, i) => i === existing ? entry : e)
-      : [...weightLog, entry].slice(-60); // garder 60 jours max
-    setWeightLog(updated);
+      : [...weightLog, entry].slice(-60);
+    setWeightLog([...updated]); // forcer re-render avec nouvelle référence
     try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
     setNewWeight('');
     setShowWeightInput(false);
-    // Sync avec settings
+    // Sync poids avec settings
     try {
       const s = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
       s.weight = val;
       localStorage.setItem('pp_user_settings', JSON.stringify(s));
       localStorage.setItem('pp_nutrition_profile', JSON.stringify({...s, weight: val}));
+      setProfile(prev => ({ ...prev, weight: val }));
     } catch {}
   };
 
