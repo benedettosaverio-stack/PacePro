@@ -437,8 +437,7 @@ export default function FuelRecoveryHub() {
         {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
 
         {/* Suivi du poids */}
-        {isPerte && (
-          <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 20, padding: '18px', marginBottom: 16 }}>
+        <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 20, padding: '18px', marginBottom: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
               <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>🔥 Suivi du poids</div>
               <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', borderRadius: 8, padding: '5px 12px', fontSize: 11, fontWeight: 700, color: '#f97316', cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -524,7 +523,6 @@ export default function FuelRecoveryHub() {
               </div>
             )}
           </div>
-        )}
 
         {/* Générateur IA personnalisé */}
         <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 20, padding: '18px' }}>
