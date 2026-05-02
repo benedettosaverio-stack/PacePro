@@ -86,7 +86,7 @@ function ThemeStyles() {
         --next-session-border: rgba(255,0,64,0.2);
         --chip-bg: rgba(255,255,255,0.04);
         --chip-border: rgba(255,255,255,0.07);
-        --progress-track: rgba(255,255,255,0.06);
+        --progress-track: rgba(255,255,255,0.15);
         --svg-text: rgba(255,255,255,0.25);
         --svg-text-val: rgba(255,255,255,0.4);
         --plans-bg: #07080b;
@@ -119,7 +119,7 @@ function ThemeStyles() {
           --next-session-border: rgba(255,0,64,0.18);
           --chip-bg: rgba(10,11,15,0.06);
           --chip-border: rgba(10,11,15,0.12);
-          --progress-track: rgba(10,11,15,0.09);
+          --progress-track: rgba(10,11,15,0.18);
           --svg-text: #9296a0;
           --svg-text-val: #6b6f7a;
           --plans-bg: #f0f2f5;
@@ -1208,7 +1208,7 @@ export default function PacePro() {
             <div style={{ fontSize:36, fontWeight:900, letterSpacing:'-0.05em', color:'#fff', lineHeight:1, marginBottom:8 }}>PacePro</div>
             <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.25em' }}>Your training companion</div>
           </div>
-          <div style={{ width:120, height:2, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
+          <div style={{ width:120, height:2, background:'var(--progress-track)', borderRadius:99, overflow:'hidden' }}>
             <div className="splash-bar" style={{ height:'100%', background:'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius:99 }}/>
           </div>
         </div>
@@ -1311,7 +1311,7 @@ export default function PacePro() {
         <div style={{ fontSize:36, fontWeight:900, letterSpacing:'-0.05em', color:'#fff', lineHeight:1, marginBottom:8 }}>PacePro</div>
         <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.25em' }}>Your training companion</div>
       </div>
-      <div style={{ width:120, height:2, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
+      <div style={{ width:120, height:2, background:'var(--progress-track)', borderRadius:99, overflow:'hidden' }}>
         <div className="splash-bar" style={{ height:'100%', background:'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius:99 }}/>
       </div>
     </div>

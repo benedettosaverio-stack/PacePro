@@ -69,7 +69,7 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
         <span style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'DM Mono, monospace' }}>{label}</span>
         <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
       </div>
-      <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 99, overflow: 'hidden', position: 'relative' }}>
+      <div style={{ height: 6, background: 'var(--progress-track)', borderRadius: 99, overflow: 'hidden', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-card)', borderRadius: 99 }}/>
         <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 99, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)', boxShadow: `0 0 8px ${color}60` }}/>
       </div>
@@ -446,7 +446,7 @@ export default function FuelRecoveryHub() {
 
             {showWeightInput && (
               <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-                <input type="number" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
+                <input type="number" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'var(--progress-track)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
                 <button onClick={addWeight} style={{ background: '#f97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
               </div>
             )}

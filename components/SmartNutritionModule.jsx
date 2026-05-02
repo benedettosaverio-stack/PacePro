@@ -39,7 +39,7 @@ function MacroBar({ label, value, max, color, unit = 'g', animated = true }) {
         <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'Syne, sans-serif' }}>{label}</span>
         <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
       </div>
-      <div style={{ height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+      <div style={{ height: 8, background: 'var(--progress-track)', borderRadius: 99, overflow: 'hidden' }}>
         <div style={{ height: '100%', width: `${width}%`, background: color, borderRadius: 99, transition: 'width 1.2s cubic-bezier(0.22,1,0.36,1)' }} />
       </div>
     </div>
@@ -153,7 +153,7 @@ export default function SmartNutritionModule({ onBack }) {
               {isRecharge ? 'Recharge · Post-Training' : 'Récupération · Maintenance'}
             </span>
           </div>
-          <button onClick={() => setShowProfileSetup(true)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '6px 12px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'inherit' }}>
+          <button onClick={() => setShowProfileSetup(true)} style={{ background: 'var(--progress-track)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '6px 12px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'inherit' }}>
             ⚙️ Profil
           </button>
         </div>
@@ -210,7 +210,7 @@ export default function SmartNutritionModule({ onBack }) {
             <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 20 }}>Mon profil nutritionnel</div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 8 }}>Poids (kg)</label>
-              <input type="number" value={weight} onChange={e => setWeight(+e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-input)', borderRadius: 12, padding: '12px 14px', color: 'var(--text-primary)', fontSize: 16, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
+              <input type="number" value={weight} onChange={e => setWeight(+e.target.value)} style={{ width: '100%', background: 'var(--progress-track)', border: '1px solid var(--border-input)', borderRadius: 12, padding: '12px 14px', color: 'var(--text-primary)', fontSize: 16, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
             </div>
             <div style={{ marginBottom: 24 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 8 }}>Objectif</label>
