@@ -77,9 +77,9 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
 }
 
 // ── Meal card ────────────────────────────────────────────────────────────────
-function MealCard({ meal, tag, accent }) {
+function MealCard({ meal, tag, accent, onClick }) {
   return (
-    <div style={{ borderRadius: 16, padding: '14px 16px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${accent}25`, position: 'relative', overflow: 'hidden' }}>
+    <div onClick={onClick} style={{ borderRadius: 16, padding: '14px 16px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${accent}25`, position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
       <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle, ${accent}12 0%, transparent 70%)`, pointerEvents: 'none' }}/>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
         <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', flex: 1, marginRight: 8 }}>{meal.name}</div>
@@ -110,19 +110,92 @@ function SectionHeader({ label, color }) {
 }
 
 const MEALS_POST = [
-  { name: 'Pasta Thon · Tomate', desc: 'Pâtes complètes, thon en boîte, sauce tomate maison, basilic frais, parmesan', kcal: 620, prot: 40, carbs: 75, fat: 12 },
-  { name: 'Bowl Poulet · Patate Douce', desc: 'Riz complet, poulet grillé, patate douce rôtie, avocat, graines de courge', kcal: 660, prot: 44, carbs: 70, fat: 18 },
+  { name: 'Pasta Thon · Tomate', desc: 'Pâtes complètes, thon en boîte, sauce tomate maison, basilic frais, parmesan', kcal: 620, prot: 40, carbs: 75, fat: 12,
+    ingredients: ['200g de pâtes complètes', '1 boîte de thon au naturel (150g)', '200ml de sauce tomate', '1 gousse d'ail', 'Basilic frais', '20g de parmesan râpé', 'Sel, poivre, huile d'olive'],
+    steps: ['Cuire les pâtes al dente dans de l'eau salée (8-10 min).', 'Faire revenir l'ail émincé 1 min dans un filet d'huile d'olive.', 'Ajouter la sauce tomate et laisser mijoter 5 min à feu doux.', 'Égoutter le thon et l'incorporer à la sauce. Chauffer 2 min.', 'Mélanger les pâtes avec la sauce. Servir avec basilic et parmesan.'],
+    time: '15 min', difficulty: 'Facile', tip: 'Idéal dans les 30-60 min post-effort pour recharger le glycogène.' },
+  { name: 'Bowl Poulet · Patate Douce', desc: 'Riz complet, poulet grillé, patate douce rôtie, avocat, graines de courge', kcal: 660, prot: 44, carbs: 70, fat: 18,
+    ingredients: ['150g de riz complet cuit', '150g de blanc de poulet', '1 patate douce moyenne', '½ avocat', '1 c.s. de graines de courge', 'Citron, cumin, paprika, huile d'olive'],
+    steps: ['Préchauffer le four à 200°C. Couper la patate douce en cubes, assaisonner d'huile et cumin, rôtir 20 min.', 'Assaisonner le poulet de paprika, sel et poivre. Cuire à la poêle 6-7 min de chaque côté.', 'Trancher le poulet. Disposer dans un bol : riz, poulet, patate douce, avocat en tranches.', 'Parsemer de graines de courge. Arroser de jus de citron.'],
+    time: '30 min', difficulty: 'Facile', tip: 'La patate douce est une source excellente de glucides complexes et de bêta-carotène.' },
 ];
 const MEALS_REST = [
-  { name: 'Omelette · Légumes', desc: 'Œufs entiers, courgettes, poivrons, fromage de chèvre, herbes fraîches', kcal: 380, prot: 28, carbs: 12, fat: 24 },
-  { name: 'Salade Quinoa · Avocat', desc: 'Quinoa, avocat, tomates cerises, feta, graines de chanvre, citron', kcal: 420, prot: 18, carbs: 38, fat: 22 },
+  { name: 'Omelette · Légumes', desc: 'Œufs entiers, courgettes, poivrons, fromage de chèvre, herbes fraîches', kcal: 380, prot: 28, carbs: 12, fat: 24,
+    ingredients: ['3 œufs entiers', '½ courgette', '½ poivron rouge', '40g de fromage de chèvre', 'Ciboulette fraîche', 'Sel, poivre, huile d'olive'],
+    steps: ['Couper les légumes en petits dés. Les faire revenir 5 min dans une poêle huilée.', 'Battre les œufs avec sel et poivre. Verser sur les légumes.', 'Cuire à feu moyen 3 min. Ajouter le fromage de chèvre émietté.', 'Replier l'omelette et servir parsemée de ciboulette.'],
+    time: '12 min', difficulty: 'Facile', tip: 'Riche en protéines complètes et faible en glucides — parfait pour un jour de récupération.' },
+  { name: 'Salade Quinoa · Avocat', desc: 'Quinoa, avocat, tomates cerises, feta, graines de chanvre, citron', kcal: 420, prot: 18, carbs: 38, fat: 22,
+    ingredients: ['150g de quinoa cuit', '1 avocat mûr', '100g de tomates cerises', '50g de feta', '2 c.s. de graines de chanvre', 'Jus d'1 citron, huile d'olive, sel'],
+    steps: ['Rincer et cuire le quinoa 12 min dans 2x son volume d'eau. Laisser refroidir.', 'Couper les tomates en deux, l'avocat en cubes. Émietter la feta.', 'Mélanger tous les ingrédients dans un saladier.', 'Assaisonner avec citron, huile d'olive et sel. Ajouter les graines de chanvre.'],
+    time: '20 min', difficulty: 'Facile', tip: 'Le quinoa est une protéine complète — idéal pour la synthèse musculaire au repos.' },
 ];
+
+// ── Recipe Sheet ────────────────────────────────────────────────────────────
+function RecipeSheet({ meal, tag, accent, onClose }) {
+  if (!meal) return null;
+  const { createPortal } = require('react-dom');
+  return createPortal(
+    <div style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', flexDirection:'column', justifyContent:'flex-end' }} onClick={onClose}>
+      <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(6px)' }}/>
+      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{ position:'relative', width:'100%', background:'#13161f', borderRadius:'24px 24px 0 0', padding:'12px 20px 48px', maxHeight:'85vh', overflowY:'auto', zIndex:1 }}>
+        <div style={{ width:36, height:4, background:'rgba(255,255,255,0.15)', borderRadius:99, margin:'0 auto 16px' }}/>
+        {/* Header */}
+        <div style={{ marginBottom:16, paddingBottom:14, borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ fontSize:9, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>{tag}</div>
+          <div style={{ fontSize:22, fontWeight:900, color:'#fff', letterSpacing:'-0.03em', marginBottom:4 }}>{meal.name}</div>
+          <div style={{ display:'flex', gap:12 }}>
+            <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>⏱ {meal.time}</span>
+            <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>👨‍🍳 {meal.difficulty}</span>
+          </div>
+        </div>
+        {/* Macros */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:20 }}>
+          {[['Kcal', meal.kcal, '#fff'], ['Prot.', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip.', `${meal.fat}g`, '#a78bfa']].map(([l,v,c]) => (
+            <div key={l} style={{ background:'rgba(255,255,255,0.05)', borderRadius:12, padding:'10px 8px', textAlign:'center' }}>
+              <div style={{ fontSize:15, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
+              <div style={{ fontSize:8, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+        {/* Ingrédients */}
+        <div style={{ marginBottom:20 }}>
+          <div style={{ fontSize:9, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Ingrédients</div>
+          {meal.ingredients.map((ing, i) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ width:6, height:6, borderRadius:'50%', background:accent, flexShrink:0 }}/>
+              <span style={{ fontSize:13, color:'rgba(255,255,255,0.8)' }}>{ing}</span>
+            </div>
+          ))}
+        </div>
+        {/* Étapes */}
+        <div style={{ marginBottom:20 }}>
+          <div style={{ fontSize:9, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Préparation</div>
+          {meal.steps.map((step, i) => (
+            <div key={i} style={{ display:'flex', gap:12, marginBottom:12, alignItems:'flex-start' }}>
+              <div style={{ width:24, height:24, borderRadius:8, background:`${accent}20`, border:`1px solid ${accent}40`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ fontSize:11, fontWeight:800, color:accent, fontFamily:'DM Mono, monospace' }}>{i+1}</span>
+              </div>
+              <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{step}</span>
+            </div>
+          ))}
+        </div>
+        {/* Tip */}
+        <div style={{ background:`${accent}10`, border:`1px solid ${accent}25`, borderRadius:14, padding:'12px 14px' }}>
+          <div style={{ fontSize:9, color:accent, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', fontFamily:'DM Mono, monospace', marginBottom:6 }}>💡 Conseil nutritionnel</div>
+          <div style={{ fontSize:12, color:'rgba(255,255,255,0.7)', lineHeight:1.6 }}>{meal.tip}</div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
 
 // ── Main component ───────────────────────────────────────────────────────────
 export default function FuelRecoveryHub() {
   const [status, setStatus] = useState('loading');
   const [activity, setActivity] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState(null);
   const [water, setWater] = useState(() => { try { return parseInt(localStorage.getItem('pp_water') || '0'); } catch { return 0; } });
   const [profile, setProfile] = useState(() => { try { return JSON.parse(localStorage.getItem('pp_nutrition_profile') || '{}'); } catch { return {}; } });
 
@@ -273,7 +346,9 @@ export default function FuelRecoveryHub() {
 
         {/* ── REPAS RECOMMANDÉ ── */}
         <SectionHeader label="Repas recommandé" color="#a78bfa" />
-        <MealCard meal={meals[0]} tag={mealTag} accent={energyColor} />
+        <MealCard meal={meals[0]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[0])} />
+        {meals[1] && <div style={{marginTop:10}}><MealCard meal={meals[1]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[1])} /></div>}
+        {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
 
       </div>
 
