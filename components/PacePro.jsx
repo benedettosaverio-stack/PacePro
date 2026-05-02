@@ -161,6 +161,18 @@ function ThemeStyles() {
         transform: translateY(-2px);
         box-shadow: 0 8px 32px rgba(0,0,0,0.18);
       }
+      @keyframes navActivate {
+        0%   { transform: scale(1); opacity: 0.5; }
+        50%  { transform: scale(1.15); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      @keyframes navDot {
+        from { transform: scaleX(0); opacity: 0; }
+        to   { transform: scaleX(1); opacity: 1; }
+      }
+      .nav-btn-active svg {
+        animation: navActivate 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
     `}</style>
   );
 }
@@ -1259,9 +1271,10 @@ export default function PacePro() {
     <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',height:56,paddingBottom:0,alignItems:'center'}}>
       {[['home','home','Accueil'],['running','running','Running'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['historique','history','Historique'],['nutrition','nutrition','Nutrition']].map(([t,icon,label])=>(
         <button key={t} onClick={()=>setTab(t)}
-          className={tab===t ? 'nav-btn-active' : ''} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
+          className={tab===t ? 'nav-btn-active' : ''} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}} className={tab===t?'nav-btn-active':''}>
           <Icon name={icon} size={22} color={tab===t?'#FF0040':'var(--text-muted)'}/>
-          <span style={{fontSize:9,fontWeight:tab===t?700:400,letterSpacing:'0.04em'}}>{label}</span>
+          <span style={{fontSize:9,fontWeight:tab===t?700:400,letterSpacing:'0.04em',color:tab===t?'#FF0040':'var(--text-muted)'}}>{label}</span>
+          <div style={{width:16,height:2,borderRadius:99,background:'#FF0040',opacity:tab===t?1:0,transition:'opacity 0.25s, transform 0.25s',transform:tab===t?'scaleX(1)':'scaleX(0)',transformOrigin:'center'}}/>
         </button>
       ))}
     </div>
