@@ -52,6 +52,7 @@ import AuthModule from './AuthModule';
 import { Icon } from './Icons';
 import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
+import SettingsModule from './SettingsModule';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
@@ -1110,6 +1111,10 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
           ))}
         </div>
 
+        {/* Settings */}
+        <button onClick={() => { onNavigate('settings'); onClose(); }} style={{ width:'100%', background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:16, padding:'14px', fontSize:13, fontWeight:700, color:'var(--text-secondary)', cursor:'pointer', fontFamily:'Syne, sans-serif', marginBottom:10, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
+          ⚙️ Paramètres & Profil
+        </button>
         {/* Logout */}
         <button onClick={onLogout} style={{ width:'100%', background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:16, padding:'16px', fontSize:14, fontWeight:700, color:'rgba(239,68,68,0.8)', cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'0.01em' }}>
           Se déconnecter
@@ -1247,6 +1252,15 @@ export default function PacePro() {
       </div>
     );
   }
+  if (tab === 'settings') return (
+    <div className='app-shell'>
+      <ThemeStyles/>
+      {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+      <AppHeader />
+      <div className='app-content tab-enter' style={{paddingBottom:80}}><SettingsModule onBack={() => setTab('home')} user={user} /></div>
+      <BottomNav/>
+    </div>
+  );
   if (tab === 'nutrition') return (
     <div className='app-shell'>
       <ThemeStyles/>
