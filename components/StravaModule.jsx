@@ -258,20 +258,6 @@ export default function StravaModule() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 80 }}>
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-nav)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border-nav)', padding: '0 20px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {athlete?.photo && <img src={athlete.photo} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />}
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{athlete?.name || 'Strava'}</div>
-            <div style={{ fontSize: 10, color: '#FC4C02', fontWeight: 600, fontFamily: 'monospace' }}>● CONNECTÉ</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={loadActivities} style={{ ...btnGhost, padding: '6px 12px', fontSize: 12 }}>↻ Sync</button>
-          <button onClick={disconnect} style={{ ...btnGhost, padding: '6px 12px', fontSize: 12, color: 'rgba(239,68,68,0.7)' }}>Déco.</button>
-        </div>
-      </div>
-
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '20px 16px' }}>
         {activities.length > 0 && <Stats activities={activities} />}
 
