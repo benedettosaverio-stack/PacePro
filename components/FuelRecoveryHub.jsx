@@ -201,7 +201,13 @@ export default function FuelRecoveryHub() {
   const [aiLoading, setAiLoading] = useState(false);
   const [showAiMeals, setShowAiMeals] = useState(false);
   const [water, setWater] = useState(() => { try { return parseInt(localStorage.getItem('pp_water') || '0'); } catch { return 0; } });
-  const [profile, setProfile] = useState(() => { try { return JSON.parse(localStorage.getItem('pp_nutrition_profile') || '{}'); } catch { return {}; } });
+  const [profile, setProfile] = useState(() => {
+    try {
+      const settings = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
+      const nutrition = JSON.parse(localStorage.getItem('pp_nutrition_profile') || '{}');
+      return { ...nutrition, ...settings };
+    } catch { return {}; }
+  });
 
   useEffect(() => {
     const token = getToken();
@@ -234,24 +240,49 @@ export default function FuelRecoveryHub() {
   const waterPct = Math.min((water / waterGoalMl) * 100, 100);
 
   // Macros
-  const protein = Math.round(w * (isPostRun ? 2.0 : 1.6));
-  const carbs = Math.round(w * (isIntense ? 7 : isPostRun ? 5 : 3) + elevation * 0.02);
-  const fat = Math.round(w * 0.9);
-  const kcal = Math.round(protein * 4 + carbs * 4 + fat * 9);
+  const goal = profile?.goal || 'performance';
+  const isPerte = goal === 'perte';
+  const isPrise = goal === 'prise';
+
+  // Macros adaptées selon objectif
+  const protein = Math.round(w * (isPerte ? 2.2 : isPrise ? 2.0 : isPostRun ? 2.0 : 1.6));
+  const carbs = isPerte
+    ? Math.round(w * (isIntense ? 3.5 : isPostRun ? 2.5 : 1.5) + elevation * 0.01)
+    : Math.round(w * (isIntense ? 7 : isPostRun ? 5 : 3) + elevation * 0.02);
+  const fat = Math.round(w * (isPerte ? 0.7 : isPrise ? 1.1 : 0.9));
+  const baseKcal = Math.round(protein * 4 + carbs * 4 + fat * 9);
+  const deficit = isPerte ? Math.round(w * 4) : 0; // ~500 kcal déficit selon poids
+  const kcal = Math.max(baseKcal - deficit, 1200);
 
   // Colors
   const waterColor = '#38bdf8';
   const energyColor = isIntense ? '#f59e0b' : isPostRun ? '#FF0040' : '#22c55e';
 
   // AI advice
-  const aiText = isIntense
+  const aiText = isPerte
+    ? isIntense
+      ? `Séance intense avec objectif perte de poids — bravo ! Tu as brûlé environ ${Math.round(distKm*w*1.1)} kcal. Recharge avec ${carbs}g de glucides complexes et ${protein}g de protéines pour préserver ta masse musculaire. Objectif calorique du jour : ${kcal} kcal en déficit modéré.`
+      : isPostRun
+      ? `Bonne séance ! En mode perte de poids, vise ${protein}g de protéines pour éviter la fonte musculaire. Limite les glucides à ${carbs}g. Déficit calorique cible : ${deficit} kcal.`
+      : `Jour de repos en mode perte de poids. Protéines élevées (${protein}g) pour préserver le muscle, glucides bas (${carbs}g), lipides sains. Total : ${kcal} kcal — déficit de ${deficit} kcal.`
+    : isIntense
     ? `Séance intense détectée — ${distKm.toFixed(1)}km avec ${Math.round(elevation)}m D+. Recharge en ${carbs}g de glucides complexes dans les 30 minutes. ${waterGoalMl/1000}L d'eau minimum aujourd'hui, avec électrolytes.`
     : isPostRun
     ? `Activité modérée détectée. Récupération optimale : ${protein}g de protéines et ${carbs}g de glucides suffisent. Maintiens une bonne hydratation.`
     : `Journée de repos. Priorité aux protéines (${protein}g) et aux lipides sains. Limite les glucides simples. ${waterGoalMl/1000}L d'eau pour la récupération cellulaire.`;
 
   const typedAI = useTypewriter(status === 'done' ? aiText : '', 20);
-  const meals = isPostRun ? MEALS_POST : MEALS_REST;
+  const MEALS_PERTE = [
+    { name: 'Bowl Blanc de Poulet · Légumes', desc: 'Blanc de poulet grillé, brocoli vapeur, carottes, concombre, sauce yaourt citron', kcal: 320, prot: 42, carbs: 14, fat: 8,
+      ingredients: ['180g blanc de poulet', '150g brocoli', '1 carotte', '½ concombre', '100g yaourt grec 0%', 'Citron, herbes, sel'],
+      steps: ['Cuire le poulet à la poêle avec herbes 8 min.', 'Cuire le brocoli et la carotte vapeur 5 min.', 'Préparer la sauce yaourt + citron + herbes.', 'Disposer dans un bol et napper de sauce.'],
+      time: '15 min', difficulty: 'Facile', tip: 'Riche en protéines, faible en calories — idéal pour préserver le muscle en déficit.' },
+    { name: 'Salade Thon · Œuf · Épinards', desc: 'Épinards frais, thon au naturel, œuf dur, tomates cerises, vinaigrette légère', kcal: 280, prot: 35, carbs: 8, fat: 12,
+      ingredients: ['100g épinards frais', '1 boîte thon naturel', '2 œufs durs', '100g tomates cerises', '1 c.s. huile d'olive', 'Vinaigre balsamique, sel'],
+      steps: ['Cuire les œufs durs 10 min.', 'Disposer les épinards dans un grand bol.', 'Ajouter le thon égoutté, les œufs coupés, les tomates.', 'Assaisonner avec huile d'olive et vinaigre.'],
+      time: '12 min', difficulty: 'Facile', tip: 'Combo parfait : protéines complètes + oméga-3 + faible densité calorique.' },
+  ];
+  const meals = isPerte ? MEALS_PERTE : isPostRun ? MEALS_POST : MEALS_REST;
   const mealTag = isIntense ? 'Post-run intense' : isPostRun ? 'Post-training' : 'Jour de repos';
 
   const generateAiMeals = async () => {
@@ -292,7 +323,10 @@ export default function FuelRecoveryHub() {
               {isIntense ? 'Recharge · Post-Intensif' : isPostRun ? 'Récupération · Post-Run' : 'Maintenance · Repos'}
             </span>
           </div>
-          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace' }}>{kcal} kcal/j</span>
+          <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+            {isPerte && <span style={{ fontSize:9, padding:'2px 7px', borderRadius:99, background:'rgba(255,100,0,0.15)', color:'#f97316', border:'1px solid rgba(255,100,0,0.3)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>-{deficit} kcal déficit</span>}
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace' }}>{kcal} kcal/j</span>
+          </div>
         </div>
 
         {/* ── HYDRATATION ── */}

@@ -130,11 +130,16 @@ export default function SettingsModule({ onBack, user }) {
         <Section title="Objectif sportif">
           <div style={{ padding: '14px 16px' }}>
             <SegmentedControl
-              options={[['performance','🏃 Perf.'],['prise','💪 Masse'],['sante','🌿 Santé']]}
+              options={[['performance','🏃 Perf.'],['prise','💪 Masse'],['perte','🔥 Perte'],['sante','🌿 Santé']]}
               value={s.goal}
               onChange={v => update('goal', v)}
             />
           </div>
+          {s.goal === 'perte' && (
+            <div style={{ padding:'0 16px 12px', fontSize:11, color:'rgba(255,165,0,0.8)', fontFamily:'DM Mono, monospace', lineHeight:1.5 }}>
+              🔥 Déficit calorique modéré · Protéines élevées · Glucides réduits · Lipides sains
+            </div>
+          )}
           <Row label="Niveau running" last>
             <SegmentedControl
               options={[['beginner','Déb.'],['intermediate','Inter.'],['advanced','Avancé']]}
