@@ -278,8 +278,8 @@ export default function FuelRecoveryHub() {
       steps: ['Cuire le poulet à la poêle avec herbes 8 min.', 'Cuire le brocoli et la carotte vapeur 5 min.', 'Préparer la sauce yaourt + citron + herbes.', 'Disposer dans un bol et napper de sauce.'],
       time: '15 min', difficulty: 'Facile', tip: 'Riche en protéines, faible en calories — idéal pour préserver le muscle en déficit.' },
     { name: 'Salade Thon · Œuf · Épinards', desc: 'Épinards frais, thon au naturel, œuf dur, tomates cerises, vinaigrette légère', kcal: 280, prot: 35, carbs: 8, fat: 12,
-      ingredients: ['100g épinards frais', '1 boîte thon naturel', '2 œufs durs', '100g tomates cerises', '1 c.s. huile d'olive', 'Vinaigre balsamique, sel'],
-      steps: ['Cuire les œufs durs 10 min.', 'Disposer les épinards dans un grand bol.', 'Ajouter le thon égoutté, les œufs coupés, les tomates.', 'Assaisonner avec huile d'olive et vinaigre.'],
+      ingredients: ['100g épinards frais', '1 boîte thon naturel', '2 œufs durs', '100g tomates cerises', '1 c.s. huile d\'olive', 'Vinaigre balsamique, sel'],
+      steps: ['Cuire les œufs durs 10 min.', 'Disposer les épinards dans un grand bol.', 'Ajouter le thon égoutté, les œufs coupés, les tomates.', 'Assaisonner avec huile d\'olive et vinaigre.'],
       time: '12 min', difficulty: 'Facile', tip: 'Combo parfait : protéines complètes + oméga-3 + faible densité calorique.' },
   ];
   const meals = isPerte ? MEALS_PERTE : isPostRun ? MEALS_POST : MEALS_REST;
