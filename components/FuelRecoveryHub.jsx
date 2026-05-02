@@ -295,11 +295,12 @@ export default function FuelRecoveryHub() {
     const val = parseFloat(newWeight.replace(',', '.'));
     if (!val || val < 30 || val > 300) return;
     const today = new Date().toISOString().split('T')[0];
-    const entry = { date: today, weight: val };
+    const entry = { date: today, weight: val, ts: Date.now() };
+    // Remplacer si même jour, sinon ajouter
     const existing = weightLog.findIndex(e => e.date === today);
     const updated = existing >= 0
       ? weightLog.map((e, i) => i === existing ? entry : e)
-      : [...weightLog, entry].slice(-60);
+      : [...weightLog, entry].slice(-90);
     setWeightLog([...updated]); // forcer re-render avec nouvelle référence
     try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
     setNewWeight('');
@@ -452,7 +453,7 @@ export default function FuelRecoveryHub() {
               </div>
             )}
 
-            {weightLog.length >= 2 ? (() => {
+            {weightLog.length >= 1 ? (() => {
               const sorted = [...weightLog].sort((a,b) => a.date.localeCompare(b.date));
               const first = sorted[0].weight;
               const last = sorted[sorted.length-1].weight;
@@ -519,7 +520,7 @@ export default function FuelRecoveryHub() {
               );
             })() : (
               <div style={{ textAlign: 'center', padding: '16px 0', color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
-                Ajoute au moins 2 mesures pour voir ta courbe d'évolution
+                Ajoute une 2ème mesure dans quelques jours pour voir ta courbe d'évolution
               </div>
             )}
           </div>
