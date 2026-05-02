@@ -56,7 +56,6 @@ html, body {
 .app-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
 
 .bottom-nav {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  height: 56px;
   flex-shrink: 0;
 }
