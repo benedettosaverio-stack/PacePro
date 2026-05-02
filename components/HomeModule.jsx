@@ -100,10 +100,7 @@ export default function HomeModule({ onNavigate }) {
                   <path d="M0 38 L0 32 Q10 31 20 28 Q30 24 40 26 Q55 29 65 22 Q75 14 85 10 Q95 6 105 8 Q115 11 125 18 Q135 24 145 20 Q155 15 165 8 Q175 2 185 4 Q195 7 205 14 Q215 20 225 16 Q235 11 245 6 Q255 1 265 4 Q275 8 285 14 Q295 20 305 24 Q315 28 325 22 Q335 15 345 20 Q355 26 365 30 Q375 34 385 32 Q392 31 400 32 L400 40 Z"
                     fill="url(#fillGrad)" stroke="url(#progGrad)" strokeWidth="1.5"/>
                 </g>
-                {/* % discret au niveau de la progression */}
-                {progress > 0 && progress < 100 && (
-                  <text x={Math.min(progress * 4, 370)} y="15" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="monospace">{progress}%</text>
-                )}
+
               </svg>
             </div>
           </div>
