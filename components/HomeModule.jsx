@@ -56,14 +56,9 @@ export default function HomeModule({ onNavigate }) {
         {/* Next session card */}
         {nextSession ? (
           <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#0d0608', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
-            {/* Bokeh effect */}
-            <div style={{ position:'absolute', inset:0, overflow:'hidden', borderRadius:20 }}>
-              <div style={{ position:'absolute', width:120, height:120, borderRadius:'50%', background:'rgba(255,0,64,0.35)', filter:'blur(40px)', top:-20, left:20 }}/>
-              <div style={{ position:'absolute', width:80, height:80, borderRadius:'50%', background:'rgba(251,191,36,0.25)', filter:'blur(30px)', top:10, left:'45%' }}/>
-              <div style={{ position:'absolute', width:100, height:100, borderRadius:'50%', background:'rgba(255,0,64,0.2)', filter:'blur(35px)', bottom:-10, right:30 }}/>
-              <div style={{ position:'absolute', width:60, height:60, borderRadius:'50%', background:'rgba(99,102,241,0.2)', filter:'blur(25px)', bottom:10, left:'30%' }}/>
-              <div style={{ position:'absolute', width:40, height:40, borderRadius:'50%', background:'rgba(255,0,64,0.15)', filter:'blur(20px)', top:30, right:'20%' }}/>
-            </div>
+            {/* SVG background */}
+            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.6 }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 100%)', borderRadius:20 }} />
 
 
             {/* Content */}
