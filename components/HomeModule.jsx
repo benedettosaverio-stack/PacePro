@@ -64,22 +64,8 @@ export default function HomeModule({ onNavigate }) {
               <div style={{ position:'absolute', width:60, height:60, borderRadius:'50%', background:'rgba(99,102,241,0.2)', filter:'blur(25px)', bottom:10, left:'30%' }}/>
               <div style={{ position:'absolute', width:40, height:40, borderRadius:'50%', background:'rgba(255,0,64,0.15)', filter:'blur(20px)', top:30, right:'20%' }}/>
             </div>
-            {/* Glow */}
-            <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 200, height: 80, background: 'radial-gradient(circle, rgba(255,0,64,0.25) 0%, transparent 70%)', pointerEvents: 'none' }} />
-            {/* Elevation profile */}
-            <svg style={{ position: 'absolute', bottom: 0, left: 0, right: 0, width: '100%', opacity: 0.6 }} viewBox="0 0 400 60" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="elev" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FF0040" stopOpacity="0.6"/>
-                  <stop offset="100%" stopColor="#FF0040" stopOpacity="0"/>
-                </linearGradient>
-              </defs>
-              <path d="M0 60 L0 45 Q20 42 40 38 Q70 30 100 35 Q130 40 160 28 Q190 16 220 20 Q250 24 280 18 Q310 12 340 22 Q370 32 400 28 L400 60 Z" fill="url(#elev)"/>
-              <path d="M0 45 Q20 42 40 38 Q70 30 100 35 Q130 40 160 28 Q190 16 220 20 Q250 24 280 18 Q310 12 340 22 Q370 32 400 28" fill="none" stroke="#FF0040" strokeWidth="1.5"/>
-              {/* Dot on peak */}
-              <circle cx="310" cy="12" r="3" fill="#FF0040"/>
-              <line x1="310" y1="12" x2="310" y2="60" stroke="#FF0040" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.4"/>
-            </svg>
+
+
             {/* Content */}
             <div style={{ position: 'relative', zIndex: 1, padding: '16px 16px 48px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
