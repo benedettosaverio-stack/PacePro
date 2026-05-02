@@ -90,7 +90,7 @@ function MealCard({ meal, tag, accent, onClick }) {
         {[['Kcal', meal.kcal, 'var(--text-primary)'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
           <div key={l} style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 8, padding: '6px 4px', textAlign: 'center' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: c, fontFamily: 'DM Mono, monospace' }}>{v}</div>
-            <div style={{ fontSize: 7, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginTop: 1 }}>{l}</div>
+            <div style={{ fontSize: 7, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 1 }}>{l}</div>
           </div>
         ))}
       </div>
