@@ -1240,22 +1240,28 @@ export default function PacePro() {
     </div>
   );
 
-  const ProfileBtn = () => (
-    <button onClick={() => setShowProfile(true)} style={{ position:'fixed', top:'calc(env(safe-area-inset-top, 0px) + 12px)', right:16, zIndex:150, background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:99, padding:'6px 12px 6px 8px', display:'flex', alignItems:'center', gap:8, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 2px 12px rgba(0,0,0,0.1)' }}>
-      {user?.photo
-        ? <img src={user.photo} alt="" style={{ width:26, height:26, borderRadius:'50%', objectFit:'cover' }} />
-        : <div style={{ width:26, height:26, borderRadius:'50%', background:'rgba(219,59,61,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
-      }
-      <span style={{ fontSize:12, fontWeight:600, color:'var(--text-primary)', maxWidth:80, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user?.name?.split(' ')[0]}</span>
-    </button>
+  const AppHeader = ({ actions }) => (
+    <div style={{ position:'sticky', top:0, zIndex:100, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)', paddingTop:'env(safe-area-inset-top, 0px)' }}>
+      <div style={{ height:52, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px' }}>
+        <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', gap:8, background:'none', border:'none', cursor:'pointer', fontFamily:'Syne, sans-serif', padding:0 }}>
+          {user?.photo
+            ? <img src={user.photo} alt="" style={{ width:30, height:30, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(255,0,64,0.3)' }} />
+            : <div style={{ width:30, height:30, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
+          }
+          <span style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>{user?.name?.split(' ')[0]}</span>
+        </button>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>{actions}</div>
+      </div>
+    </div>
   );
+
 
   if (tab === 'historique') {
     return (
       <div className='app-shell'>
         <ThemeStyles/>
-        <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <AppHeader />
         <div className='app-content tab-enter' style={{paddingBottom:80}}><HistoriqueModule/></div>
         <BottomNav/>
       </div>
@@ -1264,8 +1270,8 @@ export default function PacePro() {
   if (tab === 'bilan') return (
     <div className='app-shell'>
       <ThemeStyles/>
-      <ProfileBtn/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+      <AppHeader />
       <div className='app-content tab-enter'><BilanModule onBack={() => setTab('home')} /></div>
     </div>
   );
@@ -1273,8 +1279,8 @@ export default function PacePro() {
     return (
       <div className='app-shell'>
         <ThemeStyles/>
-        <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <AppHeader />
         <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
       </div>
@@ -1284,8 +1290,8 @@ export default function PacePro() {
     return (
       <div className='app-shell'>
         <ThemeStyles/>
-        <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <AppHeader />
         <div className='app-content tab-enter' style={{paddingBottom:80}}><StravaModule/></div>
         <BottomNav/>
       </div>
@@ -1295,8 +1301,8 @@ export default function PacePro() {
     return (
       <div className='app-shell'>
         <ThemeStyles/>
-        <ProfileBtn/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <AppHeader actions={<><button onClick={()=>{}} style={{background:'rgba(96,165,250,0.08)',border:'1px solid rgba(96,165,250,0.2)',color:'#60a5fa',borderRadius:10,padding:'6px 12px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>✨ IA</button><button onClick={()=>{}} style={{background:'#FF0040',border:'none',color:'#fff',borderRadius:10,padding:'6px 12px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Créer</button></>} />
         <div className='app-content tab-enter' style={{paddingBottom:80}}><Muscu/></div>
         <BottomNav/>
       </div>
@@ -1304,19 +1310,21 @@ export default function PacePro() {
   }
 
   // Running tab
-  if (view==='onboarding') return <div className='app-shell'><ThemeStyles/><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
+  if (view==='onboarding') return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader /><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
       <div className='app-shell'>
         <ThemeStyles/>
+        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <AppHeader actions={<button onClick={()=>setView('list')} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:10,padding:'6px 12px',color:'var(--btn-ghost-color)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>📋 Plans</button>} />
         <div className='app-content tab-enter' style={{paddingBottom:80}}>
-          <button onClick={()=>setView('list')} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
+          <button onClick={()=>setView('list')} style={{display:'none'}} style={{position:'fixed',bottom:68,right:20,zIndex:99,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:99,padding:'8px 14px',color:'var(--text-secondary)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Syne,sans-serif',backdropFilter:'blur(12px)'}}>📋 Mes plans</button>
           <Dashboard profile={plans[activePlan].profile} plan={plans[activePlan].plan} initialCompleted={plans[activePlan].completed||{}} initialFeedbacks={plans[activePlan].feedbacks||{}} onReset={()=>setView('onboarding')} onSave={(newPlan, newCompleted, newFeedbacks) => { const updated = plans.map((p,i) => i===activePlan ? {...p, plan:newPlan, completed:newCompleted, feedbacks:newFeedbacks} : p); savePlans(updated); }}/>
         </div>
         <BottomNav/>
       </div>
     );
   }
-  if (plans.length===0) return <div className='app-shell'><ThemeStyles/><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
-  return <div className='app-shell'><ThemeStyles/><div className='app-content' style={{paddingBottom:80}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></div>;
+  if (plans.length===0) return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader /><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
+  return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader actions={<button onClick={()=>setView('onboarding')} style={{background:'#FF0040',border:'none',color:'#fff',borderRadius:10,padding:'6px 14px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Nouveau</button>} /><div className='app-content' style={{paddingBottom:80}}><PlansList plans={plans} onSelect={i=>{setActivePlan(i);setView('dashboard');}} onNew={()=>setView('onboarding')} onDelete={handleDelete}/></div><BottomNav/></div>;
 }
