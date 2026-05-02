@@ -57,15 +57,14 @@ export default function HomeModule({ onNavigate }) {
         {nextSession ? (
           <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#0d0608', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
             {/* Topographic texture */}
-            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.12 }} viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
-              <ellipse cx="200" cy="140" rx="180" ry="60" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="140" rx="150" ry="48" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="140" rx="120" ry="36" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="140" rx="90" ry="25" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="140" rx="60" ry="16" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="200" cy="140" rx="30" ry="8" fill="none" stroke="#FF0040" strokeWidth="1"/>
-              <ellipse cx="120" cy="130" rx="80" ry="30" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
-              <ellipse cx="300" cy="135" rx="70" ry="25" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.1 }} viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice">
+              <ellipse cx="200" cy="175" rx="180" ry="50" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="175" rx="150" ry="40" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="175" rx="120" ry="30" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="175" rx="90" ry="20" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="200" cy="175" rx="60" ry="12" fill="none" stroke="#FF0040" strokeWidth="1"/>
+              <ellipse cx="120" cy="168" rx="80" ry="22" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
+              <ellipse cx="300" cy="170" rx="70" ry="18" fill="none" stroke="#FF0040" strokeWidth="0.8"/>
             </svg>
             {/* Glow */}
             <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 200, height: 80, background: 'radial-gradient(circle, rgba(255,0,64,0.25) 0%, transparent 70%)', pointerEvents: 'none' }} />
