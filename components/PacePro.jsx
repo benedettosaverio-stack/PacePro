@@ -1317,7 +1317,7 @@ export default function PacePro() {
     </div>
   ) : null;
 
-  if (showSplash) return (
+  if (showSplash && user) return (
     <div style={{ position:'fixed', inset:0, background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, transition:'opacity 0.5s ease', opacity: splashOut ? 0 : 1 }}>
       <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
       <img src="/logo.svg" alt="PacePro" className="splash-logo" style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
