@@ -1141,6 +1141,16 @@ export default function PacePro() {
     try { return !sessionStorage.getItem('pp_splash_shown'); } catch { return true; }
   });
   const [splashOut, setSplashOut] = useState(false);
+
+  useEffect(() => {
+    if (!showSplash) return;
+    const t1 = setTimeout(() => setSplashOut(true), 2500);
+    const t2 = setTimeout(() => {
+      setShowSplash(false);
+      try { sessionStorage.setItem('pp_splash_shown', '1'); } catch {}
+    }, 3000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [showSplash]);
   const [showProfile, setShowProfile] = useState(false);
   const [user, setUser] = useState(() => {
     try {
