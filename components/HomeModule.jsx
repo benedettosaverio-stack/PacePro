@@ -55,10 +55,10 @@ export default function HomeModule({ onNavigate }) {
 
         {/* Next session card */}
         {nextSession ? (
-          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: 'var(--bg-card)', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
+          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#111114', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
             {/* SVG background */}
-            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.6 }} />
-            <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg, var(--bg-overlay-dark, rgba(0,0,0,0.3)) 0%, transparent 100%)', borderRadius:20 }} />
+            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.45 }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)', borderRadius:20 }} />
 
 
             {/* Content */}
@@ -100,9 +100,9 @@ export default function HomeModule({ onNavigate }) {
                   <path d="M0 38 L0 32 Q10 31 20 28 Q30 24 40 26 Q55 29 65 22 Q75 14 85 10 Q95 6 105 8 Q115 11 125 18 Q135 24 145 20 Q155 15 165 8 Q175 2 185 4 Q195 7 205 14 Q215 20 225 16 Q235 11 245 6 Q255 1 265 4 Q275 8 285 14 Q295 20 305 24 Q315 28 325 22 Q335 15 345 20 Q355 26 365 30 Q375 34 385 32 Q392 31 400 32 L400 40 Z"
                     fill="url(#fillGrad)" stroke="url(#progGrad)" strokeWidth="1.5"/>
                 </g>
-                {/* Point de progression */}
+                {/* % discret au niveau de la progression */}
                 {progress > 0 && progress < 100 && (
-                  <circle cx={progress * 4} cy="20" r="3" fill="#FF0040" style={{filter:'drop-shadow(0 0 4px #FF0040)'}}/>
+                  <text x={Math.min(progress * 4, 370)} y="15" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="monospace">{progress}%</text>
                 )}
               </svg>
             </div>
