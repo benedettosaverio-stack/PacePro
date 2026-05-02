@@ -1185,25 +1185,24 @@ export default function PacePro() {
     setUser(null);
   };
 
-  if (showSplash) return (
-    <div style={{ position:'fixed', inset:0, background:'#07080b', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease' }}>
-      {/* Glow background */}
-      <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
-      {/* Logo */}
-      <img src="/logo.svg" alt="PacePro" className={`splash-logo${splashOut?' splash-out':''}`} style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
-      {/* Title */}
-      <div className="splash-text" style={{ textAlign:'center', marginBottom:48 }}>
-        <div style={{ fontSize:36, fontWeight:900, letterSpacing:'-0.05em', color:'#fff', lineHeight:1, marginBottom:8 }}>PacePro</div>
-        <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.25em' }}>Your training companion</div>
-      </div>
-      {/* Progress bar */}
-      <div style={{ width:120, height:2, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
-        <div className="splash-bar" style={{ height:'100%', background:'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius:99 }}/>
-      </div>
-    </div>
+  if (!user) return (
+    <>
+      <AuthModule onAuth={handleAuth} />
+      {showSplash && (
+        <div style={{ position:'fixed', inset:0, background:'#07080b', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
+          <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
+          <img src="/logo.svg" alt="PacePro" className="splash-logo" style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
+          <div className="splash-text" style={{ textAlign:'center', marginBottom:48 }}>
+            <div style={{ fontSize:36, fontWeight:900, letterSpacing:'-0.05em', color:'#fff', lineHeight:1, marginBottom:8 }}>PacePro</div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.25em' }}>Your training companion</div>
+          </div>
+          <div style={{ width:120, height:2, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
+            <div className="splash-bar" style={{ height:'100%', background:'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius:99 }}/>
+          </div>
+        </div>
+      )}
+    </>
   );
-
-  if (!user) return <AuthModule onAuth={handleAuth} />;
    // 'running' | 'muscu'
   const [view, setView] = useState('list');
   const [plans, setPlans] = useState([]);
@@ -1290,11 +1289,27 @@ export default function PacePro() {
   );
 
 
+  // Splash overlay pour utilisateurs connectés
+  const SplashOverlay = () => showSplash ? (
+    <div style={{ position:'fixed', inset:0, background:'#07080b', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
+      <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
+      <img src="/logo.svg" alt="PacePro" className="splash-logo" style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
+      <div className="splash-text" style={{ textAlign:'center', marginBottom:48 }}>
+        <div style={{ fontSize:36, fontWeight:900, letterSpacing:'-0.05em', color:'#fff', lineHeight:1, marginBottom:8 }}>PacePro</div>
+        <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.25em' }}>Your training companion</div>
+      </div>
+      <div style={{ width:120, height:2, background:'rgba(255,255,255,0.08)', borderRadius:99, overflow:'hidden' }}>
+        <div className="splash-bar" style={{ height:'100%', background:'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius:99 }}/>
+      </div>
+    </div>
+  ) : null;
+
   if (tab === 'historique') {
     return (
       <div className='app-shell'>
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <SplashOverlay/>
         <AppHeader />
         <div className='app-content tab-enter' style={{paddingBottom:80}}><HistoriqueModule/></div>
         <BottomNav/>
@@ -1332,6 +1347,7 @@ export default function PacePro() {
       <div className='app-shell'>
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <SplashOverlay/>
         <AppHeader />
         <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
@@ -1343,6 +1359,7 @@ export default function PacePro() {
       <div className='app-shell'>
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
+        <SplashOverlay/>
         <AppHeader />
         <div className='app-content tab-enter' style={{paddingBottom:80}}><StravaModule/></div>
         <BottomNav/>
