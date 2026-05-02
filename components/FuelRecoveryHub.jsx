@@ -87,7 +87,7 @@ function MealCard({ meal, tag, accent, onClick }) {
       </div>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10, lineHeight: 1.5 }}>{meal.desc}</div>
       <div style={{ display: 'flex', gap: 6 }}>
-        {[['Kcal', meal.kcal, '#fff'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
+        {[['Kcal', meal.kcal, 'var(--text-primary)'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
           <div key={l} style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 8, padding: '6px 4px', textAlign: 'center' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: c, fontFamily: 'DM Mono, monospace' }}>{v}</div>
             <div style={{ fontSize: 7, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginTop: 1 }}>{l}</div>
@@ -149,7 +149,7 @@ function RecipeSheet({ meal, tag, accent, onClose }) {
         </div>
         {/* Macros */}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:20 }}>
-          {[['Kcal', meal.kcal, '#fff'], ['Prot.', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip.', `${meal.fat}g`, '#a78bfa']].map(([l,v,c]) => (
+          {[['Kcal', meal.kcal, 'var(--text-primary)'], ['Prot.', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip.', `${meal.fat}g`, '#a78bfa']].map(([l,v,c]) => (
             <div key={l} style={{ background:'var(--bg-input)', borderRadius:12, padding:'10px 8px', textAlign:'center' }}>
               <div style={{ fontSize:15, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
               <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', marginTop:2 }}>{l}</div>
