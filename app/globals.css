@@ -23,29 +23,24 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* ── Layout fixe mobile ───────────────────────────────────────── */
 html, body {
   height: 100%;
+  width: 100%;
   overflow: hidden;
   overscroll-behavior: none;
-}
-
-#__next, main {
-  height: 100%;
 }
 
 .app-shell {
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: env(safe-area-inset-top, 0px);
-  bottom: env(safe-area-inset-bottom, 0px);
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .app-content {
@@ -56,15 +51,12 @@ html, body {
   overscroll-behavior-y: contain;
 }
 
-/* Scrollbar discrète */
 .app-content::-webkit-scrollbar { width: 3px; }
 .app-content::-webkit-scrollbar-track { background: transparent; }
 .app-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
 
-/* PWA standalone mode */
-@media all and (display-mode: standalone) {
-  .bottom-nav {
-    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
-    height: calc(56px + env(safe-area-inset-bottom, 20px)) !important;
-  }
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0;
 }
