@@ -53,6 +53,7 @@ import { Icon } from './Icons';
 import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
 import SettingsModule from './SettingsModule';
+import RaceNutritionStrategy from './RaceNutritionStrategy';
 
 // ─── Thème clair/sombre automatique ──────────────────────────────────────────
 function ThemeStyles() {
@@ -834,6 +835,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
   const [feedbackSession, setFeedbackSession] = useState(null);
   const [detailSession, setDetailSession] = useState(null);
+  const [showNutrition, setShowNutrition] = useState(false);
   const paces = calcPaces(profile.vma);
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
   const doneCount = Object.values(completed).filter(Boolean).length;
@@ -873,6 +875,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
       {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
+      {showNutrition && <RaceNutritionStrategy profile={profile} userSettings={JSON.parse(typeof window!=='undefined'?localStorage.getItem('pp_user_settings')||'{}':'{}')} onClose={()=>setShowNutrition(false)}/>}
       <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
         {/* Hero card */}
         <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',marginBottom:14,position:'relative',overflow:'hidden'}}>
@@ -984,9 +987,17 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                   {profile.raceDate?new Date(profile.raceDate).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'Jour J'}
                 </div>
                 <div style={{fontSize:16,fontWeight:700,marginBottom:4,color:'var(--text-primary)'}}>{profile.raceName} 🎯</div>
-                <div style={{fontSize:12,color:'var(--text-secondary)'}}>
+                <div style={{fontSize:12,color:'var(--text-secondary)',marginBottom:12}}>
                   {profile.raceDistanceKm} km{profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : <span style={{color:'var(--text-primary)',fontFamily:'monospace'}}>{paces.ef} /km</span>
                 </div>
+                <button onClick={()=>setShowNutrition(true)} style={{display:'flex',alignItems:'center',gap:8,background:'rgba(245,158,11,0.1)',border:'1px solid rgba(245,158,11,0.3)',borderRadius:12,padding:'10px 14px',cursor:'pointer',fontFamily:'Syne,sans-serif',width:'100%'}}>
+                  <span style={{fontSize:16}}>🥗</span>
+                  <div style={{flex:1,textAlign:'left'}}>
+                    <div style={{fontSize:12,fontWeight:700,color:'#f59e0b'}}>Stratégie nutritionnelle</div>
+                    <div style={{fontSize:10,color:'rgba(245,158,11,0.6)',fontFamily:'DM Mono,monospace'}}>Plan adapté à ta course · IA</div>
+                  </div>
+                  <span style={{color:'rgba(245,158,11,0.5)',fontSize:14}}>›</span>
+                </button>
               </div>
             )}
           </div>
