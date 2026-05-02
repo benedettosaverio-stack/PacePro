@@ -21,29 +21,6 @@ function useTypewriter(text, speed = 22) {
       setDisplayed(text.slice(0, i));
       if (i >= text.length) clearInterval(t);
     }, speed);
-    const generateAiMeals = async () => {
-    if (!aiRequest.trim()) return;
-    setAiLoading(true);
-    setAiMeals([]);
-    setShowAiMeals(true);
-    const prompt = `Tu es un nutritionniste expert en sport. L'utilisateur veut : "${aiRequest}".
-Ses macros disponibles aujourd'hui : ${carbs}g glucides, ${protein}g protéines, ${fat}g lipides, ${kcal} kcal total.
-Mode : ${isIntense ? 'post-entraînement intense' : isPostRun ? 'post-entraînement modéré' : 'jour de repos'}.
-Génère exactement 3 recettes adaptées. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après :
-[{"name":"...","desc":"...","ingredients":["..."],"steps":["..."],"kcal":0,"prot":0,"carbs":0,"fat":0,"time":"...","tip":"..."}]`;
-    try {
-      const res = await fetch('/api/gemini', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt }) });
-      const d = await res.json();
-      const text = d.text || '';
-      const clean = text.replace(/\`\`\`json|\`\`\`/g, '').trim();
-      const meals = JSON.parse(clean);
-      setAiMeals(meals);
-    } catch {
-      setAiMeals([{ name:'Erreur', desc:'Impossible de générer les recettes. Réessaie.', ingredients:[], steps:[], kcal:0, prot:0, carbs:0, fat:0, time:'—', tip:'' }]);
-    }
-    setAiLoading(false);
-  };
-
   return () => clearInterval(t);
   }, [text]);
   return displayed;
@@ -276,6 +253,25 @@ export default function FuelRecoveryHub() {
   const typedAI = useTypewriter(status === 'done' ? aiText : '', 20);
   const meals = isPostRun ? MEALS_POST : MEALS_REST;
   const mealTag = isIntense ? 'Post-run intense' : isPostRun ? 'Post-training' : 'Jour de repos';
+
+  const generateAiMeals = async () => {
+    if (!aiRequest.trim()) return;
+    setAiLoading(true);
+    setAiMeals([]);
+    setShowAiMeals(true);
+    const prompt = `Tu es un nutritionniste expert en sport. L'utilisateur veut : "${aiRequest}". Ses macros disponibles aujourd'hui : ${carbs}g glucides, ${protein}g protéines, ${fat}g lipides, ${kcal} kcal total. Mode : ${isIntense ? 'post-entraînement intense' : isPostRun ? 'post-entraînement modéré' : 'jour de repos'}. Génère exactement 3 recettes adaptées. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après : [{"name":"...","desc":"...","ingredients":["..."],"steps":["..."],"kcal":0,"prot":0,"carbs":0,"fat":0,"time":"...","tip":"..."}]`;
+    try {
+      const res = await fetch('/api/gemini', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt }) });
+      const d = await res.json();
+      const text = d.text || '';
+      const clean = text.replace(/\`\`\`json|\`\`\`/g, '').trim();
+      const meals = JSON.parse(clean);
+      setAiMeals(meals);
+    } catch {
+      setAiMeals([{ name:'Erreur', desc:'Impossible de générer les recettes. Réessaie.', ingredients:[], steps:[], kcal:0, prot:0, carbs:0, fat:0, time:'—', tip:'' }]);
+    }
+    setAiLoading(false);
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#07080b', color: '#fff', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
