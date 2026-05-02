@@ -25,20 +25,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 /* Safe area pour iOS */
-body {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-body {
-  padding-top: env(safe-area-inset-top, 44px);
-}
 
-nav {
-  padding-top: env(safe-area-inset-top, 44px) !important;
-  height: calc(56px + env(safe-area-inset-top, 44px)) !important;
-}
 /* ── Layout fixe mobile ───────────────────────────────────────── */
 html, body {
   height: 100%;
