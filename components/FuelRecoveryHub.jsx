@@ -452,10 +452,8 @@ export default function FuelRecoveryHub() {
             )}
 
             {weightLog.length >= 1 ? (() => {
-              // Grouper par jour, garder la dernière mesure de chaque jour
-              const byDay = {};
-              weightLog.forEach(e => { if (!byDay[e.date] || e.ts > byDay[e.date].ts) byDay[e.date] = e; });
-              const sorted = Object.values(byDay).sort((a,b) => a.date.localeCompare(b.date));
+              // Afficher toutes les mesures triées par timestamp
+              const sorted = [...weightLog].sort((a,b) => (a.ts||0) - (b.ts||0));
               const first = sorted[0].weight;
               const last = sorted[sorted.length-1].weight;
               const min = Math.min(...sorted.map(e=>e.weight));
@@ -502,8 +500,8 @@ export default function FuelRecoveryHub() {
                           )}
                         </g>
                       ))}
-                      <text x={2} y={86} fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{new Date(sorted[0].date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</text>
-                      {sorted.length>1 && <text x={298} y={86} textAnchor="end" fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{new Date(sorted[sorted.length-1].date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</text>}
+                      <text x={2} y={86} fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{sorted[0].date}</text>
+                      {sorted.length>1 && <text x={298} y={86} textAnchor="end" fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{sorted[sorted.length-1].date}</text>}
                     </svg>
                   </div>
                   {diff < 0 && <div style={{ fontSize: 11, color: '#22c55e', textAlign: 'center', fontFamily: 'DM Mono, monospace' }}>🎯 {Math.abs(diff)} kg perdus depuis le début</div>}
