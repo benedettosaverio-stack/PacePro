@@ -55,7 +55,7 @@ export default function HomeModule({ onNavigate }) {
 
         {/* Next session card */}
         {nextSession ? (
-          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#111114', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
+          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: '#111114', border: '1px solid rgba(255,0,64,0.12)', minHeight: 160 }}>
             {/* SVG background */}
             <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.45 }} />
             <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)', borderRadius:20 }} />
