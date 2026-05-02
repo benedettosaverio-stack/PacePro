@@ -234,7 +234,7 @@ export default function FuelRecoveryHub() {
     try { localStorage.setItem('pp_water', String(next)); } catch {}
   };
 
-  const lastWeightEntry = weightLog.length > 0 ? [...weightLog].sort((a,b) => a.date.localeCompare(b.date)).slice(-1)[0].weight : null;
+  const lastWeightEntry = weightLog.length > 0 ? [...weightLog].sort((a,b) => (a.ts||0) - (b.ts||0)).slice(-1)[0].weight : null;
   const w = lastWeightEntry || profile.weight || 70;
   const isPostRun = !!activity;
   const isIntense = activity && (activity.moving_time > 3600 || activity.total_elevation_gain > 50 || activity.average_heartrate > 140);
@@ -295,12 +295,10 @@ export default function FuelRecoveryHub() {
     const val = parseFloat(newWeight.replace(',', '.'));
     if (!val || val < 30 || val > 300) return;
     const today = new Date().toISOString().split('T')[0];
-    const entry = { date: today, weight: val, ts: Date.now() };
-    // Remplacer si même jour, sinon ajouter
-    const existing = weightLog.findIndex(e => e.date === today);
-    const updated = existing >= 0
-      ? weightLog.map((e, i) => i === existing ? entry : e)
-      : [...weightLog, entry].slice(-90);
+    const now = Date.now();
+    const entry = { date: today, weight: val, ts: now };
+    // Toujours ajouter — on garde la dernière par jour pour l'affichage
+    const updated = [...weightLog, entry].slice(-90);
     setWeightLog([...updated]); // forcer re-render avec nouvelle référence
     try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
     setNewWeight('');
@@ -454,7 +452,10 @@ export default function FuelRecoveryHub() {
             )}
 
             {weightLog.length >= 1 ? (() => {
-              const sorted = [...weightLog].sort((a,b) => a.date.localeCompare(b.date));
+              // Grouper par jour, garder la dernière mesure de chaque jour
+              const byDay = {};
+              weightLog.forEach(e => { if (!byDay[e.date] || e.ts > byDay[e.date].ts) byDay[e.date] = e; });
+              const sorted = Object.values(byDay).sort((a,b) => a.date.localeCompare(b.date));
               const first = sorted[0].weight;
               const last = sorted[sorted.length-1].weight;
               const min = Math.min(...sorted.map(e=>e.weight));
