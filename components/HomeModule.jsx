@@ -75,9 +75,36 @@ export default function HomeModule({ onNavigate }) {
                 </button>
               </div>
             </div>
-            {/* Progress bar */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3 }}>
-              <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg,#FF0040,#fbbf24)' }} />
+            {/* Elevation profile progress — inspired by UTMB */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 40, overflow: 'hidden' }}>
+              <svg viewBox="0 0 400 40" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
+                <defs>
+                  <linearGradient id="progGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#FF0040"/>
+                    <stop offset="60%" stopColor="#f59e0b"/>
+                    <stop offset="100%" stopColor="#fbbf24"/>
+                  </linearGradient>
+                  <linearGradient id="fillGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#FF0040" stopOpacity="0.3"/>
+                    <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.1"/>
+                  </linearGradient>
+                  <clipPath id={`prog-${progress}`}>
+                    <rect x="0" y="0" width={`${progress * 4}`} height="40"/>
+                  </clipPath>
+                </defs>
+                {/* Profil complet en gris */}
+                <path d="M0 38 L0 32 Q10 31 20 28 Q30 24 40 26 Q55 29 65 22 Q75 14 85 10 Q95 6 105 8 Q115 11 125 18 Q135 24 145 20 Q155 15 165 8 Q175 2 185 4 Q195 7 205 14 Q215 20 225 16 Q235 11 245 6 Q255 1 265 4 Q275 8 285 14 Q295 20 305 24 Q315 28 325 22 Q335 15 345 20 Q355 26 365 30 Q375 34 385 32 Q392 31 400 32 L400 40 Z"
+                  fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" fill-opacity="1"/>
+                {/* Profil complété en couleur */}
+                <g clipPath={`url(#prog-${progress})`}>
+                  <path d="M0 38 L0 32 Q10 31 20 28 Q30 24 40 26 Q55 29 65 22 Q75 14 85 10 Q95 6 105 8 Q115 11 125 18 Q135 24 145 20 Q155 15 165 8 Q175 2 185 4 Q195 7 205 14 Q215 20 225 16 Q235 11 245 6 Q255 1 265 4 Q275 8 285 14 Q295 20 305 24 Q315 28 325 22 Q335 15 345 20 Q355 26 365 30 Q375 34 385 32 Q392 31 400 32 L400 40 Z"
+                    fill="url(#fillGrad)" stroke="url(#progGrad)" strokeWidth="1.5"/>
+                </g>
+                {/* Point de progression */}
+                {progress > 0 && progress < 100 && (
+                  <circle cx={progress * 4} cy="20" r="3" fill="#FF0040" style={{filter:'drop-shadow(0 0 4px #FF0040)'}}/>
+                )}
+              </svg>
             </div>
           </div>
         ) : (
