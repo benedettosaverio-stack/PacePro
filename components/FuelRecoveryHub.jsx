@@ -482,37 +482,27 @@ export default function FuelRecoveryHub() {
                     ))}
                   </div>
                   {/* Courbe SVG */}
-                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: '10px 8px 4px', marginBottom: 10 }}>
-                    <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{ overflow: 'visible' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: '8px', marginBottom: 10 }}>
+                    <svg viewBox="0 0 300 90" style={{ width:'100%', height:90, display:'block' }}>
                       <defs>
-                        <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#f97316" stopOpacity="0.3"/>
+                        <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f97316" stopOpacity="0.25"/>
                           <stop offset="100%" stopColor="#f97316" stopOpacity="0"/>
                         </linearGradient>
                       </defs>
-                      {/* Grille */}
-                      {[0,1,2,3].map(i => (
-                        <line key={i} x1={0} y1={i*(H/3)} x2={W} y2={i*(H/3)} stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>
-                      ))}
-                      {/* Zone remplie */}
-                      {sorted.length > 1 && <polygon points={`0,${toY(sorted[0].weight)} ${points} ${(sorted.length-1)*xStep},${H} 0,${H}`} fill="url(#weightGrad)"/>}
-                      {/* Ligne */}
-                      {sorted.length > 1 && <polyline points={points} fill="none" stroke="#f97316" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>}
-                      {/* Points */}
+                      {[0,1,2].map(i => <line key={i} x1={0} y1={10+i*25} x2={300} y2={10+i*25} stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>)}
+                      {sorted.length > 1 && <polygon points={`${sorted.map((e,i)=>`${i*xStep},${toY(e.weight)}`).join(' ')} ${(sorted.length-1)*xStep},75 0,75`} fill="url(#wg)"/>}
+                      {sorted.length > 1 && <polyline points={sorted.map((e,i)=>`${i*xStep},${toY(e.weight)}`).join(' ')} fill="none" stroke="#f97316" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>}
                       {sorted.map((e,i) => (
                         <g key={i}>
-                          <circle cx={i*xStep} cy={toY(e.weight)} r={3} fill="#f97316"/>
-                          {(i === 0 || i === sorted.length-1) && (
-                            <text x={i*xStep} y={toY(e.weight)-8} textAnchor={i===0?'start':'end'} fill="rgba(255,255,255,0.6)" fontSize={8} fontFamily="monospace">{e.weight}kg</text>
+                          <circle cx={sorted.length>1?i*xStep:150} cy={toY(e.weight)} r={2.5} fill="#f97316"/>
+                          {(i===0||i===sorted.length-1) && (
+                            <text x={sorted.length>1?i*xStep:150} y={toY(e.weight)-5} textAnchor={i===0||sorted.length===1?'start':'end'} fill="rgba(255,255,255,0.55)" fontSize={6} fontFamily="monospace">{e.weight}kg</text>
                           )}
                         </g>
                       ))}
-                      {/* Labels dates */}
-                      {[sorted[0], sorted[sorted.length-1]].map((e,i) => (
-                        <text key={i} x={i===0?0:(sorted.length-1)*xStep} y={H+14} textAnchor={i===0?'start':'end'} fill="rgba(255,255,255,0.25)" fontSize={7} fontFamily="monospace">
-                          {new Date(e.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
-                        </text>
-                      ))}
+                      <text x={2} y={86} fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{new Date(sorted[0].date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</text>
+                      {sorted.length>1 && <text x={298} y={86} textAnchor="end" fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{new Date(sorted[sorted.length-1].date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</text>}
                     </svg>
                   </div>
                   {diff < 0 && <div style={{ fontSize: 11, color: '#22c55e', textAlign: 'center', fontFamily: 'DM Mono, monospace' }}>🎯 {Math.abs(diff)} kg perdus depuis le début</div>}
