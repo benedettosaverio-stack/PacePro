@@ -122,18 +122,76 @@ export default function HomeModule({ onNavigate }) {
 
         {/* Nav grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-          {nav.map(item => (
-            <button key={item.id} onClick={() => onNavigate(item.id)} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
-              <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, borderRadius: '50%', background: `radial-gradient(circle, ${item.color}12 0%, transparent 70%)`, pointerEvents: 'none' }} />
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon name={item.icon} size={20} color={item.color} />
+
+          {/* Running */}
+          <button onClick={() => onNavigate('running')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
+              <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(255,0,64,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name="running" size={18} color="#FF0040" />
               </div>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>{item.label}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{item.desc}</div>
+              {activePlan && <span style={{ fontSize: 18, fontWeight: 900, color: '#FF0040', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{progress}%</span>}
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Running</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{activePlan ? `${doneSessions}/${totalSessions} séances` : 'Créer un plan'}</div>
+            </div>
+            {activePlan && (
+              <div style={{ width: '100%', height: 3, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius: 99 }} />
               </div>
-            </button>
-          ))}
+            )}
+          </button>
+
+          {/* Muscu */}
+          <button onClick={() => onNavigate('muscu')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
+              <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name="muscle" size={18} color="#6366f1" />
+              </div>
+              {workouts.length > 0 && <span style={{ fontSize: 18, fontWeight: 900, color: '#6366f1', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{workouts.length}</span>}
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Muscu</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{workouts.length > 0 ? `${Math.round(workouts.reduce((a,w)=>a+(w.entries||[]).length,0)/workouts.length)} ex. en moy.` : 'Aucune séance'}</div>
+            </div>
+            {workouts.length > 0 && (
+              <div style={{ display: 'flex', gap: 3 }}>
+                {workouts.slice(-5).map((_, i) => <div key={i} style={{ width: 6, height: 6, borderRadius: 2, background: '#6366f1', opacity: 0.4 + i * 0.15 }} />)}
+              </div>
+            )}
+          </button>
+
+          {/* Strava */}
+          <button onClick={() => onNavigate('strava')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
+              <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name="strava" size={18} color="#f59e0b" />
+              </div>
+              {athlete && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', marginTop: 4 }} />}
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Strava</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{athlete ? athlete.name?.split(' ')[0] + ' · Connecté' : 'Se connecter'}</div>
+            </div>
+            {athlete && <div style={{ fontSize: 9, color: '#f59e0b', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Sync activée</div>}
+          </button>
+
+          {/* Historique */}
+          <button onClick={() => onNavigate('historique')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(34,197,94,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="history" size={18} color="#22c55e" />
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Historique</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{doneSessions > 0 ? `${doneSessions} séance${doneSessions > 1 ? 's' : ''} validée${doneSessions > 1 ? 's' : ''}` : 'Voir tout'}</div>
+            </div>
+            {doneSessions > 0 && <div style={{ fontSize: 18, fontWeight: 900, color: '#22c55e', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{doneSessions} ✓</div>}
+          </button>
+
         </div>
 
         {/* Bilan IA */}
