@@ -462,10 +462,10 @@ export default function FuelRecoveryHub() {
               const diff = (last - first).toFixed(1);
               const target = profile.weight || first;
               const W = 300, H = 80;
-              const xStep = W / (sorted.length - 1);
-              const yRange = max - min || 1;
-              const toY = v => H - ((v - min) / yRange) * (H - 10) - 5;
-              const points = sorted.map((e,i) => `${i*xStep},${toY(e.weight)}`).join(' ');
+              const xStep = sorted.length > 1 ? W / (sorted.length - 1) : W;
+              const yRange = max - min || 2;
+              const toY = v => sorted.length === 1 ? H/2 : H - ((v - min) / yRange) * (H - 10) - 5;
+              const points = sorted.map((e,i) => `${sorted.length > 1 ? i*xStep : W/2},${toY(e.weight)}`).join(' ');
               return (
                 <div>
                   {/* KPIs */}
@@ -495,9 +495,9 @@ export default function FuelRecoveryHub() {
                         <line key={i} x1={0} y1={i*(H/3)} x2={W} y2={i*(H/3)} stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>
                       ))}
                       {/* Zone remplie */}
-                      <polygon points={`0,${toY(sorted[0].weight)} ${points} ${(sorted.length-1)*xStep},${H} 0,${H}`} fill="url(#weightGrad)"/>
+                      {sorted.length > 1 && <polygon points={`0,${toY(sorted[0].weight)} ${points} ${(sorted.length-1)*xStep},${H} 0,${H}`} fill="url(#weightGrad)"/>}
                       {/* Ligne */}
-                      <polyline points={points} fill="none" stroke="#f97316" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+                      {sorted.length > 1 && <polyline points={points} fill="none" stroke="#f97316" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>}
                       {/* Points */}
                       {sorted.map((e,i) => (
                         <g key={i}>
