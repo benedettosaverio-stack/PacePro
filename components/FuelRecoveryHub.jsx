@@ -469,6 +469,10 @@ export default function FuelRecoveryHub() {
                 <div>
                   {/* KPIs */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+                <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace' }}>{sorted.length} mesure{sorted.length>1?'s':''}</div>
+                <button onClick={() => { setWeightLog([]); try { localStorage.removeItem('pp_weight_log'); } catch {} }} style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:8, padding:'3px 10px', fontSize:10, color:'rgba(239,68,68,0.6)', cursor:'pointer', fontFamily:'inherit' }}>Tout effacer</button>
+              </div>
                     {[
                       ['Actuel', `${last} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
                       ['Évolution', `${diff > 0 ? '+' : ''}${diff} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
@@ -504,7 +508,23 @@ export default function FuelRecoveryHub() {
                       {sorted.length>1 && <text x={298} y={86} textAnchor="end" fill="rgba(255,255,255,0.2)" fontSize={6} fontFamily="monospace">{sorted[sorted.length-1].date}</text>}
                     </svg>
                   </div>
-                  {diff < 0 && <div style={{ fontSize: 11, color: '#22c55e', textAlign: 'center', fontFamily: 'DM Mono, monospace' }}>🎯 {Math.abs(diff)} kg perdus depuis le début</div>}
+                  {diff < 0 && <div style={{ fontSize: 11, color: '#22c55e', textAlign: 'center', fontFamily: 'DM Mono, monospace', marginBottom:10 }}>🎯 {Math.abs(diff)} kg perdus depuis le début</div>}
+                  {/* Liste des mesures */}
+                  <div style={{ maxHeight:120, overflowY:'auto' }}>
+                    {[...sorted].reverse().map((e,i) => (
+                      <div key={e.ts||i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'5px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                        <span style={{ fontSize:10, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>{e.date}</span>
+                        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                          <span style={{ fontSize:12, fontWeight:700, color:'#f97316', fontFamily:'DM Mono, monospace' }}>{e.weight} kg</span>
+                          <button onClick={() => {
+                            const updated = weightLog.filter(x => x.ts !== e.ts && !(x.date===e.date && !x.ts && !e.ts));
+                            setWeightLog(updated);
+                            try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
+                          }} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(239,68,68,0.4)', fontSize:12, padding:'2px 4px' }}>✕</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               );
             })() : (
