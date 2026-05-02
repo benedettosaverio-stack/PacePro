@@ -42,7 +42,7 @@ async function loadPlans() {
   } catch(e) { return null; }
 }
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Muscu from './MusculationModule';
 import StravaModule from './StravaModule';
@@ -378,12 +378,33 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
   const effortColors = ['','#22c55e','#22c55e','#22c55e','#4ade80','#f59e0b','#f59e0b','#f59e0b','#FF0040','#FF0040','#FF0040'];
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
 
+  const sheetRef = React.useRef(null);
+  const touchStartY = React.useRef(0);
+
+  const handleTouchStart = (e) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+  const handleTouchEnd = (e) => {
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if (dy > 60) onClose();
+  };
+
   if (typeof document === 'undefined') return null;
   return createPortal(
     <div style={{position:'fixed',inset:0,zIndex:9999,display:'flex',flexDirection:'column',justifyContent:'flex-end'}} onClick={onClose}>
       <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.5)',backdropFilter:'blur(6px)'}}/>
-      <div onClick={e=>e.stopPropagation()} className='sheet-enter' style={{position:'relative',width:'100%',background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 18px 48px',maxHeight:'82vh',overflowY:'auto',zIndex:1}}>
-        <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
+      <div ref={sheetRef} onClick={e=>e.stopPropagation()} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} className='sheet-enter' style={{position:'relative',width:'100%',background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 18px 48px',maxHeight:'82vh',overflowY:'auto',zIndex:1}}>
+        {/* Handle + back button */}
+        <div style={{display:'flex',alignItems:'center',marginBottom:16}}>
+          <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',padding:'4px 8px 4px 0',color:'var(--text-muted)',display:'flex',alignItems:'center',gap:4,opacity:0.5}}>
+            <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <span style={{fontSize:11,fontFamily:'DM Mono, monospace'}}>retour</span>
+          </button>
+          <div style={{flex:1,display:'flex',justifyContent:'center'}}>
+            <div style={{width:36,height:4,background:'var(--border)',borderRadius:99}}/>
+          </div>
+          <div style={{width:60}}/>
+        </div>
 
         {/* Header */}
         <div style={{marginBottom:12,paddingBottom:12,borderBottom:'1px solid var(--border)'}}>
