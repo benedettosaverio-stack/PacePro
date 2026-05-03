@@ -1663,7 +1663,25 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         const d = await res.json();
         const text = (d.text || '').replace(/\`\`\`json|\`\`\`/g, '').trim();
         const aiPlan = JSON.parse(text);
-        const newPlans = [...plans, { profile, plan: aiPlan }];
+        console.log('AI Plan generated:', aiPlan.length, 'weeks, first week sessions:', aiPlan[0]?.sessions?.length);
+        // Ajouter dateRange si manquant
+        const startDate = new Date();
+        const enrichedPlan = aiPlan.map((week, idx) => {
+          const wStart = new Date(startDate);
+          wStart.setDate(startDate.getDate() + idx * 7);
+          const wEnd = new Date(wStart);
+          wEnd.setDate(wStart.getDate() + 6);
+          const fmt = d => d.toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+          return {
+            ...week,
+            dateRange: week.dateRange || `${fmt(wStart)} – ${fmt(wEnd)}`,
+            sessions: (week.sessions || []).map((s, si) => ({
+              ...s,
+              id: s.id || `w${idx+1}_s${si}`,
+            }))
+          };
+        });
+        const newPlans = [...plans, { profile, plan: enrichedPlan }];
         savePlans(newPlans);
         setActivePlan(newPlans.length - 1);
         setView('dashboard');
