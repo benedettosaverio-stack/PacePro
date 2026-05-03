@@ -913,7 +913,7 @@ function Onboarding({ onComplete }) {
     onComplete({...form,vma:finalVma,weeks:+form.weeks,raceDistanceKm:+form.raceDistanceKm,elevationM:+form.elevationM,discipline:form.discipline||'running'});
   };
   return (
-    {(() => {
+    <>{(() => {
       const disciplineTheme = {
         running: { accent:'#FF0040', grad:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(255,100,100,0.04))', glow:'rgba(255,0,64,0.12)', icon:'🏃', decor:(
           <svg style={{position:'absolute',right:-20,top:-20,opacity:0.06,pointerEvents:'none'}} width={200} height={200} viewBox="0 0 100 100"><circle cx={50} cy={50} r={45} fill="none" stroke="#FF0040" strokeWidth={2}/><circle cx={50} cy={50} r={30} fill="none" stroke="#FF0040" strokeWidth={1}/><path d="M30 50 Q50 20 70 50 Q50 80 30 50" fill="#FF0040"/></svg>
@@ -985,7 +985,7 @@ function Onboarding({ onComplete }) {
       </div>
     </div>
       );
-    })()}
+    })()}</>
   );
 }
 
