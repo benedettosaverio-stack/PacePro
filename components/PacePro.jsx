@@ -855,14 +855,20 @@ function Onboarding({ onComplete }) {
   const [stravaImported, setStravaImported] = useState(false);
 
   const importFromStrava = async () => {
-    const token = (() => { try {
-      const exp = parseInt(localStorage.getItem('strava_expires_at')||'0');
-      if (Date.now()/1000 < exp) {
-        return localStorage.getItem('strava_token') || localStorage.getItem('strava_access_token');
-      }
-      return localStorage.getItem('strava_token') || localStorage.getItem('strava_access_token');
-    } catch{} return null; })();
-    if (!token) { setStravaImported(false); setStravaImporting(false); return; }
+    const token = (() => {
+      try {
+        const keys = ['strava_token','strava_access_token','pp_strava_token'];
+        for (const k of keys) {
+          const t = localStorage.getItem(k);
+          if (t && t.length > 10) return t;
+        }
+        const user = JSON.parse(localStorage.getItem('pp_user')||'{}');
+        if (user.strava_token) return user.strava_token;
+        if (user.access_token) return user.access_token;
+      } catch{}
+      return null;
+    })();
+    if (!token) { setStravaImporting(false); return; }
     setStravaImporting(true);
     try {
       const res = await fetch(`/api/strava?action=activities&token=${token}`);
