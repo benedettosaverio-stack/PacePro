@@ -1599,6 +1599,7 @@ export default function PacePro() {
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
+        const aiWeeks = Math.min(profile.weeks || 8, 8); // Max 8 semaines pour l'IA
         const prompt = isCycling ? `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste complet en JSON.
 
 Profil de l'athlète :
@@ -1617,11 +1618,11 @@ Profil de l'athlète :
 - Déteste : ${profile.cyclingWeakPoint}
 - Point fort : ${profile.cyclingStrongPoint}
 - Sommeil : ${profile.cyclingSleep} / Stress : ${profile.cyclingStress}
-- Durée plan : ${profile.weeks} semaines
+- Durée plan : ${aiWeeks} semaines
 
-Génère exactement ${profile.weeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances.
-Les jours par défaut sont : Lundi, Mercredi, Vendredi, Samedi.
-Adapte vraiment le plan selon le profil.
+Génère exactement ${aiWeeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances maximum (3 max pour éviter trop de JSON).
+Les jours : Lundi, Mercredi, Vendredi, Samedi.
+Adapte le plan selon le profil. Sois concis dans les descriptions (max 80 chars par detail).
 
 Réponds UNIQUEMENT en JSON valide sans markdown :
 [{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`
@@ -1644,10 +1645,11 @@ Profil du nageur :
 - PPG : ${profile.swimPPG ? 'oui' : 'non'}
 - Séances/semaine : ${profile.sessionsPerWeek}
 - Heures/semaine : ${profile.swimWeeklyHours}h
-- Durée plan : ${profile.weeks} semaines
+- Durée plan : ${aiWeeks} semaines
 
-Génère exactement ${profile.weeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances.
-Les jours par défaut sont : Lundi, Mercredi, Vendredi.
+Génère exactement ${aiWeeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances maximum (3 max).
+Les jours : Lundi, Mercredi, Vendredi.
+Sois concis dans les descriptions (max 80 chars par detail).
 Utilise des couleurs bleues (#38bdf8) pour la natation.
 Si douleurs épaules chroniques : réduire le volume et éviter les nages trop sollicitantes.
 Intègre du travail technique (pull-buoy, plaquettes) si matériel disponible.
