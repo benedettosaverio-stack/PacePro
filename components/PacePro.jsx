@@ -946,6 +946,7 @@ function Onboarding({ onComplete }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(() => {
     try {
+      if (typeof window === 'undefined') return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3 };
       const athlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
       const user = JSON.parse(localStorage.getItem('pp_user') || '{}');
       const firstName = athlete.name?.split(' ')[0] || user.name?.split(' ')[0] || '';
