@@ -8,6 +8,16 @@ export default function HomeModule({ onNavigate }) {
   const [workouts, setWorkouts] = useState([]);
   const [time, setTime] = useState(new Date());
 
+  const [motivation, setMotivation] = useState(() => {
+    try {
+      const cached = JSON.parse(localStorage.getItem('pp_motivation') || '{}');
+      const today = new Date().toISOString().split('T')[0];
+      if (cached.date === today) return cached.text;
+    } catch {}
+    return null;
+  });
+  const [motivLoading, setMotivLoading] = useState(false);
+
   useEffect(() => {
     try {
       const a = localStorage.getItem('strava_athlete');
@@ -20,6 +30,65 @@ export default function HomeModule({ onNavigate }) {
     const t = setInterval(() => setTime(new Date()), 60000);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    try {
+      const cached = JSON.parse(localStorage.getItem('pp_motivation') || '{}');
+      if (cached.date === today && cached.text) return;
+    } catch {}
+    generateMotivation();
+  }, []);
+
+  const generateMotivation = async () => {
+    setMotivLoading(true);
+    try {
+      const settings = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
+      const tone = settings.motivationTone || 'inspirant';
+      const stravaAthlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
+      const name = stravaAthlete.name?.split(' ')[0] || 'Athlete';
+      const plans = JSON.parse(localStorage.getItem('pp_plans') || '[]');
+      const activePlan = plans[plans.length - 1];
+      const completed = activePlan?.completed || {};
+      const totalSessions = activePlan?.plan?.reduce((a, w) => a + w.sessions.length, 0) || 0;
+      const doneSessions = Object.values(completed).filter(Boolean).length;
+      const progress = totalSessions > 0 ? Math.round((doneSessions / totalSessions) * 100) : 0;
+      const lastActivity = JSON.parse(localStorage.getItem('pp_last_activity') || 'null');
+      const daysSinceActivity = lastActivity ? Math.floor((Date.now() - new Date(lastActivity.date).getTime()) / 86400000) : null;
+
+      const context = [
+        activePlan ? `Programme running en cours : ${progress}% complété (${doneSessions}/${totalSessions} séances)` : 'Pas de programme running actif',
+        daysSinceActivity !== null ? `Dernière activité il y a ${daysSinceActivity} jour${daysSinceActivity > 1 ? 's' : ''}` : 'Aucune activité récente détectée',
+        `Date : ${new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}`,
+      ].join('
+');
+
+      const tonePrompt = tone === 'goggins'
+        ? `Tu es David Goggins. Parle directement à ${name} sans pitié, avec une intensité maximale. Pas d'excuses, pas de douceur. Mets-lui une claque mentale. 2-3 phrases courtes et percutantes.`
+        : `Tu es un coach bienveillant et inspirant. Adresse-toi directement à ${name} avec chaleur et encouragement. Personnalise le message selon ses performances récentes. 2-3 phrases motivantes et positives.`;
+
+      const prompt = `${tonePrompt}
+
+Contexte de l'athlète :
+${context}
+
+Génère UNIQUEMENT le message de motivation, sans introduction ni conclusion. Commence directement. Langue : français.`;
+
+      const res = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      const d = await res.json();
+      const text = d.text || '';
+      if (text) {
+        setMotivation(text);
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem('pp_motivation', JSON.stringify({ date: today, text }));
+      }
+    } catch {}
+    setMotivLoading(false);
+  };
 
   const hour = time.getHours();
   const greeting = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
@@ -52,6 +121,31 @@ export default function HomeModule({ onNavigate }) {
           <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>{greeting}</div>
           <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1 }}>{firstName} 👋</div>
         </div>
+
+        {/* Message de motivation */}
+        {(motivation || motivLoading) && (
+          <div style={{ marginBottom: 20, position: 'relative' }}>
+            {motivLoading ? (
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ fontSize: 18 }}>✨</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>Génération de ton message du jour...</div>
+              </div>
+            ) : (
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: '14px 16px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #6366f1, #FF0040)' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
+                      {(() => { try { return JSON.parse(localStorage.getItem('pp_user_settings') || '{}').motivationTone === 'goggins' ? '💀 Goggins mode' : '✨ Message du jour'; } catch { return '✨ Message du jour'; } })()}
+                    </div>
+                    <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--text-primary)', fontStyle: 'italic' }}>{motivation}</div>
+                  </div>
+                  <button onClick={generateMotivation} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 14, padding: 4, flexShrink: 0 }}>↻</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Next session card */}
         {nextSession ? (

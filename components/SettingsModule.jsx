@@ -73,7 +73,7 @@ export default function SettingsModule({ onBack, user }) {
     vma: 14, level: 'intermediate',
     units: 'metric',
     theme: 'auto',
-    notifTraining: true, notifHydration: true, notifRecovery: false,
+    notifTraining: true, notifHydration: true, notifRecovery: false, motivationTone: 'inspirant',
     ...loadSettings()
   });
 
@@ -181,6 +181,24 @@ export default function SettingsModule({ onBack, user }) {
               onChange={v => update('theme', v)}
               color="#a78bfa"
             />
+          </div>
+        </Section>
+
+        {/* Message de motivation */}
+        <Section title="Message de motivation quotidien">
+          <div style={{ padding:'14px 16px' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 10 }}>Ton de coach</div>
+            <SegmentedControl
+              options={[['inspirant','🌟 Inspirant'],['goggins','💀 Goggins mode']]}
+              value={s.motivationTone || 'inspirant'}
+              onChange={v => update('motivationTone', v)}
+              color={s.motivationTone === 'goggins' ? '#FF0040' : '#6366f1'}
+            />
+            <div style={{ fontSize:11, color:'var(--text-muted)', marginTop:8, lineHeight:1.5 }}>
+              {s.motivationTone === 'goggins' 
+                ? '💀 Dur, direct, sans pitié. David Goggins approuverait.'
+                : '🌟 Bienveillant, inspirant et personnalisé à tes performances.'}
+            </div>
           </div>
         </Section>
 
