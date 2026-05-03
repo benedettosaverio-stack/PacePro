@@ -60,7 +60,7 @@ export default function HomeModule({ onNavigate }) {
         activePlan ? `Programme running en cours : ${progress}% complété (${doneSessions}/${totalSessions} séances)` : 'Pas de programme running actif',
         daysSinceActivity !== null ? `Dernière activité il y a ${daysSinceActivity} jour${daysSinceActivity > 1 ? 's' : ''}` : 'Aucune activité récente détectée',
         `Date : ${new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}`,
-      ].join('
+      ].join('\n');
 ');
 
       const tonePrompt = tone === 'goggins'
