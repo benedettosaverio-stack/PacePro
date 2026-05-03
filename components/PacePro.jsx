@@ -913,10 +913,34 @@ function Onboarding({ onComplete }) {
     onComplete({...form,vma:finalVma,weeks:+form.weeks,raceDistanceKm:+form.raceDistanceKm,elevationM:+form.elevationM,discipline:form.discipline||'running'});
   };
   return (
-    <div style={{minHeight:'100vh',background:'var(--onboarding-bg)',display:'flex',flexDirection:'column'}}>
+    {(() => {
+      const disciplineTheme = {
+        running: { accent:'#FF0040', grad:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(255,100,100,0.04))', glow:'rgba(255,0,64,0.12)', icon:'🏃', decor:(
+          <svg style={{position:'absolute',right:-20,top:-20,opacity:0.06,pointerEvents:'none'}} width={200} height={200} viewBox="0 0 100 100"><circle cx={50} cy={50} r={45} fill="none" stroke="#FF0040" strokeWidth={2}/><circle cx={50} cy={50} r={30} fill="none" stroke="#FF0040" strokeWidth={1}/><path d="M30 50 Q50 20 70 50 Q50 80 30 50" fill="#FF0040"/></svg>
+        )},
+        cycling: { accent:'#f59e0b', grad:'linear-gradient(135deg,rgba(245,158,11,0.08),rgba(251,191,36,0.04))', glow:'rgba(245,158,11,0.12)', icon:'🚴', decor:(
+          <svg style={{position:'absolute',right:-20,top:-20,opacity:0.07,pointerEvents:'none'}} width={220} height={220} viewBox="0 0 100 100"><circle cx={30} cy={65} r={25} fill="none" stroke="#f59e0b" strokeWidth={2}/><circle cx={70} cy={65} r={25} fill="none" stroke="#f59e0b" strokeWidth={2}/><circle cx={30} cy={65} r={5} fill="#f59e0b"/><circle cx={70} cy={65} r={5} fill="#f59e0b"/><path d="M30 65 L50 35 L70 65 M50 35 L50 20" stroke="#f59e0b" strokeWidth={2} fill="none"/></svg>
+        )},
+        swimming: { accent:'#38bdf8', grad:'linear-gradient(135deg,rgba(56,189,248,0.1),rgba(14,165,233,0.04))', glow:'rgba(56,189,248,0.15)', icon:'🏊', decor:(
+          <svg style={{position:'absolute',right:-10,top:10,opacity:0.08,pointerEvents:'none'}} width={240} height={200} viewBox="0 0 120 80"><path d="M0 20 Q15 10 30 20 Q45 30 60 20 Q75 10 90 20 Q105 30 120 20" fill="none" stroke="#38bdf8" strokeWidth={2}/><path d="M0 35 Q15 25 30 35 Q45 45 60 35 Q75 25 90 35 Q105 45 120 35" fill="none" stroke="#38bdf8" strokeWidth={2}/><path d="M0 50 Q15 40 30 50 Q45 60 60 50 Q75 40 90 50 Q105 60 120 50" fill="none" stroke="#38bdf8" strokeWidth={2}/><path d="M0 65 Q15 55 30 65 Q45 75 60 65 Q75 55 90 65 Q105 75 120 65" fill="none" stroke="#38bdf8" strokeWidth={2}/></svg>
+        )},
+        triathlon: { accent:'#a78bfa', grad:'linear-gradient(135deg,rgba(167,139,250,0.08),rgba(139,92,246,0.04))', glow:'rgba(167,139,250,0.12)', icon:'🤸', decor:(
+          <svg style={{position:'absolute',right:-10,top:-10,opacity:0.07,pointerEvents:'none'}} width={200} height={200} viewBox="0 0 100 100"><polygon points="50,5 95,27 95,73 50,95 5,73 5,27" fill="none" stroke="#a78bfa" strokeWidth={1.5}/><polygon points="50,20 80,35 80,65 50,80 20,65 20,35" fill="none" stroke="#a78bfa" strokeWidth={1}/><circle cx={50} cy={50} r={12} fill="none" stroke="#a78bfa" strokeWidth={1.5}/></svg>
+        )},
+      };
+      const theme = disciplineTheme[form.discipline] || disciplineTheme.running;
+      const accentColor = step === 0 ? theme.accent : (disciplineTheme[form.discipline]||disciplineTheme.running).accent;
+
+      return (
+    <div style={{minHeight:'100vh',background:'var(--onboarding-bg)',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden'}}>
+      {/* Discipline glow */}
+      <div style={{position:'fixed',top:-100,right:-100,width:400,height:400,borderRadius:'50%',background:`radial-gradient(circle, ${theme.glow} 0%, transparent 70%)`,pointerEvents:'none',transition:'background 0.5s',zIndex:0}}/>
+      {/* Discipline decor */}
+      <div style={{position:'fixed',bottom:100,right:0,pointerEvents:'none',zIndex:0}}>{theme.decor}</div>
+
       {/* Progress bar top */}
       <div style={{height:3,background:'var(--progress-track)',position:'fixed',top:0,left:0,right:0,zIndex:10}}>
-        <div style={{height:'100%',width:`${((step+1)/steps.length)*100}%`,background:'linear-gradient(90deg,#FF0040,#ff6b6b)',transition:'width 0.4s cubic-bezier(0.22,1,0.36,1)'}}/>
+        <div style={{height:'100%',width:`${((step+1)/steps.length)*100}%`,background:`linear-gradient(90deg,${theme.accent},${theme.accent}aa)`,transition:'width 0.4s cubic-bezier(0.22,1,0.36,1)'}}/>
       </div>
 
       <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',padding:'60px 20px 40px'}}>
@@ -934,13 +958,13 @@ function Onboarding({ onComplete }) {
           {/* Step indicators */}
           <div style={{display:'flex',gap:4,marginBottom:32}}>
             {steps.map((_,i)=>(
-              <div key={i} style={{flex:1,height:3,borderRadius:99,background:i<=step?'#FF0040':'var(--progress-track)',transition:'background 0.3s'}}/>
+              <div key={i} style={{flex:1,height:3,borderRadius:99,background:i<=step?theme.accent:'var(--progress-track)',transition:'background 0.3s'}}/>
             ))}
           </div>
 
           {/* Title */}
           <div style={{marginBottom:28}}>
-            <div style={{fontSize:11,fontWeight:700,color:'#FF0040',fontFamily:'DM Mono,monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:10}}>Étape {step+1}</div>
+            <div style={{fontSize:11,fontWeight:700,color:theme.accent,fontFamily:'DM Mono,monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:10}}>Étape {step+1}</div>
             <h2 style={{fontSize:28,fontWeight:900,letterSpacing:'-0.04em',marginBottom:6,color:'var(--text-primary)',fontFamily:'Syne,sans-serif',lineHeight:1.1}}>{steps[step].title}</h2>
             <p style={{fontSize:13,color:'var(--text-muted)',lineHeight:1.5}}>{steps[step].sub}</p>
           </div>
@@ -953,13 +977,15 @@ function Onboarding({ onComplete }) {
             {step>0 && (
               <button onClick={()=>setStep(s=>s-1)} style={{width:48,height:48,borderRadius:14,background:'var(--bg-card)',border:'1px solid var(--border)',color:'var(--text-primary)',cursor:'pointer',fontFamily:'inherit',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>←</button>
             )}
-            <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,height:52,background:steps[step].ok?'#FF0040':'var(--progress-track)',color:steps[step].ok?'#fff':'var(--text-muted)',border:'none',borderRadius:14,fontSize:15,fontWeight:800,cursor:steps[step].ok?'pointer':'not-allowed',fontFamily:'Syne,sans-serif',letterSpacing:'-0.01em',transition:'all 0.2s'}}>
+            <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,height:52,background:steps[step].ok?theme.accent:'var(--progress-track)',color:steps[step].ok?'#fff':'var(--text-muted)',border:'none',borderRadius:14,fontSize:15,fontWeight:800,cursor:steps[step].ok?'pointer':'not-allowed',fontFamily:'Syne,sans-serif',letterSpacing:'-0.01em',transition:'all 0.2s',boxShadow:steps[step].ok?`0 4px 20px ${theme.glow}`:'none'}}>
               {step<steps.length-1?'Continuer →':'Générer mon programme'}
             </button>
           </div>
         </div>
       </div>
     </div>
+      );
+    })()}
   );
 }
 
