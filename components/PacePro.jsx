@@ -1687,7 +1687,11 @@ export default function PacePro() {
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
   useEffect(()=>{
-  const recalcWeeklyKm = (plans) => plans.map(p => ({
+  const recalcWeeklyKm = (plans) => plans.map(p => {
+    // Ne pas recalculer les plans IA (vélo, natation, triathlon)
+    const discipline = p.profile?.discipline || 'running';
+    if (discipline === 'cycling' || discipline === 'swimming' || discipline === 'triathlon') return p;
+    return ({
     ...p,
     plan: (p.plan||[]).map(week => {
       const vma = p.profile?.vma || 12;
@@ -1710,7 +1714,7 @@ export default function PacePro() {
       }, 0)*10)/10;
       return { ...week, weeklyKm };
     })
-  }));
+  });});
   const init = async () => {
     const cloud = await loadPlans();
     if (cloud && cloud.length > 0) {
