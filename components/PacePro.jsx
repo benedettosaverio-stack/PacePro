@@ -1600,29 +1600,32 @@ export default function PacePro() {
       const isCycling = profile.discipline === 'cycling';
       try {
         const aiWeeks = Math.min(profile.weeks || 8, 8); // Max 8 semaines pour l'IA
-        const prompt = isCycling ? `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste complet en JSON.
+        const raceKm = parseFloat(profile.raceDistanceKm) || 100;
+        const weeklyHours = profile.cyclingWeeklyHours || 8;
+        const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
+        const maxWeeklyKm = Math.round(weeklyHours * avgSpeed * 0.8);
+        const longRideTarget = Math.round(raceKm * 0.85);
+        const prompt = isCycling ? `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste en JSON.
 
-Profil de l'athlète :
-- Niveau : ${profile.cyclingBackground}
-- Profil : ${profile.cyclingProfile}
-- FTP : ${profile.vma}W / FCmax : ${profile.cyclingFCmax} bpm
-- Capteur puissance : ${profile.cyclingHasPower ? 'oui' : 'non'}
-- Blessures : ${profile.cyclingInjuries}
-- Objectif : ${profile.raceName} — ${profile.raceDistanceKm}km D+${profile.elevationM}m le ${profile.raceDate}
-- Volume hebdo dispo : ${profile.cyclingWeeklyHours}h/semaine
-- Séances/semaine : ${profile.sessionsPerWeek}
-- Matériel : ${profile.cyclingMaterial}
-- Peut s'entraîner tôt/tard : ${profile.cyclingTrainNight ? 'oui' : 'non'}
-- Aime la variété : ${profile.cyclingLikesVariety ? 'oui' : 'non'}
-- Préfère : ${profile.cyclingSolo ? 'seul' : 'en groupe'}
-- Déteste : ${profile.cyclingWeakPoint}
-- Point fort : ${profile.cyclingStrongPoint}
-- Sommeil : ${profile.cyclingSleep} / Stress : ${profile.cyclingStress}
-- Durée plan : ${aiWeeks} semaines
+RÈGLES IMPORTANTES :
+- L'objectif est ${raceKm}km. La sortie longue finale doit atteindre ${longRideTarget}km.
+- Volume hebdo max : ${maxWeeklyKm}km/semaine (${weeklyHours}h × ${avgSpeed}km/h moyen).
+- Progression linéaire : semaine 1 = ${Math.round(maxWeeklyKm*0.5)}km → semaine ${aiWeeks} = ${maxWeeklyKm}km.
+- Décharge toutes les 4 semaines : réduire le volume de 30%.
+- La sortie longue = 60-85% du volume hebdo selon la phase.
 
-Génère exactement ${aiWeeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances maximum (3 max pour éviter trop de JSON).
-Les jours : Lundi, Mercredi, Vendredi, Samedi.
-Adapte le plan selon le profil. Sois concis dans les descriptions (max 80 chars par detail).
+Profil :
+- Niveau : ${profile.cyclingBackground} | Profil : ${profile.cyclingProfile}
+- FTP : ${profile.vma}W | FCmax : ${profile.cyclingFCmax} bpm | Puissancemètre : ${profile.cyclingHasPower ? 'oui' : 'non'}
+- Blessures : ${profile.cyclingInjuries} | Sommeil : ${profile.cyclingSleep} | Stress : ${profile.cyclingStress}
+- Matériel : ${profile.cyclingMaterial} | Préfère : ${profile.cyclingSolo ? 'solo' : 'groupe'}
+- Déteste : ${profile.cyclingWeakPoint} | Point fort : ${profile.cyclingStrongPoint}
+- Durée : ${aiWeeks} semaines | ${profile.sessionsPerWeek} séances/sem
+
+Génère exactement ${aiWeeks} semaines, ${profile.sessionsPerWeek} séances max par semaine.
+Jours : Lundi, Mercredi, Vendredi, Samedi.
+Descriptions concises (max 100 chars).
+Adapte intensité selon blessures/stress.
 
 Réponds UNIQUEMENT en JSON valide sans markdown :
 [{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`
