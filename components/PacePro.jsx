@@ -1662,7 +1662,14 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
           body: JSON.stringify({ prompt })
         });
         const d = await res.json();
-        const text = (d.text || '').replace(/\`\`\`json|\`\`\`/g, '').trim();
+        let text = (d.text || '').replace(/\`\`\`json|\`\`\`/g, '').trim();
+        // Extraire uniquement le JSON entre [ et ]
+        const jsonStart = text.indexOf('[');
+        const jsonEnd = text.lastIndexOf(']');
+        if (jsonStart >= 0 && jsonEnd > jsonStart) {
+          text = text.slice(jsonStart, jsonEnd + 1);
+        }
+        console.log('Parsing JSON, length:', text.length);
         const aiPlan = JSON.parse(text);
         console.log('AI Plan raw text:', text.slice(0, 200));
         console.log('AI Plan generated:', aiPlan.length, 'weeks');
