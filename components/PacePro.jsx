@@ -913,24 +913,50 @@ function Onboarding({ onComplete }) {
     onComplete({...form,vma:finalVma,weeks:+form.weeks,raceDistanceKm:+form.raceDistanceKm,elevationM:+form.elevationM,discipline:form.discipline||'running'});
   };
   return (
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'var(--onboarding-bg)'}}>
-      <div style={{width:'100%',maxWidth:460,background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:24,padding:'36px 32px'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:32}}>
-          <img src="/logo.png" alt="PacePro" style={{width:36,height:36,objectFit:'contain'}}/>
-          <span style={{fontWeight:700,fontSize:18,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>PacePro</span>
-        </div>
-        <div style={{display:'flex',gap:6,marginBottom:28,alignItems:'center'}}>
-          {steps.map((_,i)=><div key={i} style={{width:i===step?20:8,height:8,borderRadius:99,background:i===step?'#FF0040':i<step?'#22c55e':'var(--progress-track)',transition:'all 0.3s'}}/>)}
-          <span style={{fontSize:11,color:'var(--text-muted)',fontFamily:'monospace',marginLeft:8}}>{step+1}/{steps.length}</span>
-        </div>
-        <h2 style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4,color:'var(--text-primary)'}}>{steps[step].title}</h2>
-        <p style={{fontSize:13,color:'var(--text-secondary)',marginBottom:24}}>{steps[step].sub}</p>
-        {steps[step].body}
-        <div style={{display:'flex',gap:10,marginTop:28}}>
-          {step>0 && <button onClick={()=>setStep(s=>s-1)} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'12px 16px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit'}}>←</button>}
-          <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,background:'#FF0040',color:'#000',border:'none',borderRadius:12,padding:'12px 20px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit',opacity:steps[step].ok?1:0.4,transition:'all 0.2s'}}>
-            {step<steps.length-1?'Continuer →':'🚀 Générer mon programme'}
-          </button>
+    <div style={{minHeight:'100vh',background:'var(--onboarding-bg)',display:'flex',flexDirection:'column'}}>
+      {/* Progress bar top */}
+      <div style={{height:3,background:'var(--progress-track)',position:'fixed',top:0,left:0,right:0,zIndex:10}}>
+        <div style={{height:'100%',width:`${((step+1)/steps.length)*100}%`,background:'linear-gradient(90deg,#FF0040,#ff6b6b)',transition:'width 0.4s cubic-bezier(0.22,1,0.36,1)'}}/>
+      </div>
+
+      <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',padding:'60px 20px 40px'}}>
+        <div style={{width:'100%',maxWidth:420}}>
+
+          {/* Header */}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:40}}>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              <img src="/logo.svg" alt="" style={{width:28,height:28,objectFit:'contain'}}/>
+              <span style={{fontWeight:800,fontSize:16,letterSpacing:'-0.02em',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>PacePro</span>
+            </div>
+            <span style={{fontSize:11,color:'var(--text-muted)',fontFamily:'DM Mono,monospace'}}>{step+1} / {steps.length}</span>
+          </div>
+
+          {/* Step indicators */}
+          <div style={{display:'flex',gap:4,marginBottom:32}}>
+            {steps.map((_,i)=>(
+              <div key={i} style={{flex:1,height:3,borderRadius:99,background:i<=step?'#FF0040':'var(--progress-track)',transition:'background 0.3s'}}/>
+            ))}
+          </div>
+
+          {/* Title */}
+          <div style={{marginBottom:28}}>
+            <div style={{fontSize:11,fontWeight:700,color:'#FF0040',fontFamily:'DM Mono,monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:10}}>Étape {step+1}</div>
+            <h2 style={{fontSize:28,fontWeight:900,letterSpacing:'-0.04em',marginBottom:6,color:'var(--text-primary)',fontFamily:'Syne,sans-serif',lineHeight:1.1}}>{steps[step].title}</h2>
+            <p style={{fontSize:13,color:'var(--text-muted)',lineHeight:1.5}}>{steps[step].sub}</p>
+          </div>
+
+          {/* Body */}
+          <div style={{marginBottom:28}}>{steps[step].body}</div>
+
+          {/* Actions */}
+          <div style={{display:'flex',gap:10}}>
+            {step>0 && (
+              <button onClick={()=>setStep(s=>s-1)} style={{width:48,height:48,borderRadius:14,background:'var(--bg-card)',border:'1px solid var(--border)',color:'var(--text-primary)',cursor:'pointer',fontFamily:'inherit',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>←</button>
+            )}
+            <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,height:52,background:steps[step].ok?'#FF0040':'var(--progress-track)',color:steps[step].ok?'#fff':'var(--text-muted)',border:'none',borderRadius:14,fontSize:15,fontWeight:800,cursor:steps[step].ok?'pointer':'not-allowed',fontFamily:'Syne,sans-serif',letterSpacing:'-0.01em',transition:'all 0.2s'}}>
+              {step<steps.length-1?'Continuer →':'Générer mon programme'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
