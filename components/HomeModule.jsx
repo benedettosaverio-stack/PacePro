@@ -61,7 +61,6 @@ export default function HomeModule({ onNavigate }) {
         daysSinceActivity !== null ? `Dernière activité il y a ${daysSinceActivity} jour${daysSinceActivity > 1 ? 's' : ''}` : 'Aucune activité récente détectée',
         `Date : ${new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}`,
       ].join('\n');
-');
 
       const tonePrompt = tone === 'goggins'
         ? `Tu es David Goggins. Parle directement à ${name} sans pitié, avec une intensité maximale. Pas d'excuses, pas de douceur. Mets-lui une claque mentale. 2-3 phrases courtes et percutantes.`
