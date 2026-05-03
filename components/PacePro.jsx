@@ -915,17 +915,17 @@ function Onboarding({ onComplete }) {
   return (
     <>{(() => {
       const disciplineTheme = {
-        running: { accent:'#FF0040', grad:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(255,100,100,0.04))', glow:'rgba(255,0,64,0.12)', icon:'🏃', decor:(
-          <svg style={{position:'absolute',right:-20,top:-20,opacity:0.06,pointerEvents:'none'}} width={200} height={200} viewBox="0 0 100 100"><circle cx={50} cy={50} r={45} fill="none" stroke="#FF0040" strokeWidth={2}/><circle cx={50} cy={50} r={30} fill="none" stroke="#FF0040" strokeWidth={1}/><path d="M30 50 Q50 20 70 50 Q50 80 30 50" fill="#FF0040"/></svg>
+        running: { accent:'#FF0040', glow:'rgba(255,0,64,0.12)', decor:(
+          <img src="/courir.svg" alt="" style={{position:'fixed',right:-40,bottom:80,width:280,height:280,objectFit:'contain',opacity:0.07,pointerEvents:'none',filter:'saturate(0)'}}/>
         )},
-        cycling: { accent:'#f59e0b', grad:'linear-gradient(135deg,rgba(245,158,11,0.08),rgba(251,191,36,0.04))', glow:'rgba(245,158,11,0.12)', icon:'🚴', decor:(
-          <svg style={{position:'absolute',right:-20,top:-20,opacity:0.07,pointerEvents:'none'}} width={220} height={220} viewBox="0 0 100 100"><circle cx={30} cy={65} r={25} fill="none" stroke="#f59e0b" strokeWidth={2}/><circle cx={70} cy={65} r={25} fill="none" stroke="#f59e0b" strokeWidth={2}/><circle cx={30} cy={65} r={5} fill="#f59e0b"/><circle cx={70} cy={65} r={5} fill="#f59e0b"/><path d="M30 65 L50 35 L70 65 M50 35 L50 20" stroke="#f59e0b" strokeWidth={2} fill="none"/></svg>
+        cycling: { accent:'#f59e0b', glow:'rgba(245,158,11,0.12)', decor:(
+          <img src="/cyclisme.svg" alt="" style={{position:'fixed',right:-30,bottom:80,width:260,height:260,objectFit:'contain',opacity:0.08,pointerEvents:'none',filter:'saturate(0)'}}/>
         )},
-        swimming: { accent:'#38bdf8', grad:'linear-gradient(135deg,rgba(56,189,248,0.1),rgba(14,165,233,0.04))', glow:'rgba(56,189,248,0.15)', icon:'🏊', decor:(
-          <svg style={{position:'absolute',right:-10,top:10,opacity:0.08,pointerEvents:'none'}} width={240} height={200} viewBox="0 0 120 80"><path d="M0 20 Q15 10 30 20 Q45 30 60 20 Q75 10 90 20 Q105 30 120 20" fill="none" stroke="#38bdf8" strokeWidth={2}/><path d="M0 35 Q15 25 30 35 Q45 45 60 35 Q75 25 90 35 Q105 45 120 35" fill="none" stroke="#38bdf8" strokeWidth={2}/><path d="M0 50 Q15 40 30 50 Q45 60 60 50 Q75 40 90 50 Q105 60 120 50" fill="none" stroke="#38bdf8" strokeWidth={2}/><path d="M0 65 Q15 55 30 65 Q45 75 60 65 Q75 55 90 65 Q105 75 120 65" fill="none" stroke="#38bdf8" strokeWidth={2}/></svg>
+        swimming: { accent:'#38bdf8', glow:'rgba(56,189,248,0.15)', decor:(
+          <img src="/nager.svg" alt="" style={{position:'fixed',right:-30,bottom:80,width:260,height:260,objectFit:'contain',opacity:0.08,pointerEvents:'none',filter:'saturate(0)'}}/>
         )},
-        triathlon: { accent:'#a78bfa', grad:'linear-gradient(135deg,rgba(167,139,250,0.08),rgba(139,92,246,0.04))', glow:'rgba(167,139,250,0.12)', icon:'🤸', decor:(
-          <svg style={{position:'absolute',right:-10,top:-10,opacity:0.07,pointerEvents:'none'}} width={200} height={200} viewBox="0 0 100 100"><polygon points="50,5 95,27 95,73 50,95 5,73 5,27" fill="none" stroke="#a78bfa" strokeWidth={1.5}/><polygon points="50,20 80,35 80,65 50,80 20,65 20,35" fill="none" stroke="#a78bfa" strokeWidth={1}/><circle cx={50} cy={50} r={12} fill="none" stroke="#a78bfa" strokeWidth={1.5}/></svg>
+        triathlon: { accent:'#a78bfa', glow:'rgba(167,139,250,0.12)', decor:(
+          <img src="/triathlon.svg" alt="" style={{position:'fixed',right:-30,bottom:80,width:260,height:260,objectFit:'contain',opacity:0.08,pointerEvents:'none',filter:'saturate(0)'}}/>
         )},
       };
       const theme = disciplineTheme[form.discipline] || disciplineTheme.running;
