@@ -264,7 +264,7 @@ function generatePlanCycling(profile) {
           id:`w_s${si}`, day, type:'tempo', tag:'Tempo',
           tagColor:'#6366f1', tagBg:'rgba(99,102,241,0.12)',
           title:`${Math.round(km*0.4)} km tempo`,
-          detail:`Effort soutenu à allure de course. Plus confortable que les intervalles courts, très efficace pour progresser.`,
+          detail:'Effort soutenu à allure de course. Plus confortable que les intervalles courts, très efficace pour progresser.',
           allures:[{dot:'#6366f1',label:'Tempo',val:useWatts?`${Math.round(ftpNum*0.88)}-${Math.round(ftpNum*0.95)}W`:`${Math.round(fcmax*0.80)}-${Math.round(fcmax*0.87)} bpm`}]
         };
       }
@@ -961,7 +961,7 @@ function Onboarding({ onComplete }) {
   const isTriathlon = form.discipline === 'triathlon';
 
   const cyclingSteps = [
-    { title:'Profil & antécédents', sub:'Regardons d'abord dans le rétroviseur', ok:true, body:(
+    { title:'Profil & antécédents', sub:'Regardons d\'abord dans le rétroviseur', ok:true, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
         <div><label style={lbl}>Niveau actuel</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['beginner','Débutant'],['intermediate','Intermédiaire'],['advanced','Avancé'],['expert','Expert']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingBackground',v)} style={tog(form.cyclingBackground===v)}>{l}</button>)}</div></div>
@@ -969,7 +969,7 @@ function Onboarding({ onComplete }) {
         <div><label style={lbl}>Capteurs disponibles</label><div style={{display:'flex',gap:8}}>{[['cyclingHasPower','Capteur de puissance'],['cyclingHasHR','Fréquence cardiaque']].map(([k,l])=><button key={k} onClick={()=>upd(k,!form[k])} style={{...tog(form[k]),flex:1}}>{l}</button>)}</div></div>
       </div>
     )},
-    { title:'Objectifs & profil', sub:'On ne s'entraîne pas pareil pour tous les objectifs', ok:form.raceName.length>0, body:(
+    { title:'Objectifs & profil', sub:'On ne s\'entraîne pas pareil pour tous les objectifs', ok:form.raceName.length>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Ton profil de cycliste</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['grimpeur','Grimpeur'],['rouleur','Rouleur'],['sprinteur','Sprinteur'],['polyvalent','Polyvalent']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingProfile',v)} style={tog(form.cyclingProfile===v)}>{l}</button>)}</div></div>
         <div><label style={lbl}>Point fort</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['endurance','Endurance'],['power','Puissance'],['climbs','Ascensions'],['speed','Vitesse']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingStrongPoint',v)} style={tog(form.cyclingStrongPoint===v)}>{l}</button>)}</div></div>
@@ -981,7 +981,7 @@ function Onboarding({ onComplete }) {
         <div><label style={lbl}>Date de l'épreuve</label><input type="date" style={inp()} value={form.raceDate} onChange={e=>upd('raceDate',e.target.value)}/></div>
       </div>
     )},
-    { title:'Contraintes & logistique', sub:'Un bon plan c'est un plan tenu', ok:true, body:(
+    { title:'Contraintes & logistique', sub:'Un bon plan c\'est un plan tenu', ok:true, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Volume hebdo réaliste (heures)</label><div style={{display:'flex',alignItems:'center',gap:12}}><input type="range" min={3} max={20} step={1} value={form.cyclingWeeklyHours} onChange={e=>upd('cyclingWeeklyHours',+e.target.value)} style={{flex:1,accentColor:'#f59e0b'}}/><span style={{fontSize:16,fontWeight:800,color:'#f59e0b',fontFamily:'DM Mono,monospace',minWidth:40}}>{form.cyclingWeeklyHours}h</span></div></div>
         <div><label style={lbl}>Nombre de séances/semaine</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[3,4,5,6].map(v=><button key={v} onClick={()=>upd('sessionsPerWeek',v)} style={tog(form.sessionsPerWeek===v)}>{v}x</button>)}</div></div>
@@ -1001,7 +1001,7 @@ function Onboarding({ onComplete }) {
         <div><label style={lbl}>Tu préfères t'entraîner</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['true','Seul'],['false','En groupe']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingSolo',v==='true')} style={tog(String(form.cyclingSolo)===v)}>{l}</button>)}</div></div>
         <div><label style={lbl}>Tu aimes la variété ?</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['true','Oui, beaucoup'],['false','Non, routine']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingLikesVariety',v==='true')} style={tog(String(form.cyclingLikesVariety)===v)}>{l}</button>)}</div></div>
         <div><label style={lbl}>Tu peux t'entraîner tôt/tard ?</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['true','Oui'],['false','Non']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingTrainNight',v==='true')} style={tog(String(form.cyclingTrainNight)===v)}>{l}</button>)}</div></div>
-        <div><label style={lbl}>Ce que tu détestes à l'entraînement</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['intervals','Les intervalles'],['long','Les longues sorties'],['climbing','Grimper'],['speed','Le sprint']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingWeakPoint',v)} style={tog(form.cyclingWeakPoint===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Ce que tu détestes à l\'entraînement</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['intervals','Les intervalles'],['long','Les longues sorties'],['climbing','Grimper'],['speed','Le sprint']].map(([v,l])=><button key={v} onClick={()=>upd('cyclingWeakPoint',v)} style={tog(form.cyclingWeakPoint===v)}>{l}</button>)}</div></div>
       </div>
     )},
   ];
