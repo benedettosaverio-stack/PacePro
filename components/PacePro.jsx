@@ -1671,9 +1671,8 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         }
         console.log('Parsing JSON, length:', text.length);
         const aiPlan = JSON.parse(text);
-        console.log('AI Plan raw text:', text.slice(0, 200));
-        console.log('AI Plan generated:', aiPlan.length, 'weeks');
-        console.log('First week:', JSON.stringify(aiPlan[0]).slice(0, 300));
+        console.log('AI Plan week count:', aiPlan.length);
+        console.log('Week 1 sessions:', aiPlan[0]?.sessions?.length, JSON.stringify(aiPlan[0]?.sessions?.[0]).slice(0,200));
         // Ajouter dateRange si manquant
         const startDate = new Date();
         const enrichedPlan = aiPlan.map((week, idx) => {
