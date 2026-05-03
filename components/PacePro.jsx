@@ -851,6 +851,7 @@ function Onboarding({ onComplete }) {
     } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' }; }
   });
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
+  const computedVma = form.vmaMode==='direct' ? +form.vma : (form.raceTimeMins?estimateVMA(+form.raceDistKm,+form.raceTimeMins):0);
 
   const toggleDay = (day) => {
     if (form.trainingDays.includes(day)) { upd('trainingDays',form.trainingDays.filter(d=>d!==day)); }
