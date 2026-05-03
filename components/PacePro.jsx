@@ -842,7 +842,14 @@ function KpiCharts({ plan, feedbacks, completed }) {
 
 function Onboarding({ onComplete }) {
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' });
+  const [form, setForm] = useState(() => {
+    try {
+      const athlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
+      const user = JSON.parse(localStorage.getItem('pp_user') || '{}');
+      const firstName = athlete.name?.split(' ')[0] || user.name?.split(' ')[0] || '';
+      return { name:firstName, discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' };
+    } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' }; }
+  });
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
   const [stravaImporting, setStravaImporting] = useState(false);
   const [stravaImported, setStravaImported] = useState(false);
