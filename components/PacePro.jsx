@@ -1542,12 +1542,68 @@ export default function PacePro() {
   init();
 },[]);
   const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} syncPlans(p); };
-  const handleOnboarding = (profile) => {
-    const plan = generatePlan(profile);
-    const newPlans = [...plans,{profile,plan}];
-    savePlans(newPlans);
-    setActivePlan(newPlans.length-1);
-    setView('dashboard');
+  const [generatingPlan, setGeneratingPlan] = useState(false);
+
+  const handleOnboarding = async (profile) => {
+    if (profile.discipline === 'cycling') {
+      setGeneratingPlan(true);
+      try {
+        const prompt = `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste complet en JSON.
+
+Profil de l'athlète :
+- Niveau : ${profile.cyclingBackground}
+- Profil : ${profile.cyclingProfile}
+- FTP : ${profile.vma}W / FCmax : ${profile.cyclingFCmax} bpm
+- Capteur puissance : ${profile.cyclingHasPower ? 'oui' : 'non'}
+- Blessures : ${profile.cyclingInjuries}
+- Objectif : ${profile.raceName} — ${profile.raceDistanceKm}km D+${profile.elevationM}m le ${profile.raceDate}
+- Volume hebdo dispo : ${profile.cyclingWeeklyHours}h/semaine
+- Séances/semaine : ${profile.sessionsPerWeek}
+- Matériel : ${profile.cyclingMaterial}
+- Peut s'entraîner tôt/tard : ${profile.cyclingTrainNight ? 'oui' : 'non'}
+- Aime la variété : ${profile.cyclingLikesVariety ? 'oui' : 'non'}
+- Préfère : ${profile.cyclingSolo ? 'seul' : 'en groupe'}
+- Déteste : ${profile.cyclingWeakPoint}
+- Point fort : ${profile.cyclingStrongPoint}
+- Sommeil : ${profile.cyclingSleep} / Stress : ${profile.cyclingStress}
+- Durée plan : ${profile.weeks} semaines
+
+Génère exactement ${profile.weeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances.
+Les jours par défaut sont : Lundi, Mercredi, Vendredi, Samedi (ou moins selon sessionsPerWeek).
+Adapte vraiment le plan selon le profil (blessures → moins d'intensité, stress élevé → récup supplémentaire, grimpeur → plus de côtes, etc).
+
+Réponds UNIQUEMENT en JSON valide sans markdown :
+[{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`;
+
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+        const d = await res.json();
+        const text = (d.text || '').replace(/\`\`\`json|\`\`\`/g, '').trim();
+        const aiPlan = JSON.parse(text);
+        const newPlans = [...plans, { profile, plan: aiPlan }];
+        savePlans(newPlans);
+        setActivePlan(newPlans.length - 1);
+        setView('dashboard');
+      } catch(e) {
+        console.error('AI plan error:', e);
+        // Fallback au plan statique
+        const plan = generatePlan(profile);
+        const newPlans = [...plans, { profile, plan }];
+        savePlans(newPlans);
+        setActivePlan(newPlans.length - 1);
+        setView('dashboard');
+      }
+      setGeneratingPlan(false);
+    } else {
+      const plan = generatePlan(profile);
+      const newPlans = [...plans, { profile, plan }];
+      savePlans(newPlans);
+      setActivePlan(newPlans.length - 1);
+      setView('dashboard');
+    }
   };
   const handleDelete = (idx) => { savePlans(plans.filter((_,i)=>i!==idx)); setView('list'); };
 
@@ -1688,6 +1744,19 @@ export default function PacePro() {
   }
 
   // Running tab
+  if (generatingPlan) return (
+    <div className='app-shell'><ThemeStyles/>
+      <div style={{position:'fixed',inset:0,background:'var(--bg-primary)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24,zIndex:9999}}>
+        <div style={{width:60,height:60,borderRadius:'50%',border:'3px solid rgba(245,158,11,0.2)',borderTopColor:'#f59e0b',animation:'spin 1s linear infinite'}}/>
+        <div style={{textAlign:'center'}}>
+          <div style={{fontSize:18,fontWeight:800,color:'var(--text-primary)',marginBottom:8}}>L'IA crée ton plan vélo</div>
+          <div style={{fontSize:13,color:'var(--text-muted)'}}>Analyse de ton profil en cours...</div>
+        </div>
+      </div>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+
   if (view==='onboarding') return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader /><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
