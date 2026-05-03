@@ -1114,7 +1114,7 @@ function Onboarding({ onComplete }) {
         <div><label style={lbl}>Gestion des transitions</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['fast','Rapide'],['medium','Moyenne'],['slow','À améliorer']].map(([v,l])=><button key={v} onClick={()=>upd('triTransition',v)} style={tog(form.triTransition===v)}>{l}</button>)}</div></div>
       </div>
     )},
-    { title:'Logistique & matériel', sub:'Un bon plan s'adapte à ta réalité', ok:true, body:(
+    { title:'Logistique & matériel', sub:'Un bon plan s\'adapte à ta réalité', ok:true, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Volume hebdo réaliste (heures)</label><div style={{display:'flex',alignItems:'center',gap:12}}><input type="range" min={4} max={20} step={1} value={form.triWeeklyHours} onChange={e=>upd('triWeeklyHours',+e.target.value)} style={{flex:1,accentColor:'#a78bfa'}}/><span style={{fontSize:16,fontWeight:800,color:'#a78bfa',fontFamily:'DM Mono,monospace',minWidth:40}}>{form.triWeeklyHours}h</span></div></div>
         <div><label style={lbl}>Séances par semaine</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[4,5,6,8].map(v=><button key={v} onClick={()=>upd('triSessions',v)} style={tog(form.triSessions===v)}>{v}x</button>)}</div></div>
