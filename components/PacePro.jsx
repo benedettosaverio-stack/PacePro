@@ -1663,7 +1663,9 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         const d = await res.json();
         const text = (d.text || '').replace(/\`\`\`json|\`\`\`/g, '').trim();
         const aiPlan = JSON.parse(text);
-        console.log('AI Plan generated:', aiPlan.length, 'weeks, first week sessions:', aiPlan[0]?.sessions?.length);
+        console.log('AI Plan raw text:', text.slice(0, 200));
+        console.log('AI Plan generated:', aiPlan.length, 'weeks');
+        console.log('First week:', JSON.stringify(aiPlan[0]).slice(0, 300));
         // Ajouter dateRange si manquant
         const startDate = new Date();
         const enrichedPlan = aiPlan.map((week, idx) => {
