@@ -851,63 +851,7 @@ function Onboarding({ onComplete }) {
     } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' }; }
   });
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
-  const [stravaImporting, setStravaImporting] = useState(false);
-  const [stravaImported, setStravaImported] = useState(false);
 
-  const importFromStrava = async () => {
-    const token = (() => {
-      try {
-        const keys = ['strava_token','strava_access_token','pp_strava_token'];
-        for (const k of keys) {
-          const t = localStorage.getItem(k);
-          if (t && t.length > 10) return t;
-        }
-        const user = JSON.parse(localStorage.getItem('pp_user')||'{}');
-        if (user.strava_token) return user.strava_token;
-        if (user.access_token) return user.access_token;
-      } catch{}
-      return null;
-    })();
-    if (!token) { setStravaImporting(false); return; }
-    setStravaImporting(true);
-    try {
-      const res = await fetch(`/api/strava?action=activities&token=${token}`);
-      const activities = await res.json();
-      if (!Array.isArray(activities)) throw new Error('Pas de données');
-      const discipline = form.discipline || 'running';
-
-      if (discipline === 'running') {
-        const runs = activities.filter(a => a.type==='Run' && a.distance>1000 && a.average_speed>0);
-        if (runs.length > 0) {
-          const bestSpeed = Math.max(...runs.map(a => a.average_speed));
-          const estimatedVma = (bestSpeed * 3.6 / 0.85).toFixed(1);
-          upd('vma', estimatedVma);
-          upd('vmaMode', 'direct');
-          setStravaImported(true);
-        }
-      } else if (discipline === 'cycling') {
-        const rides = activities.filter(a => (a.type==='Ride'||a.type==='VirtualRide') && a.average_watts>0);
-        if (rides.length > 0) {
-          const avgWatts = Math.round(rides.slice(0,5).reduce((s,a)=>s+a.average_watts,0)/Math.min(rides.length,5));
-          const estimatedFtp = Math.round(avgWatts * 0.95);
-          upd('vma', estimatedFtp);
-          upd('vmaMode', 'direct');
-          setStravaImported(true);
-        }
-      } else if (discipline === 'swimming') {
-        const swims = activities.filter(a => a.type==='Swim' && a.distance>0 && a.average_speed>0);
-        if (swims.length > 0) {
-          const avgSpeed = swims.slice(0,3).reduce((s,a)=>s+a.average_speed,0)/Math.min(swims.length,3);
-          const pacePer100 = (100/avgSpeed/60).toFixed(1);
-          upd('vma', pacePer100);
-          upd('vmaMode', 'direct');
-          setStravaImported(true);
-        }
-      }
-    } catch(e) { console.error('Strava import error:', e); }
-    setStravaImporting(false);
-  };
-  const computedVma = form.vmaMode==='direct' ? +form.vma : (form.raceTimeMins?estimateVMA(+form.raceDistKm,+form.raceTimeMins):0);
   const toggleDay = (day) => {
     if (form.trainingDays.includes(day)) { upd('trainingDays',form.trainingDays.filter(d=>d!==day)); }
     else if (form.trainingDays.length < form.sessionsPerWeek) { upd('trainingDays',[...form.trainingDays,day]); }
@@ -923,12 +867,6 @@ function Onboarding({ onComplete }) {
     )},
     { title:'Ta condition physique', sub:form.discipline==='swimming'?'On calcule tes allures bassin':form.discipline==='cycling'?'On calcule tes allures vélo':'On calcule tes allures personnalisées', ok:computedVma>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
-        {/* Import Strava */}
-        <button onClick={importFromStrava} disabled={stravaImporting} style={{width:'100%',background:stravaImported?'rgba(34,197,94,0.1)':'rgba(245,158,11,0.1)',border:`1px solid ${stravaImported?'rgba(34,197,94,0.3)':'rgba(245,158,11,0.3)'}`,borderRadius:12,padding:'12px',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginBottom:4}}>
-          <span style={{fontSize:16}}>🟠</span>
-          <span style={{fontSize:13,fontWeight:700,color:stravaImported?'#22c55e':'#f59e0b'}}>{stravaImporting?'Analyse en cours...':stravaImported?'✓ Données importées depuis Strava':'Importer automatiquement depuis Strava'}</span>
-        </button>
-        <div style={{fontSize:11,color:'var(--text-muted)',textAlign:'center',marginBottom:12}}>ou saisir manuellement</div>
         <div><label style={lbl}>Comment saisir {form.discipline==='cycling'?'ton FTP':form.discipline==='swimming'?'ton allure':'ta VMA'} ?</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['direct',`Je connais ${form.discipline==='cycling'?'mon FTP':'ma VMA'}`],['race','Depuis un chrono récent']].map(([v,l])=><button key={v} onClick={()=>upd('vmaMode',v)} style={tog(form.vmaMode===v)}>{l}</button>)}</div></div>
         {form.vmaMode==='direct' ? (
           <div><label style={lbl}>{form.discipline==='cycling'?'FTP (watts)':form.discipline==='swimming'?'Allure 400m (min)':'VMA (km/h)'}</label><input type="number" style={inp()} min="8" max="500" step={form.discipline==='cycling'?5:0.5} value={form.vma} onChange={e=>upd('vma',e.target.value)}/><p style={{fontSize:11,color:'var(--text-muted)',marginTop:6}}>{form.discipline==='cycling'?'FTP moyen loisir : 150–220W':form.discipline==='swimming'?'Allure 400m typique : 7-12 min':'Moyenne loisir : 12–15 km/h'}</p></div>
