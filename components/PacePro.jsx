@@ -946,12 +946,12 @@ function Onboarding({ onComplete }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(() => {
     try {
-      if (typeof window === 'undefined') return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3 };
+      if (typeof window === 'undefined') return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12' };
       const athlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
       const user = JSON.parse(localStorage.getItem('pp_user') || '{}');
       const firstName = athlete.name?.split(' ')[0] || user.name?.split(' ')[0] || '';
-      return { name:firstName, discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3 };
-    } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3 }; }
+      return { name:firstName, discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12' };
+    } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12' }; }
   });
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
   const computedVma = form.vmaMode==='direct' ? +form.vma : (form.raceTimeMins?estimateVMA(+form.raceDistKm,+form.raceTimeMins):0);
@@ -1059,7 +1059,77 @@ function Onboarding({ onComplete }) {
     )},
   ];
 
-  const steps = isCycling ? cyclingSteps : isSwimming ? swimmingSteps : [
+  const TRI_FORMATS = {
+    sprint:   { label:'Sprint',        swim:750,  bike:20,  run:5  },
+    olympic:  { label:'Olympique',     swim:1500, bike:40,  run:10 },
+    half:     { label:'Half Ironman',  swim:1900, bike:90,  run:21 },
+    ironman:  { label:'Ironman',       swim:3800, bike:180, run:42 },
+  };
+
+  const triathlonSteps = [
+    { title:'Ton profil triathlete', sub:'3 disciplines, 1 seul athlète', ok:form.name.length>0, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
+        <div><label style={lbl}>Niveau par discipline</label>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {[['triSwimLevel','🏊 Natation'],['triCyclingLevel','🚴 Vélo'],['triRunLevel','🏃 Course']].map(([key,label])=>(
+              <div key={key}>
+                <div style={{fontSize:11,color:'var(--text-muted)',marginBottom:4,fontFamily:'DM Mono,monospace'}}>{label}</div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6}}>{[['beginner','Déb.'],['intermediate','Inter.'],['advanced','Avancé'],['expert','Expert']].map(([v,l])=><button key={v} onClick={()=>upd(key,v)} style={{...tog(form[key]===v),fontSize:11,padding:'8px 4px'}}>{l}</button>)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div><label style={lbl}>Discipline dominante</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['swimming','Natation'],['cycling','Vélo'],['running','Course']].map(([v,l])=><button key={v} onClick={()=>upd('triDominant',v)} style={tog(form.triDominant===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Discipline à améliorer</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['swimming','Natation'],['cycling','Vélo'],['running','Course']].map(([v,l])=><button key={v} onClick={()=>upd('triWeakDiscipline',v)} style={tog(form.triWeakDiscipline===v)}>{l}</button>)}</div></div>
+      </div>
+    )},
+    { title:'Format & objectif', sub:'Sprint, Olympique, Half ou Full ?', ok:form.raceName.length>0, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Format de triathlon</label>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+            {Object.entries(TRI_FORMATS).map(([v,f])=>(
+              <button key={v} onClick={()=>{upd('triFormat',v);upd('raceDistanceKm',f.bike);upd('elevationM',0);}} style={tog(form.triFormat===v)}>
+                <div style={{fontWeight:700}}>{f.label}</div>
+                <div style={{fontSize:10,opacity:0.7,marginTop:2}}>{f.swim}m · {f.bike}km · {f.run}km</div>
+              </button>
+            ))}
+          </div>
+        </div>
+        {form.triFormat && (
+          <div style={{background:'var(--bg-input)',borderRadius:12,padding:'12px 14px',fontSize:12,color:'var(--text-secondary)'}}>
+            🏊 {TRI_FORMATS[form.triFormat].swim}m · 🚴 {TRI_FORMATS[form.triFormat].bike}km · 🏃 {TRI_FORMATS[form.triFormat].run}km
+          </div>
+        )}
+        <div><label style={lbl}>Nom de l'épreuve</label><input style={inp()} placeholder="Ironman Nice, Triathlon de Paris..." value={form.raceName} onChange={e=>upd('raceName',e.target.value)}/></div>
+        <div><label style={lbl}>Date de l'épreuve</label><input type="date" style={inp()} value={form.raceDate} onChange={e=>upd('raceDate',e.target.value)}/></div>
+      </div>
+    )},
+    { title:'Performances actuelles', sub:'Tes chrono de référence par discipline', ok:true, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Temps natation 400m (ex: 7:30)</label><input style={inp()} placeholder="7:30" value={form.triSwimTime} onChange={e=>upd('triSwimTime',e.target.value)}/></div>
+        <div><label style={lbl}>{form.triCyclingLevel==='beginner'?'FCmax estimée (bpm)':'FTP (watts)'}</label><input type="number" style={inp()} placeholder={form.triCyclingLevel==='beginner'?'185':'200'} value={form.triCyclingFTP} onChange={e=>upd('triCyclingFTP',e.target.value)}/></div>
+        <div><label style={lbl}>VMA course à pied (km/h)</label><input type="number" style={inp()} placeholder="12" value={form.triRunVMA} onChange={e=>upd('triRunVMA',e.target.value)}/></div>
+        <div><label style={lbl}>FCmax (bpm)</label><input type="number" style={inp()} placeholder="185" value={form.triFCmax} onChange={e=>upd('triFCmax',e.target.value)}/></div>
+        <div><label style={lbl}>Gestion des transitions</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['fast','Rapide'],['medium','Moyenne'],['slow','À améliorer']].map(([v,l])=><button key={v} onClick={()=>upd('triTransition',v)} style={tog(form.triTransition===v)}>{l}</button>)}</div></div>
+      </div>
+    )},
+    { title:'Logistique & matériel', sub:'Un bon plan s'adapte à ta réalité', ok:true, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Volume hebdo réaliste (heures)</label><div style={{display:'flex',alignItems:'center',gap:12}}><input type="range" min={4} max={20} step={1} value={form.triWeeklyHours} onChange={e=>upd('triWeeklyHours',+e.target.value)} style={{flex:1,accentColor:'#a78bfa'}}/><span style={{fontSize:16,fontWeight:800,color:'#a78bfa',fontFamily:'DM Mono,monospace',minWidth:40}}>{form.triWeeklyHours}h</span></div></div>
+        <div><label style={lbl}>Séances par semaine</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[4,5,6,8].map(v=><button key={v} onClick={()=>upd('triSessions',v)} style={tog(form.triSessions===v)}>{v}x</button>)}</div></div>
+        <div><label style={lbl}>Matériel</label>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            <button onClick={()=>upd('triHasCombinaiison',!form.triHasCombinaiison)} style={{...tog(form.triHasCombinaiison),flex:1}}>Combinaison néoprène</button>
+            <button onClick={()=>upd('triHasTTBike',!form.triHasTTBike)} style={{...tog(form.triHasTTBike),flex:1}}>Vélo TT / Triathlon</button>
+          </div>
+        </div>
+        <div><label style={lbl}>Durée du programme</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[8,12,16,20].map(v=><button key={v} onClick={()=>upd('weeks',v)} style={tog(form.weeks===v)}>{v}sem</button>)}</div></div>
+      </div>
+    )},
+  ];
+
+  const steps = isCycling ? cyclingSteps : isSwimming ? swimmingSteps : isTriathlon ? triathlonSteps : [
     { title:'Qui es-tu ?', sub:'Ton profil sportif', ok:form.name.length>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
@@ -1595,7 +1665,7 @@ export default function PacePro() {
   const [generatingPlan, setGeneratingPlan] = useState(false);
 
   const handleOnboarding = async (profile) => {
-    if (profile.discipline === 'cycling' || profile.discipline === 'swimming') {
+    if (profile.discipline === 'cycling' || profile.discipline === 'swimming' || profile.discipline === 'triathlon') {
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
@@ -1629,6 +1699,28 @@ Adapte intensité selon blessures/stress.
 
 Réponds UNIQUEMENT en JSON valide sans markdown :
 [{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`
+        : profile.discipline === 'triathlon' ? `Tu es un coach triathlon expert. Génère un plan d'entraînement triathlon complet en JSON.
+
+Format : ${profile.triFormat} — Nage ${{'sprint':750,'olympic':1500,'half':1900,'ironman':3800}[profile.triFormat]}m · Vélo ${{'sprint':20,'olympic':40,'half':90,'ironman':180}[profile.triFormat]}km · Course ${{'sprint':5,'olympic':10,'half':21,'ironman':42}[profile.triFormat]}km
+Épreuve : ${profile.raceName} le ${profile.raceDate}
+Niveaux : Natation ${profile.triSwimLevel} | Vélo ${profile.triCyclingLevel} | Course ${profile.triRunLevel}
+Dominant : ${profile.triDominant} | À améliorer : ${profile.triWeakDiscipline}
+Chrono natation 400m : ${profile.triSwimTime} | FTP vélo : ${profile.triCyclingFTP}W | VMA course : ${profile.triRunVMA} km/h
+FCmax : ${profile.triFCmax} bpm | Transitions : ${profile.triTransition}
+Volume hebdo : ${profile.triWeeklyHours}h | ${profile.triSessions} séances/sem
+Combinaison : ${profile.triHasCombinaiison ? 'oui' : 'non'} | Vélo TT : ${profile.triHasTTBike ? 'oui' : 'non'}
+Durée : ${aiWeeks} semaines
+
+RÈGLES :
+- Alterner les 3 disciplines + séances BRIQUE (vélo→course enchaînés) chaque semaine
+- Mettre l'accent sur ${profile.triWeakDiscipline} (30% du volume)
+- Séances brique = tag "Brique" tagColor "#FF0040"
+- Natation tag "#38bdf8", Vélo "#f59e0b", Course "#22c55e"
+- Transitions dédiées si ${profile.triTransition} === 'slow'
+- Génère ${aiWeeks} semaines, ${profile.triSessions} séances max, descriptions concises
+
+Réponds UNIQUEMENT en JSON valide sans markdown :
+[{"week":1,"phase":"base","label":"Base triathlon","color":"#a78bfa","bg":"rgba(167,139,250,0.12)","dateRange":"","weeklyKm":0,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Natation","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"1500m technique","detail":"Travail technique crawl, respiration bilatérale","allures":[{"dot":"#38bdf8","label":"CSS","val":"1:55/100m"}]}]}`
         : `Tu es un coach natation expert. Génère un plan d'entraînement natation complet en JSON.
 
 Profil du nageur :
