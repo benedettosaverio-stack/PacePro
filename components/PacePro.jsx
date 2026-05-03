@@ -1685,7 +1685,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
           wStart.setDate(startDate.getDate() + idx * 7);
           const wEnd = new Date(wStart);
           wEnd.setDate(wStart.getDate() + 6);
-          const fmt = d => d.toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+          const fmt = dt => dt.toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
           return {
             ...week,
             dateRange: week.dateRange || `${fmt(wStart)} – ${fmt(wEnd)}`,
