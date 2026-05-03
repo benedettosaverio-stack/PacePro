@@ -220,9 +220,9 @@ function generatePlanCycling(profile) {
     const days = trainingDays.slice(0,sessionsPerWeek);
     const sessions = days.map((day,si) => {
       const isLast = si===days.length-1;
-      if (isLast) return { id:`w${idx+1}_s${si}`, day, type:'long', tag:'Sortie longue 🚴', tagColor:'#f59e0b', tagBg:'rgba(245,158,11,0.12)', title:`${Math.round(km*0.6)} km endurance`, detail:'Allure Z2, cadence régulière. Mange et hydrate-toi pendant l'effort.', allures:[{dot:'#22c55e',label:'Allure',val:`Z2 — ${Math.round(ftp*0.6)}-${Math.round(ftp*0.75)}W`}] };
+      if (isLast) return { id:`w${idx+1}_s${si}`, day, type:'long', tag:'Sortie longue 🚴', tagColor:'#f59e0b', tagBg:'rgba(245,158,11,0.12)', title:`${Math.round(km*0.6)} km endurance`, detail:'Allure Z2, cadence régulière. Mange et hydrate-toi pendant l\'effort.', allures:[{dot:'#22c55e',label:'Allure',val:`Z2 — ${Math.round(ftp*0.6)}-${Math.round(ftp*0.75)}W`}] };
       if (si===0) return { id:`w${idx+1}_s${si}`, day, type:'frac', tag:'Intervalles ⚡', tagColor:'#FF0040', tagBg:'rgba(255,0,64,0.12)', title:`5 × 5 min / 3 min`, detail:'Échauffement 20 min. 5 blocs à haute intensité. Retour calme 15 min.', allures:[{dot:'#FF0040',label:'Effort',val:`Z4 — ${Math.round(ftp*0.9)}-${Math.round(ftp*1.05)}W`},{dot:'#22c55e',label:'Récup',val:`Z1 — <${Math.round(ftp*0.55)}W`}] };
-      return { id:`w${idx+1}_s${si}`, day, type:'ef', tag:'Endurance 🚴', tagColor:'#22c55e', tagBg:'rgba(34,197,94,0.12)', title:`${Math.round(km*0.35)} km récup`, detail:'Sortie récupération, cadence libre, pas d'effort.', allures:[{dot:'#22c55e',label:'Allure',val:`Z1-Z2 — <${Math.round(ftp*0.65)}W`}] };
+      return { id:`w${idx+1}_s${si}`, day, type:'ef', tag:'Endurance 🚴', tagColor:'#22c55e', tagBg:'rgba(34,197,94,0.12)', title:`${Math.round(km*0.35)} km récup`, detail:'Sortie récupération, cadence libre, pas d\'effort.', allures:[{dot:'#22c55e',label:'Allure',val:`Z1-Z2 — <${Math.round(ftp*0.65)}W`}] };
     });
     return { week:idx+1, phase, ...phaseInfo[phase], dateRange:`${fmt(wStart)} – ${fmt(wEnd)}`, sessions, weeklyKm:km, isKey:phase==='peak' };
   });
