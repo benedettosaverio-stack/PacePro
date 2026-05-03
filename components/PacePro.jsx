@@ -1729,9 +1729,12 @@ export default function PacePro() {
 },[]);
   const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} syncPlans(p); };
   const [generatingPlan, setGeneratingPlan] = useState(false);
+  const [generatingDiscipline, setGeneratingDiscipline] = useState('vélo');
 
   const handleOnboarding = async (profile) => {
     if (profile.discipline === 'cycling' || profile.discipline === 'swimming' || profile.discipline === 'triathlon') {
+      const disciplineLabels = {'cycling':'vélo','swimming':'natation','triathlon':'triathlon'};
+      setGeneratingDiscipline(disciplineLabels[profile.discipline] || 'sport');
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
@@ -1854,6 +1857,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
           };
         });
         const newPlans = [...plans, { profile, plan: enrichedPlan }];
+        console.log('Saving plan, weeks:', enrichedPlan.length, 'first week sessions:', enrichedPlan[0]?.sessions?.length);
         savePlans(newPlans);
         setActivePlan(newPlans.length - 1);
         setView('dashboard');
