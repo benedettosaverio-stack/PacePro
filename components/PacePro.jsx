@@ -1270,7 +1270,61 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   const [feedbackSession, setFeedbackSession] = useState(null);
   const [detailSession, setDetailSession] = useState(null);
   const [showNutrition, setShowNutrition] = useState(false);
-  const paces = calcPaces(profile.vma);
+  const discipline = profile.discipline || 'running';
+  const isCyclingDash = discipline === 'cycling';
+  const isSwimmingDash = discipline === 'swimming';
+  const isTriathlonDash = discipline === 'triathlon';
+
+  // Calcul des allures selon discipline
+  const paces = (() => {
+    if (isCyclingDash) {
+      const ftp = parseFloat(profile.vma) || 200;
+      const fcmax = parseFloat(profile.cyclingFCmax) || 185;
+      const useW = profile.cyclingHasPower;
+      return {
+        ef: useW ? `${Math.round(ftp*0.56)}-${Math.round(ftp*0.75)}W` : `${Math.round(fcmax*0.60)}-${Math.round(fcmax*0.72)} bpm`,
+        tempo: useW ? `${Math.round(ftp*0.76)}-${Math.round(ftp*0.90)}W` : `${Math.round(fcmax*0.72)}-${Math.round(fcmax*0.82)} bpm`,
+        threshold: useW ? `${Math.round(ftp*0.91)}-${Math.round(ftp*1.05)}W` : `${Math.round(fcmax*0.82)}-${Math.round(fcmax*0.89)} bpm`,
+        vma90: useW ? `${Math.round(ftp*1.06)}-${Math.round(ftp*1.20)}W` : `${Math.round(fcmax*0.90)}-${Math.round(fcmax*0.95)} bpm`,
+        recov: useW ? `<${Math.round(ftp*0.55)}W` : `<${Math.round(fcmax*0.60)} bpm`,
+        swim: null, bike: null, run: null,
+      };
+    }
+    if (isSwimmingDash) {
+      const t100 = profile.swimTime100 || '2:00';
+      const [m,s] = t100.split(':').map(Number);
+      const secPer100 = (m||2)*60+(s||0);
+      const css = secPer100 * 0.95;
+      const toSwimPace = (factor) => { const total = Math.round(secPer100*factor); return `${Math.floor(total/60)}:${String(total%60).padStart(2,'0')}/100m`; };
+      return {
+        ef: toSwimPace(1.10),
+        tempo: toSwimPace(1.02),
+        threshold: `${Math.floor(css/60)}:${String(Math.round(css%60)).padStart(2,'0')}/100m (CSS)`,
+        vma90: toSwimPace(0.92),
+        recov: toSwimPace(1.20),
+        swim: null, bike: null, run: null,
+      };
+    }
+    if (isTriathlonDash) {
+      const vmaRun = parseFloat(profile.triRunVMA) || 12;
+      const ftp = parseFloat(profile.triCyclingFTP) || 200;
+      const t400 = profile.triSwimTime || '8:00';
+      const [tm,ts] = t400.split(':').map(Number);
+      const sec400 = (tm||8)*60+(ts||0);
+      const css = Math.round(sec400/4*0.95);
+      return {
+        ef: `${toPace(vmaRun*0.70)}–${toPace(vmaRun*0.75)}`,
+        tempo: `${toPace(vmaRun*0.80)}–${toPace(vmaRun*0.85)}`,
+        threshold: `${toPace(vmaRun*0.87)}–${toPace(vmaRun*0.92)}`,
+        vma90: `${toPace(vmaRun*0.92)}–${toPace(vmaRun*1.00)}`,
+        recov: `${toPace(vmaRun*0.60)}–${toPace(vmaRun*0.65)}`,
+        swim: `${Math.floor(css/60)}:${String(css%60).padStart(2,'0')}/100m`,
+        bike: `${Math.round(ftp*0.65)}-${Math.round(ftp*0.80)}W`,
+        run: `${toPace(vmaRun*0.70)}–${toPace(vmaRun*0.75)}/km`,
+      };
+    }
+    return calcPaces(profile.vma);
+  })();
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
   const doneCount = Object.values(completed).filter(Boolean).length;
   const progress = Math.round((doneCount/totalSessions)*100);
@@ -1348,12 +1402,20 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
         <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px',marginBottom:14}}>
           <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:12}}>Tes allures personnalisées</div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:6}}>
-            {[['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'var(--text-muted)']].map(([l,v,col])=>(
+            {(isTriathlonDash ? [
+                ['Nage CSS',paces.swim||'—','#38bdf8'],['Vélo Z2',paces.bike||'—','#f59e0b'],['Course EF',paces.run||'—','#22c55e'],['Course Seuil',paces.threshold,'#FF0040']
+              ] : isCyclingDash ? [
+                ['Z1-Z2',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VO2Max',paces.vma90,'#ef4444'],['Récup',paces.recov,'var(--text-muted)']
+              ] : isSwimmingDash ? [
+                ['Endurance',paces.ef,'#22c55e'],['CSS',paces.threshold,'#38bdf8'],['Vitesse',paces.vma90,'#FF0040'],['Récup',paces.recov,'var(--text-muted)']
+              ] : [
+                ['EF',paces.ef,'#22c55e'],['Tempo',paces.tempo,'#f59e0b'],['Seuil',paces.threshold,'#FF0040'],['VMA 90%',paces.vma90,'#ef4444'],['Récup',paces.recov,'var(--text-muted)']
+              ]).map(([l,v,col])=>(
               <div key={l} style={{background:'var(--bg-input)',borderRadius:10,padding:'8px 10px',display:'flex',alignItems:'center',gap:8}}>
                 <span style={{width:8,height:8,borderRadius:'50%',background:col,flexShrink:0}}/>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.08em'}}>{l}</div>
-                  <div style={{fontSize:12,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{v}/km</div>
+                  <div style={{fontSize:12,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{v}{!isCyclingDash&&!isSwimmingDash&&!isTriathlonDash?' /km':''}</div>
                 </div>
               </div>
             ))}
