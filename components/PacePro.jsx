@@ -865,7 +865,12 @@ function Onboarding({ onComplete }) {
           <div><label style={lbl}>{form.discipline==='cycling'?'FTP (watts)':form.discipline==='swimming'?'Allure 400m (min)':'VMA (km/h)'}</label><input type="number" style={inp()} min="8" max="500" step={form.discipline==='cycling'?5:0.5} value={form.vma} onChange={e=>upd('vma',e.target.value)}/><p style={{fontSize:11,color:'var(--text-muted)',marginTop:6}}>{form.discipline==='cycling'?'FTP moyen loisir : 150–220W':form.discipline==='swimming'?'Allure 400m typique : 7-12 min':'Moyenne loisir : 12–15 km/h'}</p></div>
         ) : (
           <div style={{display:'flex',flexDirection:'column',gap:12}}>
-            <div><label style={lbl}>Distance récente</label><select style={inp()} value={form.raceDistKm} onChange={e=>upd('raceDistKm',e.target.value)}>{[[1,'1 km'],[3,'3 km'],[5,'5 km'],[10,'10 km'],[15,'15 km'],[21.1,'Semi-marathon'],[42.2,'Marathon']].map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div>
+            <div><label style={lbl}>Distance récente</label><select style={inp()} value={form.raceDistKm} onChange={e=>upd('raceDistKm',e.target.value)}>
+              {form.discipline==='cycling' && [[20,'20 km'],[40,'40 km'],[80,'80 km'],[100,'100 km'],[160,'Gran Fondo']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              {form.discipline==='swimming' && [[0.4,'400m'],[0.75,'750m'],[1.5,'1500m'],[3.8,'3800m (ironman)']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              {form.discipline==='triathlon' && [[51.5,'Sprint (51.5km)'],[113,'Half Ironman'],[226,'Ironman']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              {(!form.discipline||form.discipline==='running') && [[1,'1 km'],[3,'3 km'],[5,'5 km'],[10,'10 km'],[15,'15 km'],[21.1,'Semi-marathon'],[42.2,'Marathon']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+            </select></div>
             <div><label style={lbl}>Chrono (en minutes)</label><input type="number" style={inp()} placeholder="ex: 55" value={form.raceTimeMins} onChange={e=>upd('raceTimeMins',e.target.value)}/></div>
             {computedVma>0 && <div style={{background:'rgba(255,0,64,0.08)',border:'1px solid rgba(255,0,64,0.2)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--text-secondary)'}}>VMA estimée : <span style={{color:'#FF0040',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
           </div>
