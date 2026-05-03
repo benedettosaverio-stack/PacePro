@@ -1863,8 +1863,17 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         setView('dashboard');
       } catch(e) {
         console.error('AI plan error:', e);
-        const plan = generatePlan(profile);
-        const newPlans = [...plans, { profile, plan }];
+        // Fallback — plan minimaliste de 4 semaines
+        const fallbackPlan = Array.from({length:4},(_,idx)=>({
+          week:idx+1, phase:'base', label:'Base', color:'#6366f1', bg:'rgba(99,102,241,0.12)',
+          dateRange:'', weeklyKm:0, isKey:false, isDeload:false,
+          sessions:[
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'ef',tag:'Séance 1',tagColor:'#6366f1',tagBg:'rgba(99,102,241,0.12)',title:'Entraînement',detail:'Séance à adapter selon ta discipline.',allures:[{dot:'#6366f1',label:'Intensité',val:'Modérée'}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Séance 2',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:'Endurance',detail:'Sortie longue à allure confortable.',allures:[{dot:'#22c55e',label:'Allure',val:'Facile'}]},
+            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:'Sortie clé',detail:'Sortie principale de la semaine.',allures:[{dot:'#f59e0b',label:'Allure',val:'Modérée'}]},
+          ]
+        }));
+        const newPlans = [...plans, { profile, plan: fallbackPlan }];
         savePlans(newPlans);
         setActivePlan(newPlans.length - 1);
         setView('dashboard');
