@@ -1041,7 +1041,7 @@ function Onboarding({ onComplete }) {
         <div style={{display:'flex',gap:8}}><button onClick={()=>upd('swimOpenWater',!form.swimOpenWater)} style={{...tog(form.swimOpenWater),flex:1}}>Eau libre / mer</button></div>
       </div>
     )},
-    { title:'Logistique & accès', sub:'L'accès aux lignes d'eau, le vrai défi', ok:true, body:(
+    { title:'Logistique & accès', sub:'L\'accès aux lignes d\'eau, le vrai défi', ok:true, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Bassin disponible</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['25m','25m'],['50m','50m'],['open','Eau libre / mer'],['both','Les deux']].map(([v,l])=><button key={v} onClick={()=>upd('swimPool',v)} style={tog(form.swimPool===v)}>{l}</button>)}</div></div>
         <div><label style={lbl}>Matériel disponible</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['basic','Basique (lunettes)'],['pullbuoy','Pull-buoy'],['paddles','Palmes + plaquettes'],['full','Matériel complet']].map(([v,l])=><button key={v} onClick={()=>upd('swimMaterial',v)} style={tog(form.swimMaterial===v)}>{l}</button>)}</div></div>
@@ -1049,7 +1049,7 @@ function Onboarding({ onComplete }) {
         <div><label style={lbl}>Durée du programme</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[8,10,12,16].map(v=><button key={v} onClick={()=>upd('weeks',v)} style={tog(form.weeks===v)}>{v}sem</button>)}</div></div>
       </div>
     )},
-    { title:'Santé & prévention', sub:'L'épaule du nageur — la blessure à éviter', ok:true, body:(
+    { title:'Santé & prévention', sub:'L\'épaule du nageur — la blessure à éviter', ok:true, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Douleurs épaules / cervicales</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['none','Aucune'],['mild','Légères'],['chronic','Chroniques']].map(([v,l])=><button key={v} onClick={()=>upd('swimShoulderPain',v)} style={tog(form.swimShoulderPain===v)}>{l}</button>)}</div></div>
         <div><label style={lbl}>Mobilité scapulaire</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['good','Bonne'],['medium','Moyenne'],['poor','Limitée']].map(([v,l])=><button key={v} onClick={()=>upd('swimMobility',v)} style={tog(form.swimMobility===v)}>{l}</button>)}</div></div>
