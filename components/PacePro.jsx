@@ -109,7 +109,7 @@ function ThemeStyles() {
           --btn-ghost-bg: rgba(10,11,15,0.07);
           --btn-ghost-border: rgba(10,11,15,0.16);
           --btn-ghost-color: #33363f;
-          --onboarding-bg: #f0f2f5;
+          --onboarding-bg: #f5f5f7;
           --session-bg: rgba(255,255,255,0.96);
           --session-border: rgba(10,11,15,0.10);
           --week-tabs-inactive: rgba(10,11,15,0.06);
