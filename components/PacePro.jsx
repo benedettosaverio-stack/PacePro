@@ -264,7 +264,7 @@ function generatePlanTriathlon(profile) {
   };
   const phaseMap = weeks<=4 ? Array(weeks).fill(0).map((_,i)=>i<weeks-1?'base':'taper') : ['base','base','build','build','peak','taper'].slice(0,weeks);
   const startDate = new Date();
-  const triSessions = ['🏊 Natation','🚴 Vélo','🏃 Course','🔄 Brique vélo+course'];
+  const triSessions = ['Natation','Vélo','Course','🔄 Brique vélo+course'];
   return Array.from({length:weeks},(_,idx)=>{
     const phase = phaseMap[idx] || 'base';
     const wStart = new Date(startDate); wStart.setDate(startDate.getDate()+idx*7);
@@ -860,9 +860,9 @@ function Onboarding({ onComplete }) {
     { title:'Qui es-tu ?', sub:'Ton profil sportif', ok:form.name.length>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
-        <div><label style={lbl}>Discipline</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['running','🏃 Course'],['cycling','🚴 Vélo'],['swimming','🏊 Natation'],['triathlon','🤸 Triathlon']].map(([v,l])=><button key={v} onClick={()=>upd('discipline',v)} style={tog(form.discipline===v)}>{l}</button>)}</div></div>
-        {form.discipline==='running' && <div><label style={lbl}>Type de course</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['trail','🏔️ Trail'],['road','🏙️ Route']].map(([v,l])=><button key={v} onClick={()=>upd('type',v)} style={tog(form.type===v)}>{l}</button>)}</div></div>}
-        <div><label style={lbl}>Niveau</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['beginner','🌱 Débutant'],['intermediate','🏃 Intermédiaire'],['advanced','⚡ Avancé'],['expert','🔥 Expert']].map(([v,l])=><button key={v} onClick={()=>upd('level',v)} style={tog(form.level===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Discipline</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['running','Course'],['cycling','Vélo'],['swimming','Natation'],['triathlon','Triathlon']].map(([v,l])=><button key={v} onClick={()=>upd('discipline',v)} style={tog(form.discipline===v)}>{l}</button>)}</div></div>
+        {form.discipline==='running' && <div><label style={lbl}>Type de course</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['trail','Trail'],['road','Route']].map(([v,l])=><button key={v} onClick={()=>upd('type',v)} style={tog(form.type===v)}>{l}</button>)}</div></div>}
+        <div><label style={lbl}>Niveau</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['beginner','Débutant'],['intermediate','Intermédiaire'],['advanced','Avancé'],['expert','Expert']].map(([v,l])=><button key={v} onClick={()=>upd('level',v)} style={tog(form.level===v)}>{l}</button>)}</div></div>
       </div>
     )},
     { title:'Ta condition physique', sub:form.discipline==='swimming'?'On calcule tes allures bassin':form.discipline==='cycling'?'On calcule tes allures vélo':'On calcule tes allures personnalisées', ok:computedVma>0, body:(
@@ -1142,7 +1142,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
                       <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'monospace'}}>{p.profile.raceDistanceKm} km</span>
                       {p.profile.elevationM>0 && <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'monospace'}}>D+{p.profile.elevationM}m</span>}
                       <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.weeks} sem.</span>
-                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.type==='trail'?'🏔️ Trail':'🏙️ Route'}</span>
+                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.type==='trail'?'Trail':'Route'}</span>
                     </div>
                   </div>
                   <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,0,64,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginLeft:12}}>
