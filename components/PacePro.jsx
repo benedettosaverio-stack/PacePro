@@ -200,7 +200,91 @@ function estimateVMA(distKm, timeMins) {
 }
 const DAYS_FR = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 
+function generatePlanCycling(profile) {
+  const { vma: ftp, level, weeks, sessionsPerWeek, trainingDays, raceDistanceKm } = profile;
+  const baseKm = { beginner:40, intermediate:60, advanced:80, expert:100 }[level];
+  const phaseMap = weeks<=4 ? Array(weeks).fill(0).map((_,i)=>i<weeks-1?'base':'taper') : ['base','base','build','build','peak','taper'].slice(0,weeks);
+  const phaseInfo = {
+    base: { label:'Endurance', color:'#22c55e', bg:'rgba(34,197,94,0.12)' },
+    build: { label:'Développement', color:'#f59e0b', bg:'rgba(245,158,11,0.12)' },
+    peak: { label:'Pic', color:'#ef4444', bg:'rgba(239,68,68,0.12)' },
+    taper: { label:'Affûtage', color:'#a78bfa', bg:'rgba(167,139,250,0.12)' },
+  };
+  const startDate = new Date();
+  return Array.from({length:weeks},(_,idx)=>{
+    const phase = phaseMap[idx] || 'base';
+    const km = Math.round(baseKm*(1+idx*0.05));
+    const wStart = new Date(startDate); wStart.setDate(startDate.getDate()+idx*7);
+    const wEnd = new Date(wStart); wEnd.setDate(wStart.getDate()+6);
+    const fmt = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const days = trainingDays.slice(0,sessionsPerWeek);
+    const sessions = days.map((day,si) => {
+      const isLast = si===days.length-1;
+      if (isLast) return { id:`w${idx+1}_s${si}`, day, type:'long', tag:'Sortie longue 🚴', tagColor:'#f59e0b', tagBg:'rgba(245,158,11,0.12)', title:`${Math.round(km*0.6)} km endurance`, detail:'Allure Z2, cadence régulière. Mange et hydrate-toi pendant l'effort.', allures:[{dot:'#22c55e',label:'Allure',val:`Z2 — ${Math.round(ftp*0.6)}-${Math.round(ftp*0.75)}W`}] };
+      if (si===0) return { id:`w${idx+1}_s${si}`, day, type:'frac', tag:'Intervalles ⚡', tagColor:'#FF0040', tagBg:'rgba(255,0,64,0.12)', title:`5 × 5 min / 3 min`, detail:'Échauffement 20 min. 5 blocs à haute intensité. Retour calme 15 min.', allures:[{dot:'#FF0040',label:'Effort',val:`Z4 — ${Math.round(ftp*0.9)}-${Math.round(ftp*1.05)}W`},{dot:'#22c55e',label:'Récup',val:`Z1 — <${Math.round(ftp*0.55)}W`}] };
+      return { id:`w${idx+1}_s${si}`, day, type:'ef', tag:'Endurance 🚴', tagColor:'#22c55e', tagBg:'rgba(34,197,94,0.12)', title:`${Math.round(km*0.35)} km récup`, detail:'Sortie récupération, cadence libre, pas d'effort.', allures:[{dot:'#22c55e',label:'Allure',val:`Z1-Z2 — <${Math.round(ftp*0.65)}W`}] };
+    });
+    return { week:idx+1, phase, ...phaseInfo[phase], dateRange:`${fmt(wStart)} – ${fmt(wEnd)}`, sessions, weeklyKm:km, isKey:phase==='peak' };
+  });
+}
+
+function generatePlanSwimming(profile) {
+  const { vma, level, weeks, sessionsPerWeek, trainingDays, raceDistanceKm } = profile;
+  const baseM = { beginner:1500, intermediate:2500, advanced:3500, expert:5000 }[level];
+  const phaseInfo = {
+    base: { label:'Technique', color:'#38bdf8', bg:'rgba(56,189,248,0.12)' },
+    build: { label:'Volume', color:'#6366f1', bg:'rgba(99,102,241,0.12)' },
+    peak: { label:'Vitesse', color:'#FF0040', bg:'rgba(255,0,64,0.12)' },
+    taper: { label:'Affûtage', color:'#a78bfa', bg:'rgba(167,139,250,0.12)' },
+  };
+  const phaseMap = weeks<=4 ? Array(weeks).fill(0).map((_,i)=>i<weeks-1?'base':'taper') : ['base','base','build','build','peak','taper'].slice(0,weeks);
+  const startDate = new Date();
+  return Array.from({length:weeks},(_,idx)=>{
+    const phase = phaseMap[idx] || 'base';
+    const m = Math.round(baseM*(1+idx*0.05));
+    const wStart = new Date(startDate); wStart.setDate(startDate.getDate()+idx*7);
+    const wEnd = new Date(wStart); wEnd.setDate(wStart.getDate()+6);
+    const fmt = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const days = trainingDays.slice(0,sessionsPerWeek);
+    const sessions = days.map((day,si) => {
+      if (si===0) return { id:`w${idx+1}_s${si}`, day, type:'frac', tag:'Séries 🏊', tagColor:'#38bdf8', tagBg:'rgba(56,189,248,0.12)', title:`10 × 100m`, detail:'Échauffement 400m. 10 × 100m avec 20s récup. Retour calme 200m.', allures:[{dot:'#38bdf8',label:'Effort',val:`85-90% FCmax`},{dot:'#22c55e',label:'Récup',val:`20 sec`}] };
+      return { id:`w${idx+1}_s${si}`, day, type:'ef', tag:'Endurance 🏊', tagColor:'#6366f1', tagBg:'rgba(99,102,241,0.12)', title:`${m}m continu`, detail:'Nage continue à allure confortable. Focus technique et respiration.', allures:[{dot:'#6366f1',label:'Allure',val:`70-75% FCmax`}] };
+    });
+    return { week:idx+1, phase, ...phaseInfo[phase], dateRange:`${fmt(wStart)} – ${fmt(wEnd)}`, sessions, weeklyKm:Math.round(m/100)/10, isKey:phase==='peak' };
+  });
+}
+
+function generatePlanTriathlon(profile) {
+  const { vma, level, weeks, sessionsPerWeek, trainingDays, raceDistanceKm } = profile;
+  const phaseInfo = {
+    base: { label:'Base', color:'#22c55e', bg:'rgba(34,197,94,0.12)' },
+    build: { label:'Build', color:'#f59e0b', bg:'rgba(245,158,11,0.12)' },
+    peak: { label:'Peak', color:'#FF0040', bg:'rgba(255,0,64,0.12)' },
+    taper: { label:'Taper', color:'#a78bfa', bg:'rgba(167,139,250,0.12)' },
+  };
+  const phaseMap = weeks<=4 ? Array(weeks).fill(0).map((_,i)=>i<weeks-1?'base':'taper') : ['base','base','build','build','peak','taper'].slice(0,weeks);
+  const startDate = new Date();
+  const triSessions = ['🏊 Natation','🚴 Vélo','🏃 Course','🔄 Brique vélo+course'];
+  return Array.from({length:weeks},(_,idx)=>{
+    const phase = phaseMap[idx] || 'base';
+    const wStart = new Date(startDate); wStart.setDate(startDate.getDate()+idx*7);
+    const wEnd = new Date(wStart); wEnd.setDate(wStart.getDate()+6);
+    const fmt = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const days = trainingDays.slice(0,sessionsPerWeek);
+    const sessions = days.map((day,si) => {
+      const sport = triSessions[si % triSessions.length];
+      const isBrique = sport.includes('Brique');
+      return { id:`w${idx+1}_s${si}`, day, type:isBrique?'key':'ef', tag:sport, tagColor:isBrique?'#FF0040':'#22c55e', tagBg:isBrique?'rgba(255,0,64,0.12)':'rgba(34,197,94,0.12)', title:isBrique?'40km vélo + 5km course':'Entraînement spécifique', detail:isBrique?'Enchaînement clé. Transition rapide. Pace modéré sur la course.':'Séance technique sur ta discipline.', allures:[{dot:'#22c55e',label:'Intensité',val:'Z2-Z3'}] };
+    });
+    return { week:idx+1, phase, ...phaseInfo[phase], dateRange:`${fmt(wStart)} – ${fmt(wEnd)}`, sessions, weeklyKm:0, isKey:phase==='peak' };
+  });
+}
+
 function generatePlan(profile) {
+  const discipline = profile.discipline || 'running';
+  if (discipline === 'cycling') return generatePlanCycling(profile);
+  if (discipline === 'swimming') return generatePlanSwimming(profile);
+  if (discipline === 'triathlon') return generatePlanTriathlon(profile);
   const { vma, level, type, weeks, sessionsPerWeek, trainingDays, raceDistanceKm, elevationM } = profile;
   const paces = calcPaces(vma);
   const isTrail = type === 'trail';
@@ -758,7 +842,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
 
 function Onboarding({ onComplete }) {
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ name:'', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' });
+  const [form, setForm] = useState({ name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'' });
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
   const computedVma = form.vmaMode==='direct' ? +form.vma : (form.raceTimeMins?estimateVMA(+form.raceDistKm,+form.raceTimeMins):0);
   const toggleDay = (day) => {
@@ -766,18 +850,19 @@ function Onboarding({ onComplete }) {
     else if (form.trainingDays.length < form.sessionsPerWeek) { upd('trainingDays',[...form.trainingDays,day]); }
   };
   const steps = [
-    { title:'Qui es-tu ?', sub:'Ton profil de coureur', ok:form.name.length>0, body:(
+    { title:'Qui es-tu ?', sub:'Ton profil sportif', ok:form.name.length>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
-        <div><label style={lbl}>Type de course</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['trail','🏔️ Trail'],['road','🏙️ Route']].map(([v,l])=><button key={v} onClick={()=>upd('type',v)} style={tog(form.type===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Discipline</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['running','🏃 Course'],['cycling','🚴 Vélo'],['swimming','🏊 Natation'],['triathlon','🤸 Triathlon']].map(([v,l])=><button key={v} onClick={()=>upd('discipline',v)} style={tog(form.discipline===v)}>{l}</button>)}</div></div>
+        {form.discipline==='running' && <div><label style={lbl}>Type de course</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['trail','🏔️ Trail'],['road','🏙️ Route']].map(([v,l])=><button key={v} onClick={()=>upd('type',v)} style={tog(form.type===v)}>{l}</button>)}</div></div>}
         <div><label style={lbl}>Niveau</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['beginner','🌱 Débutant'],['intermediate','🏃 Intermédiaire'],['advanced','⚡ Avancé'],['expert','🔥 Expert']].map(([v,l])=><button key={v} onClick={()=>upd('level',v)} style={tog(form.level===v)}>{l}</button>)}</div></div>
       </div>
     )},
-    { title:'Ta condition physique', sub:'On calcule tes allures personnalisées', ok:computedVma>0, body:(
+    { title:'Ta condition physique', sub:form.discipline==='swimming'?'On calcule tes allures bassin':form.discipline==='cycling'?'On calcule tes allures vélo':'On calcule tes allures personnalisées', ok:computedVma>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Comment saisir ta VMA ?</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>{[['direct','Je connais ma VMA'],['race','Depuis un chrono récent']].map(([v,l])=><button key={v} onClick={()=>upd('vmaMode',v)} style={tog(form.vmaMode===v)}>{l}</button>)}</div></div>
         {form.vmaMode==='direct' ? (
-          <div><label style={lbl}>VMA (km/h)</label><input type="number" style={inp()} min="8" max="25" step="0.5" value={form.vma} onChange={e=>upd('vma',e.target.value)}/><p style={{fontSize:11,color:'var(--text-muted)',marginTop:6}}>Moyenne loisir : 12–15 km/h</p></div>
+          <div><label style={lbl}>{form.discipline==='cycling'?'FTP (watts)':form.discipline==='swimming'?'Allure 400m (min)':'VMA (km/h)'}</label><input type="number" style={inp()} min="8" max="500" step={form.discipline==='cycling'?5:0.5} value={form.vma} onChange={e=>upd('vma',e.target.value)}/><p style={{fontSize:11,color:'var(--text-muted)',marginTop:6}}>{form.discipline==='cycling'?'FTP moyen loisir : 150–220W':form.discipline==='swimming'?'Allure 400m typique : 7-12 min':'Moyenne loisir : 12–15 km/h'}</p></div>
         ) : (
           <div style={{display:'flex',flexDirection:'column',gap:12}}>
             <div><label style={lbl}>Distance récente</label><select style={inp()} value={form.raceDistKm} onChange={e=>upd('raceDistKm',e.target.value)}>{[[1,'1 km'],[3,'3 km'],[5,'5 km'],[10,'10 km'],[15,'15 km'],[21.1,'Semi-marathon'],[42.2,'Marathon']].map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div>
@@ -787,12 +872,12 @@ function Onboarding({ onComplete }) {
         )}
       </div>
     )},
-    { title:'Ta course cible', sub:'Dis-nous tout sur ton objectif', ok:form.raceName.length>0, body:(
+    { title:'Ton objectif', sub:form.discipline==='triathlon'?'Dis-nous tout sur ton triathlon':form.discipline==='cycling'?'Ta course ou sortie cible':form.discipline==='swimming'?'Ta compétition ou objectif natation':'Dis-nous tout sur ton objectif', ok:form.raceName.length>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Nom de la course</label><input style={inp()} placeholder="Trail de la Fraise" value={form.raceName} onChange={e=>upd('raceName',e.target.value)}/></div>
         <div><label style={lbl}>Date de la course</label><input type="date" style={inp()} value={form.raceDate} onChange={e=>upd('raceDate',e.target.value)}/></div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-          <div><label style={lbl}>Distance (km)</label><input type="number" style={inp()} min="1" max="200" step="0.5" value={form.raceDistanceKm} onChange={e=>upd('raceDistanceKm',e.target.value)}/></div>
+          <div><label style={lbl}>{form.discipline==='swimming'?'Distance (m)':'Distance (km)'}</label><input type="number" style={inp()} min="1" max={form.discipline==='swimming'?50000:1000} step={form.discipline==='swimming'?50:0.5} value={form.raceDistanceKm} onChange={e=>upd('raceDistanceKm',e.target.value)}/></div>
           <div><label style={lbl}>Dénivelé + (m)</label><input type="number" style={inp()} min="0" max="5000" step="50" value={form.elevationM} onChange={e=>upd('elevationM',e.target.value)} placeholder="0 si plat"/></div>
         </div>
       </div>
@@ -812,7 +897,7 @@ function Onboarding({ onComplete }) {
   ];
   const handleFinish = () => {
     const finalVma = form.vmaMode==='direct'?+form.vma:estimateVMA(+form.raceDistKm,+form.raceTimeMins);
-    onComplete({...form,vma:finalVma,weeks:+form.weeks,raceDistanceKm:+form.raceDistanceKm,elevationM:+form.elevationM});
+    onComplete({...form,vma:finalVma,weeks:+form.weeks,raceDistanceKm:+form.raceDistanceKm,elevationM:+form.elevationM,discipline:form.discipline||'running'});
   };
   return (
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px 16px',background:'var(--onboarding-bg)'}}>
