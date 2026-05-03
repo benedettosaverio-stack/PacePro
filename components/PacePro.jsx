@@ -916,16 +916,16 @@ function Onboarding({ onComplete }) {
     <>{(() => {
       const disciplineTheme = {
         running: { accent:'#FF0040', glow:'rgba(255,0,64,0.12)', decor:(
-          <img src="/courir.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:260,height:260,objectFit:'contain',opacity:0.12,pointerEvents:'none'}}/>
+          <img src="/courir.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:260,height:260,objectFit:'contain',opacity:0.12,pointerEvents:'none',mixBlendMode:'screen'}}/>
         )},
         cycling: { accent:'#f59e0b', glow:'rgba(245,158,11,0.12)', decor:(
-          <img src="/cyclisme.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:240,height:240,objectFit:'contain',opacity:0.12,pointerEvents:'none'}}/>
+          <img src="/cyclisme.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:240,height:240,objectFit:'contain',opacity:0.12,pointerEvents:'none',mixBlendMode:'screen'}}/>
         )},
         swimming: { accent:'#38bdf8', glow:'rgba(56,189,248,0.15)', decor:(
-          <img src="/nager.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:240,height:240,objectFit:'contain',opacity:0.12,pointerEvents:'none'}}/>
+          <img src="/nager.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:240,height:240,objectFit:'contain',opacity:0.12,pointerEvents:'none',mixBlendMode:'screen'}}/>
         )},
         triathlon: { accent:'#a78bfa', glow:'rgba(167,139,250,0.12)', decor:(
-          <img src="/triathlon.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:240,height:240,objectFit:'contain',opacity:0.12,pointerEvents:'none'}}/>
+          <img src="/triathlon.svg" alt="" style={{position:'fixed',right:0,bottom:60,width:240,height:240,objectFit:'contain',opacity:0.12,pointerEvents:'none',mixBlendMode:'screen'}}/>
         )},
       };
       const theme = disciplineTheme[form.discipline] || disciplineTheme.running;
