@@ -949,8 +949,8 @@ function Onboarding({ onComplete }) {
       const athlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
       const user = JSON.parse(localStorage.getItem('pp_user') || '{}');
       const firstName = athlete.name?.split(' ')[0] || user.name?.split(' ')[0] || '';
-      return { name:firstName, discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium' };
-    } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium' }; }
+      return { name:firstName, discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3 };
+    } catch { return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3 }; }
   });
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
   const computedVma = form.vmaMode==='direct' ? +form.vma : (form.raceTimeMins?estimateVMA(+form.raceDistKm,+form.raceTimeMins):0);
@@ -1009,7 +1009,56 @@ function Onboarding({ onComplete }) {
     )},
   ];
 
-  const steps = isCycling ? cyclingSteps : [
+  const swimmingSteps = [
+    { title:'Profil technique', sub:'En natation, la glisse avant le moteur', ok:true, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
+        <div><label style={lbl}>Niveau aquatique</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['beginner','Débutant'],['intermediate','Intermédiaire'],['advanced','Avancé'],['expert','Expert']].map(([v,l])=><button key={v} onClick={()=>upd('swimLevel',v)} style={tog(form.swimLevel===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Nages maîtrisées</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['crawl','Crawl uniquement'],['4nages','4 nages'],['crawl_dos','Crawl + Dos'],['crawl_brasse','Crawl + Brasse']].map(([v,l])=><button key={v} onClick={()=>upd('swimStrokes',v)} style={tog(form.swimStrokes===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Respiration</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['one_side','Un seul côté'],['bilateral','Bilatérale'],['every2','Tous les 2 cycles'],['every3','Tous les 3 cycles']].map(([v,l])=><button key={v} onClick={()=>upd('swimBreathing',v)} style={tog(form.swimBreathing===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Flottabilité naturelle</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['good','Bonne'],['normal','Normale'],['poor','Jambes qui coulent']].map(([v,l])=><button key={v} onClick={()=>upd('swimFloatability',v)} style={tog(form.swimFloatability===v)}>{l}</button>)}</div></div>
+        <div style={{display:'flex',gap:8}}><button onClick={()=>upd('swimHasTurns',!form.swimHasTurns)} style={{...tog(form.swimHasTurns),flex:1}}>Culbutes maîtrisées</button><button onClick={()=>upd('swimPPG',!form.swimPPG)} style={{...tog(form.swimPPG),flex:1}}>PPG / renforcement</button></div>
+      </div>
+    )},
+    { title:'Chronos & efficience', sub:'Le CSS est ton FTP de nageur', ok:true, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+          <div><label style={lbl}>Temps 100m (min:sec)</label><input style={inp()} placeholder="Ex: 1:45" value={form.swimTime100} onChange={e=>upd('swimTime100',e.target.value)}/></div>
+          <div><label style={lbl}>Temps 400m (min:sec)</label><input style={inp()} placeholder="Ex: 7:30" value={form.swimTime400} onChange={e=>upd('swimTime400',e.target.value)}/></div>
+        </div>
+        <div><label style={lbl}>SWOLF (mouvements/longueur)</label><input type="number" style={inp()} placeholder="Ex: 42" value={form.swimSwolf} onChange={e=>upd('swimSwolf',e.target.value)}/><p style={{fontSize:11,color:'var(--text-muted)',marginTop:4}}>Compter tes bras + tes battements de jambes sur 25m</p></div>
+        <div><label style={lbl}>Battement de jambes</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['2beat','2 temps'],['4beat','4 temps'],['6beat','6 temps']].map(([v,l])=><button key={v} onClick={()=>upd('swimKick',v)} style={tog(form.swimKick===v)}>{l}</button>)}</div></div>
+      </div>
+    )},
+    { title:'Objectif & milieu', sub:'Bassin ou eau libre — pas le même programme', ok:form.raceName.length>0, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Objectif principal</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['pool_speed','Vitesse bassin'],['open_water','Eau libre'],['triathlon','Triathlon'],['endurance','Endurance']].map(([v,l])=><button key={v} onClick={()=>upd('swimGoal',v)} style={tog(form.swimGoal===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Nom de ta compétition</label><input style={inp()} placeholder="Ex: Traversée du lac..." value={form.raceName} onChange={e=>upd('raceName',e.target.value)}/></div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+          <div><label style={lbl}>Distance (m)</label><input type="number" style={inp()} value={form.raceDistanceKm} onChange={e=>upd('raceDistanceKm',e.target.value)}/></div>
+          <div><label style={lbl}>Date</label><input type="date" style={inp()} value={form.raceDate} onChange={e=>upd('raceDate',e.target.value)}/></div>
+        </div>
+        <div style={{display:'flex',gap:8}}><button onClick={()=>upd('swimOpenWater',!form.swimOpenWater)} style={{...tog(form.swimOpenWater),flex:1}}>Eau libre / mer</button></div>
+      </div>
+    )},
+    { title:'Logistique & accès', sub:'L'accès aux lignes d'eau, le vrai défi', ok:true, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Bassin disponible</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['25m','25m'],['50m','50m'],['open','Eau libre / mer'],['both','Les deux']].map(([v,l])=><button key={v} onClick={()=>upd('swimPool',v)} style={tog(form.swimPool===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Matériel disponible</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['basic','Basique (lunettes)'],['pullbuoy','Pull-buoy'],['paddles','Palmes + plaquettes'],['full','Matériel complet']].map(([v,l])=><button key={v} onClick={()=>upd('swimMaterial',v)} style={tog(form.swimMaterial===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Séances par semaine</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[2,3,4,5].map(v=><button key={v} onClick={()=>upd('sessionsPerWeek',v)} style={tog(form.sessionsPerWeek===v)}>{v}x</button>)}</div></div>
+        <div><label style={lbl}>Durée du programme</label><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>{[8,10,12,16].map(v=><button key={v} onClick={()=>upd('weeks',v)} style={tog(form.weeks===v)}>{v}sem</button>)}</div></div>
+      </div>
+    )},
+    { title:'Santé & prévention', sub:'L'épaule du nageur — la blessure à éviter', ok:true, body:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div><label style={lbl}>Douleurs épaules / cervicales</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['none','Aucune'],['mild','Légères'],['chronic','Chroniques']].map(([v,l])=><button key={v} onClick={()=>upd('swimShoulderPain',v)} style={tog(form.swimShoulderPain===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Mobilité scapulaire</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['good','Bonne'],['medium','Moyenne'],['poor','Limitée']].map(([v,l])=><button key={v} onClick={()=>upd('swimMobility',v)} style={tog(form.swimMobility===v)}>{l}</button>)}</div></div>
+        <div><label style={lbl}>Heures d'entraînement/semaine</label><div style={{display:'flex',alignItems:'center',gap:12}}><input type="range" min={2} max={15} step={0.5} value={form.swimWeeklyHours} onChange={e=>upd('swimWeeklyHours',+e.target.value)} style={{flex:1,accentColor:'#38bdf8'}}/><span style={{fontSize:16,fontWeight:800,color:'#38bdf8',fontFamily:'DM Mono,monospace',minWidth:40}}>{form.swimWeeklyHours}h</span></div></div>
+      </div>
+    )},
+  ];
+
+  const steps = isCycling ? cyclingSteps : isSwimming ? swimmingSteps : [
     { title:'Qui es-tu ?', sub:'Ton profil sportif', ok:form.name.length>0, body:(
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div><label style={lbl}>Ton prénom</label><input style={inp()} placeholder="Alex" value={form.name} onChange={e=>upd('name',e.target.value)}/></div>
@@ -1545,10 +1594,11 @@ export default function PacePro() {
   const [generatingPlan, setGeneratingPlan] = useState(false);
 
   const handleOnboarding = async (profile) => {
-    if (profile.discipline === 'cycling') {
+    if (profile.discipline === 'cycling' || profile.discipline === 'swimming') {
       setGeneratingPlan(true);
+      const isCycling = profile.discipline === 'cycling';
       try {
-        const prompt = `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste complet en JSON.
+        const prompt = isCycling ? `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste complet en JSON.
 
 Profil de l'athlète :
 - Niveau : ${profile.cyclingBackground}
@@ -1569,11 +1619,41 @@ Profil de l'athlète :
 - Durée plan : ${profile.weeks} semaines
 
 Génère exactement ${profile.weeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances.
-Les jours par défaut sont : Lundi, Mercredi, Vendredi, Samedi (ou moins selon sessionsPerWeek).
-Adapte vraiment le plan selon le profil (blessures → moins d'intensité, stress élevé → récup supplémentaire, grimpeur → plus de côtes, etc).
+Les jours par défaut sont : Lundi, Mercredi, Vendredi, Samedi.
+Adapte vraiment le plan selon le profil.
 
 Réponds UNIQUEMENT en JSON valide sans markdown :
-[{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`;
+[{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`
+        : `Tu es un coach natation expert. Génère un plan d'entraînement natation complet en JSON.
+
+Profil du nageur :
+- Niveau : ${profile.swimLevel}
+- Nages : ${profile.swimStrokes}
+- Respiration : ${profile.swimBreathing}
+- Flottabilité : ${profile.swimFloatability}
+- Culbutes : ${profile.swimHasTurns ? 'oui' : 'non'}
+- Temps 100m : ${profile.swimTime100} / Temps 400m : ${profile.swimTime400}
+- SWOLF : ${profile.swimSwolf} / Battement : ${profile.swimKick}
+- Objectif : ${profile.swimGoal} — ${profile.raceName} ${profile.raceDistanceKm}m le ${profile.raceDate}
+- Eau libre : ${profile.swimOpenWater ? 'oui' : 'non'}
+- Bassin : ${profile.swimPool}
+- Matériel : ${profile.swimMaterial}
+- Douleurs épaules : ${profile.swimShoulderPain}
+- Mobilité scapulaire : ${profile.swimMobility}
+- PPG : ${profile.swimPPG ? 'oui' : 'non'}
+- Séances/semaine : ${profile.sessionsPerWeek}
+- Heures/semaine : ${profile.swimWeeklyHours}h
+- Durée plan : ${profile.weeks} semaines
+
+Génère exactement ${profile.weeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances.
+Les jours par défaut sont : Lundi, Mercredi, Vendredi.
+Utilise des couleurs bleues (#38bdf8) pour la natation.
+Si douleurs épaules chroniques : réduire le volume et éviter les nages trop sollicitantes.
+Intègre du travail technique (pull-buoy, plaquettes) si matériel disponible.
+Si eau libre : ajouter des séances spécifiques orientation et drafting.
+
+Réponds UNIQUEMENT en JSON valide sans markdown :
+[{"week":1,"phase":"base","label":"Technique & endurance","color":"#38bdf8","bg":"rgba(56,189,248,0.12)","dateRange":"","weeklyKm":3,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Technique","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"2000m technique","detail":"...","allures":[{"dot":"#38bdf8","label":"CSS","val":"1:55/100m"}]}]}]`;
 
         const res = await fetch('/api/gemini', {
           method: 'POST',
@@ -1589,7 +1669,6 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         setView('dashboard');
       } catch(e) {
         console.error('AI plan error:', e);
-        // Fallback au plan statique
         const plan = generatePlan(profile);
         const newPlans = [...plans, { profile, plan }];
         savePlans(newPlans);
@@ -1597,7 +1676,9 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         setView('dashboard');
       }
       setGeneratingPlan(false);
-    } else {
+      return;
+    }
+    if (profile.discipline === 'cycling_old') {
       const plan = generatePlan(profile);
       const newPlans = [...plans, { profile, plan }];
       savePlans(newPlans);
