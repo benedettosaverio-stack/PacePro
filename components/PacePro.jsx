@@ -393,9 +393,9 @@ function applyFeedback(plan, sessionId, feedback) {
 
 const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px 18px'};
 const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
-const lbl = {fontSize:12,color:'var(--text-secondary)',display:'block',marginBottom:8};
-const inp = () => ({background:'var(--bg-input)',border:'1px solid var(--border-input)',color:'var(--text-primary)',borderRadius:12,padding:'12px 14px',width:'100%',fontSize:14,fontFamily:'inherit',outline:'none'});
-const tog = (a) => ({background:a?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${a?'rgba(255,0,64,0.5)':'var(--btn-ghost-border)'}`,color:a?'#FF0040':'var(--btn-ghost-color)',borderRadius:12,padding:'10px 12px',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'});
+const lbl = {fontSize:11,fontWeight:700,color:'var(--text-muted)',display:'block',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.08em',fontFamily:'DM Mono, monospace'};
+const inp = () => ({background:'var(--bg-card)',border:'1.5px solid var(--border)',color:'var(--text-primary)',borderRadius:16,padding:'14px 16px',width:'100%',fontSize:15,fontFamily:'Syne, sans-serif',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'});
+const tog = (a) => ({background:a?'rgba(255,0,64,0.1)':'var(--bg-card)',border:`2px solid ${a?'#FF0040':'var(--border)'}`,color:a?'#FF0040':'var(--text-secondary)',borderRadius:16,padding:'14px 12px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'Syne, sans-serif',transition:'all 0.2s',outline:'none',boxShadow:a?'0 0 0 4px rgba(255,0,64,0.08)':'none'});
 
 const SessionIcons = {
   frac: () => (<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/><path d="M12 24 L18 10 L24 24" stroke="#FF0040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 20 L22 20" stroke="#FF0040" strokeWidth="1.5" strokeLinecap="round"/><circle cx="18" cy="10" r="2" fill="#FF0040"/></svg>),
@@ -898,7 +898,7 @@ function Onboarding({ onComplete }) {
           setStravaImported(true);
         }
       }
-    } catch(e) { alert('Impossible de récupérer les données Strava'); }
+    } catch(e) { console.error('Strava import error:', e); }
     setStravaImporting(false);
   };
   const computedVma = form.vmaMode==='direct' ? +form.vma : (form.raceTimeMins?estimateVMA(+form.raceDistKm,+form.raceTimeMins):0);
