@@ -316,8 +316,11 @@ function generatePlanCycling(profile) {
     const wStart = new Date(startDate); wStart.setDate(startDate.getDate()+idx*7);
     const wEnd = new Date(wStart); wEnd.setDate(wStart.getDate()+6);
     const fmt = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-    const days = trainingDays.slice(0,sessionsPerWeek);
-    const sessions = buildSessions(phase, km, days).map((s,i)=>({...s, id:`w${idx+1}_s${i}`}));
+    const defaultDays = ['Lundi','Mercredi','Vendredi','Samedi','Mardi','Jeudi','Dimanche'];
+    const activeDays = (trainingDays && trainingDays.length >= sessionsPerWeek)
+      ? trainingDays.slice(0, sessionsPerWeek)
+      : defaultDays.slice(0, sessionsPerWeek);
+    const sessions = buildSessions(phase, km, activeDays).map((s,i)=>({...s, id:`w${idx+1}_s${i}`}));
     return {
       week:idx+1, phase, ...phaseInfo[phase],
       dateRange:`${fmt(wStart)} – ${fmt(wEnd)}`,
