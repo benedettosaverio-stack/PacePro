@@ -1203,7 +1203,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
   const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
   const doneCount = Object.values(completed).filter(Boolean).length;
   const progress = Math.round((doneCount/totalSessions)*100);
-  const week = plan[activeWeek];
+  const week = plan[activeWeek] || plan[0] || {sessions:[], phase:'base', label:'', color:'#FF0040', bg:'', dateRange:'', weeklyKm:0};
   const nextSession = plan.flatMap(w=>w.sessions.map(s=>({...s,week:w.week}))).find(s=>!completed[s.id]);
   const handleComplete = (id, undo = false) => {
     if (undo) {
@@ -1327,7 +1327,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
               <button onClick={()=>setActiveWeek(w=>Math.min(plan.length-1,w+1))} style={navBtnS}>→</button>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:12}}>
-              {week.sessions.map(s => {
+              {(week.sessions || []).map(s => {
                 const fb = feedbacks[s.id];
                 return (
                   <div key={s.id}>
