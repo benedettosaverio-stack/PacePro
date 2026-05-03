@@ -64,21 +64,49 @@ function buildStrategy(profile, userSettings) {
   const elev = parseFloat(profile.elevationM) || 0;
   const w = userSettings?.weight || 70;
   const vma = parseFloat(profile.vma) || 12;
+  const discipline = profile.discipline || 'running';
   const isTrail = profile.type === 'trail';
+  const isCycling = discipline === 'cycling';
+  const isSwimming = discipline === 'swimming';
+  const isTriathlon = discipline === 'triathlon';
 
-  // Estimation temps de course
-  const efPace = 60 / (vma * 0.72); // min/km
-  const trailFactor = 1 + (elev / dist) * 0.01;
-  const estTimeMin = Math.round(dist * efPace * (isTrail ? trailFactor : 1) * 0.9);
+  // Estimation temps selon discipline
+  let estTimeMin;
+  if (isCycling) {
+    const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
+    estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
+  } else if (isSwimming) {
+    const pace100m = parseFloat(profile.swimTime100?.replace(':','.')) || 2.0;
+    estTimeMin = Math.round((dist / 100) * pace100m);
+  } else {
+    const efPace = 60 / (vma * 0.72);
+    const trailFactor = 1 + (elev / dist) * 0.01;
+    estTimeMin = Math.round(dist * efPace * (isTrail ? trailFactor : 1) * 0.9);
+  }
   const estH = Math.floor(estTimeMin / 60);
   const estM = estTimeMin % 60;
   const estTimeStr = estH > 0 ? `${estH}h${estM.toString().padStart(2,'0')}` : `${estM} min`;
 
-  // Catégorie
-  const cat = dist <= 5 ? 'sprint' : dist <= 12 ? 'dix' : dist <= 22 ? 'semi' : dist <= 43 ? 'marathon' : 'ultra';
+  // Catégorie selon discipline
+  let cat;
+  if (isCycling) {
+    cat = dist <= 50 ? 'sprint' : dist <= 100 ? 'dix' : dist <= 150 ? 'semi' : dist <= 200 ? 'marathon' : 'ultra';
+  } else if (isSwimming) {
+    cat = dist <= 750 ? 'sprint' : dist <= 1500 ? 'dix' : dist <= 3800 ? 'semi' : 'marathon';
+  } else {
+    cat = dist <= 5 ? 'sprint' : dist <= 12 ? 'dix' : dist <= 22 ? 'semi' : dist <= 43 ? 'marathon' : 'ultra';
+  }
 
-  // Calories estimées
-  const kcalRace = Math.round(w * dist * (isTrail ? 1.3 : 1.0) * (elev > 0 ? 1 + elev/5000 : 1));
+  // Calories estimées selon discipline
+  let kcalRace;
+  if (isCycling) {
+    const ftp = parseFloat(profile.vma) || 200;
+    kcalRace = Math.round(estTimeMin * ftp * 0.75 * 0.239 / 60); // kJ → kcal
+  } else if (isSwimming) {
+    kcalRace = Math.round(w * (dist/1000) * 400); // ~400 kcal/km natation
+  } else {
+    kcalRace = Math.round(w * dist * (isTrail ? 1.3 : 1.0) * (elev > 0 ? 1 + elev/5000 : 1));
+  }
 
   const strategies = {
     sprint: {
@@ -133,7 +161,7 @@ function buildStrategy(profile, userSettings) {
     },
   };
 
-  return { ...strategies[cat], estTimeStr, kcalRace, dist, elev, isTrail, cat };
+  return { ...strategies[cat], estTimeStr, kcalRace, dist, elev, isTrail, isCycling, isSwimming, cat, discipline };
 }
 
 export default function RaceNutritionStrategy({ profile, userSettings, onClose }) {
