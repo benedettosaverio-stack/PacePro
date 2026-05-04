@@ -380,6 +380,8 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
 
   return (
     <div>
+      {/* Bouton retour */}
+      <button onClick={onCancel} style={{ ...btnGhost, padding:'6px 12px', fontSize:12, marginBottom:16, display:'flex', alignItems:'center', gap:6 }}>← Retour</button>
       {/* Header */}
       <div style={{ marginBottom:16 }}>
         <input style={{ ...inp(), width:'100%', fontSize:16, fontWeight:700, marginBottom:8 }}
