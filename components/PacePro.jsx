@@ -1960,22 +1960,22 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
   );
 
   const AppHeader = ({ actions }) => (
-    <div style={{ position:'sticky', top:0, zIndex:100, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)', paddingTop:'env(safe-area-inset-top, 0px)' }}>
-      <div style={{ height:52, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 16px', position:'relative' }}>
-        {/* Profil à gauche */}
-        <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', gap:8, background:'none', border:'none', cursor:'pointer', fontFamily:'Syne, sans-serif', padding:0, zIndex:1 }}>
-          {user?.photo
-            ? <img src={user.photo} alt="" style={{ width:30, height:30, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(255,0,64,0.3)' }} />
-            : <div style={{ width:30, height:30, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
-          }
-        </button>
-        {/* Logo centré */}
-        <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:6 }}>
-          <img src="/logo.svg" alt="PacePro" style={{ width:22, height:22, objectFit:'contain' }}/>
+    <div style={{ position:'sticky', top:0, zIndex:100, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)' }}>
+      <div style={{ height:'env(safe-area-inset-top, 0px)', background:'transparent' }}/>
+      <div style={{ height:52, display:'flex', alignItems:'center', padding:'0 12px', gap:8 }}>
+        <div style={{ width:36, flexShrink:0 }}>
+          <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', background:'none', border:'none', cursor:'pointer', padding:0 }}>
+            {user?.photo
+              ? <img src={user.photo} alt="" style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(255,0,64,0.3)' }} />
+              : <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
+            }
+          </button>
+        </div>
+        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:6, pointerEvents:'none' }}>
+          <img src="/logo.svg" alt="PacePro" style={{ width:20, height:20, objectFit:'contain' }}/>
           <span style={{ fontSize:13, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text-primary)' }}>PacePro</span>
         </div>
-        {/* Actions à droite */}
-        <div style={{ display:'flex', gap:8, alignItems:'center', zIndex:1 }}>{actions}</div>
+        <div style={{ display:'flex', gap:6, alignItems:'center', justifyContent:'flex-end', minWidth:36 }}>{actions}</div>
       </div>
     </div>
   );
