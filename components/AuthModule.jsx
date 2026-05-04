@@ -26,7 +26,6 @@ async function supaFetch(path, options = {}) {
   } catch(e) { return null; }
 }
 
-// Hash simple du mot de passe (SHA-256 via Web Crypto)
 async function hashPassword(password) {
   const encoder = new TextEncoder();
   const data = encoder.encode(password + 'pacepro_salt_2026');
@@ -36,7 +35,6 @@ async function hashPassword(password) {
 
 async function signUp(email, password, name) {
   const hash = await hashPassword(password);
-  // Vérifie si email existe déjà
   const existing = await supaFetch('users?email=eq.' + encodeURIComponent(email) + '&limit=1');
   if (existing && existing.length > 0) throw new Error('Cet email est déjà utilisé');
   const data = await supaFetch('users', {
@@ -55,7 +53,7 @@ async function signIn(email, password) {
 }
 
 export default function AuthModule({ onAuth }) {
-  const [mode, setMode] = useState('choice'); // 'choice' | 'login' | 'signup'
+  const [mode, setMode] = useState('choice');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -63,10 +61,20 @@ export default function AuthModule({ onAuth }) {
   const [error, setError] = useState('');
 
   const STRAVA_CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID;
+
   const connectStrava = () => {
     const scope = 'read,activity:read_all,activity:write';
     const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://pacepro-virid.vercel.app/api/strava?action=callback')}&response_type=code&scope=${scope}`;
     window.location.href = url;
+  };
+
+  const connectGoogle = async () => {
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin }
+    });
   };
 
   const handleSignUp = async () => {
@@ -108,6 +116,16 @@ export default function AuthModule({ onAuth }) {
         <div style={{ width:'100%', maxWidth:380, display:'flex', flexDirection:'column', gap:12 }}>
           <button onClick={connectStrava} style={{ ...btnGhost, display:'flex', alignItems:'center', justifyContent:'center', gap:10, borderColor:'rgba(252,76,2,0.3)', color:'#FC4C02' }}>
             <span style={{ fontSize:20 }}>🟠</span> Continuer avec Strava
+          </button>
+
+          <button onClick={connectGoogle} style={{ ...btnGhost, display:'flex', alignItems:'center', justifyContent:'center', gap:10 }}>
+            <svg width="18" height="18" viewBox="0 0 48 48">
+              <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.7 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/>
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+              <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.4 35.6 26.8 36 24 36c-5.2 0-9.7-2.9-11.9-7.2l-6.6 5.1C9.5 39.6 16.3 44 24 44z"/>
+              <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.5-4.6 5.8l6.2 5.2C40.8 35.7 44 30.3 44 24c0-1.3-.1-2.7-.4-4z"/>
+            </svg>
+            Continuer avec Google
           </button>
 
           <div style={{ display:'flex', alignItems:'center', gap:12, margin:'4px 0' }}>
@@ -170,7 +188,7 @@ export default function AuthModule({ onAuth }) {
 
             <button onClick={() => { setMode(mode === 'signup' ? 'login' : 'signup'); setError(''); }}
               style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:12, cursor:'pointer', fontFamily:'inherit' }}>
-              {mode === 'signup' ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? S\'inscrire'}
+              {mode === 'signup' ? 'Déjà un compte ? Se connecter' : "Pas de compte ? S'inscrire"}
             </button>
           </div>
         </div>
