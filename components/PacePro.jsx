@@ -1674,11 +1674,11 @@ export default function PacePro() {
 
   const handleAuth = (u) => setUser(u);
   const handleLogout = () => {
-    localStorage.removeItem('pp_user');
-    localStorage.removeItem('pp_user_id');
-    localStorage.removeItem('strava_token');
-    localStorage.removeItem('strava_athlete');
+    ['pp_user','pp_user_id','strava_token','strava_access_token',
+     'strava_athlete','strava_expires_at','pp_plans','pp_motivation',
+     'pp_water','pp_weight_log'].forEach(k => localStorage.removeItem(k));
     setUser(null);
+    setPlans([]);
   };
 
   if (!user) return <AuthModule onAuth={handleAuth} />;
