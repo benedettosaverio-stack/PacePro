@@ -42,6 +42,41 @@ async function loadPlans() {
   } catch(e) { return null; }
 }
 
+// ── Sync universelle ─────────────────────────────────────────────────────────
+async function syncData(key, value) {
+  const userId = localStorage.getItem('pp_user_id');
+  if (!userId) return;
+  try {
+    await supaFetch('user_data?user_id=eq.' + userId + '&data_key=eq.' + key, { method: 'DELETE' });
+    await supaFetch('user_data', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId, data_key: key, data_value: value }),
+    });
+  } catch(e) {}
+}
+
+async function loadData(key) {
+  const userId = localStorage.getItem('pp_user_id');
+  if (!userId) return null;
+  try {
+    const data = await supaFetch('user_data?user_id=eq.' + userId + '&data_key=eq.' + key);
+    if (data && data.length > 0) return data[0].data_value;
+    return null;
+  } catch(e) { return null; }
+}
+
+async function loadAllUserData() {
+  const userId = localStorage.getItem('pp_user_id');
+  if (!userId) return null;
+  try {
+    const data = await supaFetch('user_data?user_id=eq.' + userId);
+    if (!data || !data.length) return null;
+    const result = {};
+    data.forEach(d => { result[d.data_key] = d.data_value; });
+    return result;
+  } catch(e) { return null; }
+}
+
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Muscu from './MusculationModule';
@@ -1716,7 +1751,8 @@ export default function PacePro() {
     })
   });});
   const init = async () => {
-    const cloud = await loadPlans();
+    // Charger toutes les données depuis Supabase
+    const [cloud, allData] = await Promise.all([loadPlans(), loadAllUserData()]);
     if (cloud && cloud.length > 0) {
       const recalculated = recalcWeeklyKm(cloud);
       setPlans(recalculated);
@@ -1724,10 +1760,28 @@ export default function PacePro() {
     } else {
       try { const s = localStorage.getItem('pp_plans'); if(s) setPlans(recalcWeeklyKm(JSON.parse(s))); } catch {}
     }
+    if (allData) {
+      const keys = ['pp_workouts_pro','pp_weight_log','pp_water','pp_user_settings','pp_nutrition_profile'];
+      keys.forEach(key => {
+        if (allData[key] !== undefined) {
+          try { localStorage.setItem(key, JSON.stringify(allData[key])); } catch {}
+        }
+      });
+    }
   };
   init();
 },[]);
-  const savePlans = (p) => { setPlans(p); try{localStorage.setItem('pp_plans',JSON.stringify(p));}catch{} syncPlans(p); };
+  const savePlans = (p) => {
+    setPlans(p);
+    try { localStorage.setItem('pp_plans', JSON.stringify(p)); } catch {}
+    syncPlans(p);
+  };
+
+  // Fonction de sync universelle
+  const syncKey = (key, value) => {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+    syncData(key, value);
+  };
   const [generatingPlan, setGeneratingPlan] = useState(false);
   const [generatingDiscipline, setGeneratingDiscipline] = useState('vélo');
 
@@ -1972,7 +2026,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
       <ThemeStyles/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
       <AppHeader />
-      <div className='app-content tab-enter' style={{paddingBottom:80}}><SettingsModule onBack={() => setTab('home')} user={user} /></div>
+      <div className='app-content tab-enter' style={{paddingBottom:80}}><SettingsModule onBack={() => setTab('home')} user={user} onSync={syncKey} /></div>
       <BottomNav/>
     </div>
   );
@@ -1981,7 +2035,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
       <ThemeStyles/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
       <AppHeader />
-      <div className='app-content tab-enter' style={{paddingBottom:80}}><FuelRecoveryHub /></div>
+      <div className='app-content tab-enter' style={{paddingBottom:80}}><FuelRecoveryHub onSync={syncKey} /></div>
       <BottomNav/>
     </div>
   );

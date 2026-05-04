@@ -661,7 +661,7 @@ Groupes musculaires valides: pecs, dos, epaules, biceps, triceps, quadris, ischi
 // ═══════════════════════════════════════════════════════════════════════════════
 // MODULE PRINCIPAL
 // ═══════════════════════════════════════════════════════════════════════════════
-export default function MusculationModule() {
+export default function MusculationModule({ onSync }) {
   const [workouts, setWorkouts] = useState([]);
   const [view, setView] = useState('list');
   const [selected, setSelected] = useState(null);
@@ -671,7 +671,11 @@ export default function MusculationModule() {
     try { const s = localStorage.getItem('pp_workouts_pro'); if (s) setWorkouts(JSON.parse(s)); } catch {}
   }, []);
 
-  const persist = (list) => { setWorkouts(list); try { localStorage.setItem('pp_workouts_pro', JSON.stringify(list)); } catch {} };
+  const persist = (list) => {
+    setWorkouts(list);
+    try { localStorage.setItem('pp_workouts_pro', JSON.stringify(list)); } catch {}
+    if (onSync) onSync('pp_workouts_pro', list);
+  };
 
   const handleSave = (workout) => {
     const w = { ...workout, id: workout.id || Date.now() };

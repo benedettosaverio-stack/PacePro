@@ -66,7 +66,7 @@ function NumberInput({ value, onChange, min, max, unit }) {
   );
 }
 
-export default function SettingsModule({ onBack, user }) {
+export default function SettingsModule({ onBack, user, onSync }) {
   const [s, setS] = useState({
     weight: 70, height: 175, age: 25,
     goal: 'performance',
@@ -89,8 +89,11 @@ export default function SettingsModule({ onBack, user }) {
 
   const handleSave = () => {
     saveSettings(s);
-    // Sync avec pp_nutrition_profile
     try { localStorage.setItem('pp_nutrition_profile', JSON.stringify({ weight: s.weight, goal: s.goal })); } catch {}
+    if (onSync) {
+      onSync('pp_user_settings', s);
+      onSync('pp_nutrition_profile', { weight: s.weight, goal: s.goal });
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };

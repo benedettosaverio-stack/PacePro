@@ -190,7 +190,7 @@ function RecipeSheet({ meal, tag, accent, onClose }) {
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
-export default function FuelRecoveryHub() {
+export default function FuelRecoveryHub({ onSync }) {
   const [status, setStatus] = useState('loading');
   const [activity, setActivity] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -231,6 +231,7 @@ export default function FuelRecoveryHub() {
     const next = water + ml;
     setWater(next);
     try { localStorage.setItem('pp_water', String(next)); } catch {}
+    if (onSync) onSync('pp_water', next);
   };
 
   const lastWeightEntry = weightLog.length > 0 ? [...weightLog].sort((a,b) => (a.ts||0) - (b.ts||0)).slice(-1)[0].weight : null;
@@ -300,6 +301,7 @@ export default function FuelRecoveryHub() {
     const updated = [...weightLog, entry].slice(-90);
     setWeightLog([...updated]); // forcer re-render avec nouvelle référence
     try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
+    if (onSync) onSync('pp_weight_log', updated);
     setNewWeight('');
     setShowWeightInput(false);
     // Sync poids avec settings
@@ -519,6 +521,7 @@ export default function FuelRecoveryHub() {
                             const updated = weightLog.filter(x => x.ts !== e.ts && !(x.date===e.date && !x.ts && !e.ts));
                             setWeightLog(updated);
                             try { localStorage.setItem('pp_weight_log', JSON.stringify(updated)); } catch {}
+    if (onSync) onSync('pp_weight_log', updated);
                           }} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(239,68,68,0.4)', fontSize:12, padding:'2px 4px' }}>✕</button>
                         </div>
                       </div>
