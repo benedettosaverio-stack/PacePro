@@ -2097,7 +2097,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
     </div>
   );
 
-  if (view==='onboarding') return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader /><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
+  if (view==='onboarding') return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader actions={plans.length>0?<button onClick={()=>setView('list')} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:10,padding:'6px 12px',color:'var(--btn-ghost-color)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>← Retour</button>:null} /><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (
       <div className='app-shell'>
