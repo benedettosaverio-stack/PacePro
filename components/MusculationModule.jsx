@@ -384,11 +384,13 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
       <div style={{ marginBottom:16 }}>
         <input style={{ ...inp(), width:'100%', fontSize:16, fontWeight:700, marginBottom:8 }}
           placeholder="Nom de la séance..." value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} />
-        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-          <label style={{ fontSize:11, color:'var(--text-muted)' }}>Durée</label>
-          <input type="number" style={inp({ width:70 })} min="10" max="240" step="5" value={form.duration} onChange={e=>setForm(f=>({...f,duration:+e.target.value}))} />
-          <span style={{ fontSize:11, color:'var(--text-muted)' }}>min</span>
-          <span style={{ fontSize:11, color:'var(--text-muted)', marginLeft:8, fontFamily:'DM Mono, monospace' }}>{form.entries.length} EX</span>
+        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+          <span style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{form.entries.length} EX</span>
+          {form.entries.length > 0 && (
+            <span style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>
+              · {Math.round(form.entries.reduce((a, e) => a + (e.sets || 3) * ((e.rest || 90) / 60 + 0.75), 0))} min est.
+            </span>
+          )}
         </div>
       </div>
 
@@ -678,7 +680,8 @@ export default function MusculationModule({ onSync }) {
   };
 
   const handleSave = (workout) => {
-    const w = { ...workout, id: workout.id || Date.now() };
+    const autoDuration = Math.max(10, Math.round((workout.entries || []).reduce((a, e) => a + (e.sets || 3) * ((e.rest || 90) / 60 + 0.75), 0)));
+    const w = { ...workout, id: workout.id || Date.now(), duration: autoDuration };
     const list = editing ? workouts.map(x=>x.id===selected.id?w:x) : [...workouts, w];
     persist(list); setSelected(w); setView('detail'); setEditing(false);
   };
