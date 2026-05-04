@@ -2075,7 +2075,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <AppHeader actions={<><button onClick={()=>{}} style={{background:'rgba(96,165,250,0.08)',border:'1px solid rgba(96,165,250,0.2)',color:'#60a5fa',borderRadius:10,padding:'6px 12px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>✨ IA</button><button onClick={()=>{}} style={{background:'#FF0040',border:'none',color:'#fff',borderRadius:10,padding:'6px 12px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>+ Créer</button></>} />
-        <div className='app-content tab-enter' style={{paddingBottom:80}}><Muscu/></div>
+        <div className='app-content tab-enter' style={{paddingBottom:80}}><Muscu onSync={syncKey}/></div>
         <BottomNav/>
       </div>
     );
