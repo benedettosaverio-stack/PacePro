@@ -119,11 +119,11 @@ const INTENSITY_MODS = [
 // ═══════════════════════════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════════════════════════
-const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'14px 16px' };
-const inp = (extra={}) => ({ background:'var(--bg-input)', border:'1px solid var(--border-input)', color:'var(--text-primary)', borderRadius:10, padding:'8px 12px', fontSize:13, fontFamily:'inherit', outline:'none', ...extra });
-const btnRed = { background:'#FF0040', color:'#000', border:'none', borderRadius:10, padding:'9px 16px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' };
-const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:10, padding:'9px 14px', fontSize:12, fontWeight:600, cursor:'pointer', fontFamily:'inherit' };
-const chip = (color, active) => ({ background: active ? `${color}25` : 'var(--bg-input)', border:`1.5px solid ${active ? color : 'transparent'}`, borderRadius:20, padding:'4px 10px', fontSize:11, fontWeight:600, cursor:'pointer', color: active ? color : 'var(--text-muted)', fontFamily:'inherit', whiteSpace:'nowrap' });
+const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'16px 18px' };
+const inp = (extra={}) => ({ background:'var(--bg-input)', border:'1.5px solid var(--border-input)', color:'var(--text-primary)', borderRadius:12, padding:'12px 14px', fontSize:14, fontFamily:'Syne, sans-serif', outline:'none', ...extra });
+const btnRed = { background:'#FF0040', color:'#fff', border:'none', borderRadius:12, padding:'12px 18px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'-0.01em' };
+const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:12, padding:'11px 16px', fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'Syne, sans-serif' };
+const chip = (color, active) => ({ background: active ? `${color}18` : 'var(--bg-input)', border:`1.5px solid ${active ? color : 'var(--border)'}`, borderRadius:8, padding:'5px 12px', fontSize:11, fontWeight:700, cursor:'pointer', color: active ? color : 'var(--text-muted)', fontFamily:'DM Mono, monospace', whiteSpace:'nowrap', letterSpacing:'0.04em', textTransform:'uppercase' });
 
 // Calcule volume par muscle dans la séance
 function computeVolume(entries) {
@@ -176,7 +176,7 @@ function VolumeBar({ muscleId, sets, max }) {
   const pct = Math.min(100, (sets / max) * 100);
   return (
     <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
-      <span style={{ fontSize:10, minWidth:64, color:'var(--text-muted)', fontFamily:'monospace' }}>{m.emoji} {m.label}</span>
+      <span style={{ fontSize:9, minWidth:64, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em', fontWeight:700 }}>{m.label}</span>
       <div style={{ flex:1, height:5, background:'var(--bg-input)', borderRadius:4, overflow:'hidden' }}>
         <div style={{ width:`${pct}%`, height:'100%', background:m.color, borderRadius:4, transition:'width 0.3s' }}/>
       </div>
@@ -195,7 +195,7 @@ function ExerciseEntry({ entry, index, total, onUpdate, onDelete, onMoveUp, onMo
 
   return (
     <div style={{ marginBottom: superset ? 2 : 10 }}>
-      {superset && <div style={{ fontSize:9, color:'#f59e0b', fontFamily:'monospace', marginLeft:12, marginBottom:2 }}>⚡ SUPERSET</div>}
+      {superset && <div style={{ fontSize:9, color:'#f59e0b', fontFamily:'DM Mono, monospace', marginLeft:12, marginBottom:2, textTransform:'uppercase', letterSpacing:'0.1em' }}>SUPERSET</div>}
       <div style={{ ...card, borderLeft:`3px solid ${musInfo?.color || 'var(--border)'}`, padding:'10px 12px' }}>
         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom: open ? 12 : 0 }}>
           {/* Drag / ordre */}
@@ -207,8 +207,8 @@ function ExerciseEntry({ entry, index, total, onUpdate, onDelete, onMoveUp, onMo
           <div style={{ flex:1 }}>
             <div style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>{ex?.name || '—'}</div>
             <div style={{ display:'flex', gap:6, marginTop:2, flexWrap:'wrap' }}>
-              {musInfo && <span style={{ fontSize:9, color:musInfo.color, fontFamily:'monospace' }}>{musInfo.emoji} {musInfo.label}</span>}
-              {fatigue < 0.85 && <span style={{ fontSize:9, color:'#f59e0b', fontFamily:'monospace' }}>⚡ -{Math.round((1-fatigue)*100)}% force</span>}
+              {musInfo && <span style={{ fontSize:9, color:musInfo.color, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em', fontWeight:700 }}>{musInfo.label}</span>}
+              {fatigue < 0.85 && <span style={{ fontSize:9, color:'#f59e0b', fontFamily:'DM Mono, monospace' }}>-{Math.round((1-fatigue)*100)}% force</span>}
               {entry.modifier !== 'normal' && <span style={{ fontSize:9, background:'rgba(96,165,250,0.15)', color:'#60a5fa', borderRadius:4, padding:'1px 6px', fontFamily:'monospace' }}>{INTENSITY_MODS.find(m=>m.id===entry.modifier)?.label}</span>}
             </div>
           </div>
@@ -253,7 +253,7 @@ function ExerciseEntry({ entry, index, total, onUpdate, onDelete, onMoveUp, onMo
             {/* Substitut suggéré */}
             {sub && (
               <div style={{ marginTop:10, background:'rgba(245,158,11,0.08)', border:'1px solid rgba(245,158,11,0.2)', borderRadius:8, padding:'8px 10px' }}>
-                <div style={{ fontSize:10, color:'#f59e0b', fontWeight:600, marginBottom:4 }}>💡 Substitut suggéré pour ta contrainte</div>
+                <div style={{ fontSize:10, color:'#f59e0b', fontWeight:700, marginBottom:4, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>Substitut suggéré</div>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <span style={{ fontSize:12, color:'var(--text-primary)' }}>{sub.name}</span>
                   <button onClick={()=>onUpdate({...entry,exercise:sub})} style={{ ...btnGhost, padding:'3px 8px', fontSize:11 }}>Remplacer</button>
@@ -263,7 +263,7 @@ function ExerciseEntry({ entry, index, total, onUpdate, onDelete, onMoveUp, onMo
             {/* Superset toggle */}
             <div style={{ marginTop:10, display:'flex', alignItems:'center', gap:8 }}>
               <button onClick={()=>onUpdate({...entry, superset:!entry.superset})}
-                style={chip('#f59e0b', entry.superset)}>⚡ Superset avec suivant</button>
+                style={chip('#f59e0b', entry.superset)}>Superset</button>
               <span style={{ fontSize:10, color:'var(--text-muted)' }}>{entry.superset ? 'Enchaîné sans repos' : ''}</span>
             </div>
           </div>
@@ -305,7 +305,7 @@ function ExercisePicker({ onAdd, constraints }) {
         <button onClick={()=>setMuscle(null)} style={chip('var(--text-primary)', !muscle)}>Tous</button>
         {MUSCLES.map(m => (
           <button key={m.id} onClick={()=>setMuscle(muscle===m.id ? null : m.id)} style={chip(m.color, muscle===m.id)}>
-            {m.emoji} {m.label}
+            {m.label}
           </button>
         ))}
       </div>
@@ -331,10 +331,10 @@ function ExercisePicker({ onAdd, constraints }) {
                   {sub ? <span style={{ textDecoration:'line-through', opacity:0.4 }}>{ex.name}</span> : ex.name}
                   {sub && <span style={{ color:'#f59e0b', marginLeft:4 }}> → {sub.name}</span>}
                 </div>
-                <div style={{ fontSize:10, color:'var(--text-muted)', display:'flex', gap:6, marginTop:1 }}>
-                  <span style={{ color:m?.color }}>{m?.emoji} {m?.label}</span>
-                  {ex.secondary.slice(0,2).map(s => <span key={s} style={{ opacity:0.6 }}>+{s}</span>)}
-                  {'⭐'.repeat(ex.difficulty)}
+                <div style={{ fontSize:9, color:'var(--text-muted)', display:'flex', gap:6, marginTop:2, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.04em' }}>
+                  <span style={{ color:m?.color, fontWeight:700 }}>{m?.label}</span>
+                  {ex.secondary.slice(0,2).map(s => <span key={s} style={{ opacity:0.5 }}>+{s}</span>)}
+                  <span style={{ opacity:0.4 }}>{'·'.repeat(ex.difficulty)}</span>
                 </div>
               </div>
               <span style={{ color:m?.color||'#FF0040', fontSize:18 }}>+</span>
@@ -388,13 +388,13 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
           <label style={{ fontSize:11, color:'var(--text-muted)' }}>Durée</label>
           <input type="number" style={inp({ width:70 })} min="10" max="240" step="5" value={form.duration} onChange={e=>setForm(f=>({...f,duration:+e.target.value}))} />
           <span style={{ fontSize:11, color:'var(--text-muted)' }}>min</span>
-          <span style={{ fontSize:11, color:'var(--text-muted)', marginLeft:8 }}>💪 {form.entries.length} exercices</span>
+          <span style={{ fontSize:11, color:'var(--text-muted)', marginLeft:8, fontFamily:'DM Mono, monospace' }}>{form.entries.length} EX</span>
         </div>
       </div>
 
       {/* Tabs */}
       <div style={{ display:'flex', gap:6, marginBottom:16 }}>
-        {[['build','🏗️ Construire'],['volume','📊 Volume'],['settings','⚙️ Paramètres']].map(([id,label]) => (
+        {[['build','Construire'],['volume','Volume'],['settings','Paramètres']].map(([id,label]) => (
           <button key={id} onClick={()=>setTab(id)}
             style={{ ...btnGhost, flex:1, fontSize:11, padding:'6px 8px', background: tab===id ? 'rgba(255,0,64,0.1)' : 'var(--btn-ghost-bg)', borderColor: tab===id ? 'rgba(255,0,64,0.3)' : 'var(--btn-ghost-border)', color: tab===id ? '#FF0040' : 'var(--btn-ghost-color)' }}>
             {label}
@@ -408,15 +408,15 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
           {/* Alerte déséquilibre */}
           {imbalance && form.entries.length >= 2 && (
             <div style={{ background: imbalance.type==='danger' ? 'rgba(239,68,68,0.08)' : 'rgba(245,158,11,0.08)', border:`1px solid ${imbalance.type==='danger' ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`, borderRadius:10, padding:'8px 12px', marginBottom:12, fontSize:12, color: imbalance.type==='danger' ? 'rgba(239,68,68,0.9)' : '#f59e0b' }}>
-              {imbalance.type==='danger' ? '⚠️' : '💡'} {imbalance.msg}
+              {imbalance.msg}
             </div>
           )}
 
           {/* Liste exercices */}
           {form.entries.length === 0 && (
-            <div style={{ ...card, textAlign:'center', padding:'24px', marginBottom:12 }}>
-              <div style={{ fontSize:28, marginBottom:8 }}>🏋️</div>
-              <div style={{ fontSize:13, color:'var(--text-muted)' }}>Ajoute ton premier exercice ci-dessous</div>
+            <div style={{ ...card, textAlign:'center', padding:'32px 24px', marginBottom:12 }}>
+              <div style={{ width:40, height:40, borderRadius:12, background:'var(--bg-input)', border:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 14px', fontSize:16, color:'var(--text-muted)' }}>+</div>
+              <div style={{ fontSize:13, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>Ajoute ton premier exercice ci-dessous</div>
             </div>
           )}
           {form.entries.map((entry, i) => (
@@ -432,7 +432,7 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
             <div style={{ ...card, marginBottom:12 }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
                 <span style={{ fontSize:12, fontWeight:700, color:'var(--text-primary)' }}>Ajouter un exercice</span>
-                <button onClick={()=>setShowPicker(false)} style={{ ...btnGhost, padding:'3px 8px', fontSize:11 }}>✕ Fermer</button>
+                <button onClick={()=>setShowPicker(false)} style={{ ...btnGhost, padding:'3px 8px', fontSize:11 }}>Fermer</button>
               </div>
               <ExercisePicker onAdd={addEntry} constraints={constraints} />
             </div>
@@ -472,7 +472,7 @@ function WorkoutEditor({ workout, onSave, onCancel }) {
               ))}
             </div>
             {constraints.length > 0 && (
-              <div style={{ marginTop:8, fontSize:11, color:'#f59e0b' }}>💡 Les exercices incompatibles seront remplacés automatiquement.</div>
+              <div style={{ marginTop:8, fontSize:11, color:'#f59e0b', fontFamily:'DM Mono, monospace' }}>Substitution automatique activée</div>
             )}
           </div>
           <div style={{ ...card }}>
@@ -507,14 +507,14 @@ function WorkoutCard({ workout, onOpen, onDelete, onDuplicate }) {
         <div style={{ flex:1 }}>
           <div style={{ fontSize:16, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text-primary)', marginBottom:6 }}>{workout.name}</div>
           <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-            <span style={{ fontSize:10, padding:'3px 8px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-secondary)', fontFamily:'DM Mono, monospace' }}>💪 {(workout.entries||[]).length} exercices</span>
-            <span style={{ fontSize:10, padding:'3px 8px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-secondary)', fontFamily:'DM Mono, monospace' }}>⏱ {workout.duration} min</span>
-            {workout.aiGenerated && <span style={{ fontSize:10, padding:'3px 8px', borderRadius:99, background:'rgba(96,165,250,0.1)', color:'#60a5fa', border:'1px solid rgba(96,165,250,0.2)', fontWeight:700 }}>✨ IA</span>}
+            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:6, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>{(workout.entries||[]).length} EX</span>
+            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:6, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>{workout.duration} MIN</span>
+            {workout.aiGenerated && <span style={{ fontSize:10, padding:'3px 10px', borderRadius:6, background:'rgba(96,165,250,0.1)', color:'#60a5fa', border:'1px solid rgba(96,165,250,0.2)', fontWeight:700, fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>IA</span>}
           </div>
         </div>
         <div style={{ display:'flex', gap:6 }} onClick={e=>e.stopPropagation()}>
-          <button onClick={onDuplicate} style={{ width:32, height:32, borderRadius:10, background:'var(--bg-input)', border:'1px solid var(--border)', color:'var(--text-muted)', fontSize:12, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }} title="Dupliquer +surcharge">📋</button>
-          <button onClick={onDelete} style={{ width:32, height:32, borderRadius:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', color:'rgba(239,68,68,0.6)', fontSize:14, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+          <button onClick={onDuplicate} style={{ width:32, height:32, borderRadius:10, background:'var(--bg-input)', border:'1px solid var(--border)', color:'var(--text-muted)', fontSize:11, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'DM Mono, monospace' }} title="Dupliquer +surcharge">S+1</button>
+          <button onClick={onDelete} style={{ width:32, height:32, borderRadius:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', color:'rgba(239,68,68,0.6)', fontSize:14, fontWeight:300, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>×</button>
         </div>
       </div>
       {muscles.length > 0 && (
@@ -522,8 +522,8 @@ function WorkoutCard({ workout, onOpen, onDelete, onDuplicate }) {
           {muscles.slice(0,5).map(m => {
             const info = MUSCLES.find(x=>x.id===m);
             return info ? (
-              <span key={m} style={{ fontSize:9, fontWeight:700, color:info.color, background:`${info.color}12`, border:`1px solid ${info.color}25`, borderRadius:99, padding:'3px 8px' }}>
-                {info.emoji} {info.label}
+              <span key={m} style={{ fontSize:9, fontWeight:700, color:info.color, background:`${info.color}12`, border:`1px solid ${info.color}25`, borderRadius:6, padding:'3px 8px', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em' }}>
+                {info.label}
               </span>
             ) : null;
           })}
@@ -546,8 +546,8 @@ function WorkoutDetail({ workout, onBack, onEdit, onStart }) {
           <div style={{ fontSize:17, fontWeight:800, color:'var(--text-primary)' }}>{workout.name}</div>
           <div style={{ fontSize:11, color:'var(--text-muted)' }}>{(workout.entries||[]).length} exercices · {workout.duration} min</div>
         </div>
-        <button onClick={onEdit} style={{ ...btnGhost, padding:'7px 12px', fontSize:12 }}>✏️ Éditer</button>
-        <button onClick={onStart} style={{ ...btnRed, padding:'7px 14px', fontSize:12 }}>▶ Démarrer</button>
+        <button onClick={onEdit} style={{ ...btnGhost, padding:'7px 12px', fontSize:12 }}>Éditer</button>
+        <button onClick={onStart} style={{ ...btnRed, padding:'7px 14px', fontSize:12 }}>Démarrer</button>
       </div>
       {/* Volume */}
       {Object.keys(vol).length > 0 && (
@@ -564,7 +564,7 @@ function WorkoutDetail({ workout, onBack, onEdit, onStart }) {
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <div>
                 <div style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)' }}>{ex?.name||'—'}</div>
-                <div style={{ fontSize:10, color:'var(--text-muted)' }}>{m?.emoji} {m?.label}</div>
+                <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>{m?.label}</div>
               </div>
               <div style={{ textAlign:'right' }}>
                 <div style={{ fontSize:13, fontFamily:'monospace', color:'var(--text-primary)' }}>{entry.sets}×{entry.reps}</div>
@@ -736,19 +736,19 @@ export default function MusculationModule({ onSync }) {
           workouts.length===0 ? (
             <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:20, padding:'48px 24px', textAlign:'center', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle,rgba(96,165,250,0.05) 0%,transparent 70%)', pointerEvents:'none' }}/>
-              <div style={{ fontSize:52, marginBottom:16 }}>💪</div>
-              <div style={{ fontSize:18, fontWeight:800, letterSpacing:'-0.02em', marginBottom:8 }}>Aucune séance</div>
+              <div style={{ width:48, height:48, borderRadius:14, background:'rgba(255,0,64,0.1)', border:'1px solid rgba(255,0,64,0.2)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:22 }}>⬡</div>
+              <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', marginBottom:8, color:'var(--text-primary)' }}>Aucune séance</div>
               <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:28, lineHeight:1.6 }}>Crée ta première séance manuellement<br/>ou laisse l'IA en générer une pour toi.</p>
               <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
-                <button onClick={()=>setView('ai')} style={{ display:'flex', alignItems:'center', gap:8, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:14, padding:'12px 20px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>✨ Générer avec l'IA</button>
-                <button onClick={()=>setView('create')} style={{ background:'#FF0040', border:'none', color:'#fff', borderRadius:14, padding:'12px 20px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Créer</button>
+                <button onClick={()=>setView('ai')} style={{ background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'12px 20px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'Syne, sans-serif' }}>IA</button>
+                <button onClick={()=>setView('create')} style={{ background:'#FF0040', border:'none', color:'#fff', borderRadius:12, padding:'12px 20px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif' }}>+ Créer</button>
               </div>
             </div>
           ) : (
             <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
               <div style={{ display:'flex', gap:8, marginBottom:4 }}>
                 <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} style={{ flex:1, background:'#FF0040', border:'none', color:'#fff', borderRadius:12, padding:'11px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Nouvelle séance</button>
-                <button onClick={()=>setView('ai')} style={{ flex:1, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'11px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>✨ IA</button>
+                <button onClick={()=>setView('ai')} style={{ flex:1, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'11px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'-0.01em' }}>✦ IA</button>
               </div>
               {workouts.map(w => (
                 <WorkoutCard key={w.id} workout={w}
@@ -892,7 +892,7 @@ function LiveSession({ workout, onEnd }) {
     fetch('/api/strava', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'create_activity', token, refreshToken, expiresAt, name: '💪 ' + workout.name, duration: elapsed, start_time: startTimeRef.current, description: 'Séance PacePro\n\n' + desc }),
+      body: JSON.stringify({ action: 'create_activity', token, refreshToken, expiresAt, name: workout.name, duration: elapsed, start_time: startTimeRef.current, description: 'Séance PacePro\n\n' + desc }),
     })
       .then(r => r.json())
       .then(d => {
@@ -910,15 +910,15 @@ function LiveSession({ workout, onEnd }) {
     }, 0);
     return (
       <div style={{ minHeight:'100vh', background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'Syne, sans-serif' }}>
-        <div style={{ fontSize:60, marginBottom:16 }}>🏆</div>
-        <h2 style={{ fontSize:24, fontWeight:800, color:'var(--text-primary)', marginBottom:4, textAlign:'center' }}>Séance terminée !</h2>
+        <div style={{ width:64, height:64, borderRadius:20, background:'rgba(255,0,64,0.1)', border:'1px solid rgba(255,0,64,0.2)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:28, color:'#FF0040' }}>✓</div>
+        <h2 style={{ fontSize:24, fontWeight:800, color:'var(--text-primary)', marginBottom:4, textAlign:'center' }}>Séance terminée</h2>
         <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:32, textAlign:'center' }}>{workout.name}</p>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, width:'100%', maxWidth:340, marginBottom:32 }}>
           {[
-            ['⏱ Durée', formatTime(elapsed)],
-            ['💪 Séries', `${totalCompletedSets}/${totalSetsAll}`],
-            ['🔥 Volume', `${Math.round(totalVol)} kg`],
-            ['✅ Exercices', `${totalExercises}`],
+            ['Durée', formatTime(elapsed)],
+            ['Séries', `${totalCompletedSets}/${totalSetsAll}`],
+            ['Volume', `${Math.round(totalVol)} kg`],
+            ['Exercices', `${totalExercises}`],
           ].map(([label, value]) => (
             <div key={label} style={{ ...card, textAlign:'center' }}>
               <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:4, fontFamily:'monospace' }}>{label}</div>
@@ -926,12 +926,12 @@ function LiveSession({ workout, onEnd }) {
             </div>
           ))}
         </div>
-        {stravaStatus === 'syncing' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(252,76,2,0.08)', border:'1px solid rgba(252,76,2,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>🟠</span><div><div style={{ fontSize:12, fontWeight:700, color:'#FC4C02' }}>Synchronisation Strava...</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Création de l'activité</div></div></div>}
-        {stravaStatus === 'ok' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>✅</span><div><div style={{ fontSize:12, fontWeight:700, color:'#22c55e' }}>Activité créée sur Strava !</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>WeightTraining synchronisé</div></div></div>}
-        {stravaStatus === 'error' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>⚠️</span><div><div style={{ fontSize:12, fontWeight:700, color:'rgba(239,68,68,0.9)' }}>Erreur Strava</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Séance sauvegardée localement</div></div></div>}
-        {stravaStatus === 'no_token' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>🔗</span><div><div style={{ fontSize:12, fontWeight:700, color:'var(--text-primary)' }}>Strava non connecté</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Connecte Strava pour synchroniser</div></div></div>}
-        {stravaStatus === 'reauth' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(245,158,11,0.08)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><span style={{ fontSize:18 }}>🔄</span><div><div style={{ fontSize:12, fontWeight:700, color:'#f59e0b' }}>Session Strava expirée</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Reconnecte-toi dans l'onglet Strava</div></div></div>}
-        <div style={{ width:'100%', maxWidth:340, marginBottom:10, fontSize:11, color:'var(--text-muted)', textAlign:'center', fontFamily:'monospace' }}>💾 Séance sauvegardée localement</div>
+        {stravaStatus === 'syncing' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(252,76,2,0.08)', border:'1px solid rgba(252,76,2,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'#FC4C02', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'#FC4C02' }}>Synchronisation Strava...</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Création de l'activité</div></div></div>}
+        {stravaStatus === 'ok' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'#22c55e', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'#22c55e' }}>Activité créée sur Strava</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>WeightTraining synchronisé</div></div></div>}
+        {stravaStatus === 'error' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(239,68,68,0.9)', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'rgba(239,68,68,0.9)' }}>Erreur Strava</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Séance sauvegardée localement</div></div></div>}
+        {stravaStatus === 'no_token' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'var(--text-muted)', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'var(--text-primary)' }}>Strava non connecté</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Connecte Strava pour synchroniser</div></div></div>}
+        {stravaStatus === 'reauth' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(245,158,11,0.08)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'#f59e0b', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'#f59e0b' }}>Session Strava expirée</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Reconnecte-toi dans l'onglet Strava</div></div></div>}
+        <div style={{ width:'100%', maxWidth:340, marginBottom:10, fontSize:11, color:'var(--text-muted)', textAlign:'center', fontFamily:'DM Mono, monospace' }}>Séance sauvegardée</div>
         <button onClick={onEnd} style={{ ...btnRed, width:'100%', maxWidth:340, padding:14, fontSize:14 }}>
           Terminer la séance
         </button>
@@ -944,8 +944,8 @@ function LiveSession({ workout, onEnd }) {
 
       {/* Header sticky */}
       <div style={{ position:'sticky', top:0, zIndex:50, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)', padding:'0 16px', height:52, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-        <button onClick={onEnd} style={{ ...btnGhost, padding:'5px 10px', fontSize:12 }}>✕ Arrêter</button>
-        <div style={{ fontSize:13, fontFamily:'monospace', color:'var(--text-primary)', fontWeight:700 }}>⏱ {formatTime(elapsed)}</div>
+        <button onClick={onEnd} style={{ ...btnGhost, padding:'5px 10px', fontSize:12 }}>Arrêter</button>
+        <div style={{ fontSize:13, fontFamily:'DM Mono, monospace', color:'var(--text-primary)', fontWeight:700 }}>{formatTime(elapsed)}</div>
         <div style={{ fontSize:12, color:'var(--text-muted)', fontFamily:'monospace' }}>{exIdx+1}/{totalExercises}</div>
       </div>
 
@@ -971,7 +971,7 @@ function LiveSession({ workout, onEnd }) {
             </div>
             <div style={{ display:'flex', gap:8, justifyContent:'center' }}>
               <button onClick={() => addRest(15)} style={{ ...btnGhost, padding:'6px 12px', fontSize:12 }}>+15s</button>
-              <button onClick={skipRest} style={{ ...btnRed, padding:'8px 20px', fontSize:13 }}>⏭ Passer</button>
+              <button onClick={skipRest} style={{ ...btnRed, padding:'8px 20px', fontSize:13 }}>Passer</button>
               <button onClick={() => addRest(-15)} style={{ ...btnGhost, padding:'6px 12px', fontSize:12 }}>-15s</button>
             </div>
           </div>
@@ -983,7 +983,7 @@ function LiveSession({ workout, onEnd }) {
             {/* Nom + muscle */}
             <div style={{ marginBottom:16 }}>
               <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:6 }}>
-                {mInfo && <span style={{ fontSize:22 }}>{mInfo.emoji}</span>}
+                {mInfo && <span style={{ width:10, height:10, borderRadius:'50%', background:mInfo.color, display:'inline-block', flexShrink:0 }}/>}
                 <div>
                   <div style={{ fontSize:18, fontWeight:800, color:'var(--text-primary)', letterSpacing:'-0.02em' }}>{currentEx?.name}</div>
                   {mInfo && <div style={{ fontSize:11, color:mInfo.color, fontFamily:'monospace', fontWeight:600 }}>{mInfo.label}</div>}
@@ -991,7 +991,7 @@ function LiveSession({ workout, onEnd }) {
               </div>
               {currentEntry.modifier && currentEntry.modifier !== 'normal' && (
                 <div style={{ display:'inline-block', background:'rgba(96,165,250,0.12)', border:'1px solid rgba(96,165,250,0.25)', borderRadius:8, padding:'3px 10px', fontSize:11, color:'#60a5fa', fontFamily:'monospace' }}>
-                  ⚡ {INTENSITY_MODS.find(m=>m.id===currentEntry.modifier)?.label} — {INTENSITY_MODS.find(m=>m.id===currentEntry.modifier)?.desc}
+                  {INTENSITY_MODS.find(m=>m.id===currentEntry.modifier)?.label} — {INTENSITY_MODS.find(m=>m.id===currentEntry.modifier)?.desc}
                 </div>
               )}
             </div>
