@@ -165,9 +165,19 @@ export default function StravaModule() {
   const loadActivities = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/strava?action=activities&token=${token}`);
+      const refreshToken = localStorage.getItem('strava_refresh_token') || '';
+      const expiresAt = localStorage.getItem('strava_expires_at') || '0';
+      const res = await fetch(`/api/strava?action=activities&token=${token}&refresh_token=${refreshToken}&expires_at=${expiresAt}`);
       const data = await res.json();
-      if (Array.isArray(data)) setActivities(data);
+      // Sauvegarder le nouveau token si rafraîchi
+      if (data.newToken) {
+        localStorage.setItem('strava_token', data.newToken);
+        localStorage.setItem('strava_refresh_token', data.newRefresh);
+        localStorage.setItem('strava_expires_at', String(data.newExpires));
+        setToken(data.newToken);
+      }
+      if (Array.isArray(data.activities)) setActivities(data.activities);
+      else if (Array.isArray(data)) setActivities(data);
     } catch {}
     setLoading(false);
   };

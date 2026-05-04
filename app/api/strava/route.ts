@@ -47,12 +47,28 @@ setTimeout(() => { window.location.href = 'https://pacepro-virid.vercel.app'; },
   }
 
   if (action === 'activities') {
-    const token = searchParams.get('token');
+    let token = searchParams.get('token');
+    const refreshToken = searchParams.get('refresh_token');
+    const expiresAt = parseInt(searchParams.get('expires_at') || '0');
+    let newToken = null, newRefresh = null, newExpires = null;
+
+    // Auto-refresh si token expiré ou expire dans moins de 5 min
+    const now = Math.floor(Date.now() / 1000);
+    if (expiresAt && now >= expiresAt - 300 && refreshToken) {
+      const refreshed = await refreshAccessToken(refreshToken);
+      if (refreshed.access_token) {
+        token = refreshed.access_token;
+        newToken = refreshed.access_token;
+        newRefresh = refreshed.refresh_token;
+        newExpires = refreshed.expires_at;
+      }
+    }
+
     const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=20', {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ activities: data, newToken, newRefresh, newExpires });
   }
 
   return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
