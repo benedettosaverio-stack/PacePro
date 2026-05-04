@@ -174,7 +174,7 @@ function RecipeSheet({ meal, tag, accent, onClose }) {
               <div style={{ width:24, height:24, borderRadius:8, background:`${accent}20`, border:`1px solid ${accent}40`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ fontSize:11, fontWeight:800, color:accent, fontFamily:'DM Mono, monospace' }}>{i+1}</span>
               </div>
-              <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{step}</span>
+              <span style={{ fontSize:13, color:'var(--text-secondary)', lineHeight:1.6, paddingTop:2 }}>{step}</span>
             </div>
           ))}
         </div>
