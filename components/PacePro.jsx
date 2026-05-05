@@ -1764,7 +1764,7 @@ useEffect(() => {
           if (data?.user) {
             const u = {
               id: data.user.id,
-              name: data.user.user_metadata?.full_name || data.user.email,
+             name: data.user.user_metadata?.full_name?.split(' ')[0] || data.user.user_metadata?.name?.split(' ')[0] || data.user.email?.split('@')[0],
               email: data.user.email,
               photo: data.user.user_metadata?.avatar_url || null,
             };
