@@ -1794,7 +1794,7 @@ export default function PacePro() {
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
-        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 4 : 6); // Max tokens
+        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 12 : 6); // Max tokens par appel IA
         const raceKm = parseFloat(profile.raceDistanceKm) || 100;
         const weeklyHours = profile.cyclingWeeklyHours || 8;
         const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
@@ -1824,28 +1824,53 @@ Adapte intensité selon blessures/stress.
 
 Réponds UNIQUEMENT en JSON valide sans markdown :
 [{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`
-        : profile.discipline === 'triathlon' ? `Tu es un coach triathlon expert. Génère un plan d'entraînement triathlon complet en JSON.
+        : profile.discipline === 'triathlon' ? (() => {
+          const fmt = profile.triFormat || 'olympic';
+          const fmtDist = {'sprint':{swim:750,bike:20,run:5},'olympic':{swim:1500,bike:40,run:10},'half':{swim:1900,bike:90,run:21},'ironman':{swim:3800,bike:180,run:42}}[fmt];
+          const vmaRun = parseFloat(profile.triRunVMA) || 12;
+          const ftp = parseFloat(profile.triCyclingFTP) || 200;
+          const t400 = profile.triSwimTime || '8:00';
+          const [tm,ts] = t400.split(':').map(Number);
+          const sec400 = (tm||8)*60+(ts||0);
+          const css = Math.round(sec400/4*0.95);
+          const cssStr = Math.floor(css/60)+':'+(css%60).toString().padStart(2,'0');
+          const paceEF = (() => { const mPerKm=60/vmaRun*1.35; return Math.floor(mPerKm)+':'+(Math.round((mPerKm%1)*60)).toString().padStart(2,'0'); })();
+          const paceZ2bike = Math.round(ftp*0.68)+'-'+Math.round(ftp*0.78)+'W';
+          const isIronman = fmt === 'ironman' || fmt === 'half';
+          const weeksPerPhase = aiWeeks <= 8
+            ? {base:3,build:3,peak:2,taper:2}
+            : {base:4,build:5,peak:2,taper:1};
+          return \`Tu es un coach triathlon expert niveau Ironman (méthode Friel/Coggan). Génère un plan d'entraînement triathlon COMPLET et PROGRESSIF en JSON.
 
-Format : ${profile.triFormat} — Nage ${{'sprint':750,'olympic':1500,'half':1900,'ironman':3800}[profile.triFormat]}m · Vélo ${{'sprint':20,'olympic':40,'half':90,'ironman':180}[profile.triFormat]}km · Course ${{'sprint':5,'olympic':10,'half':21,'ironman':42}[profile.triFormat]}km
-Épreuve : ${profile.raceName} le ${profile.raceDate}
-Niveaux : Natation ${profile.triSwimLevel} | Vélo ${profile.triCyclingLevel} | Course ${profile.triRunLevel}
-Dominant : ${profile.triDominant} | À améliorer : ${profile.triWeakDiscipline}
-Chrono natation 400m : ${profile.triSwimTime} | FTP vélo : ${profile.triCyclingFTP}W | VMA course : ${profile.triRunVMA} km/h
-FCmax : ${profile.triFCmax} bpm | Transitions : ${profile.triTransition}
-Volume hebdo : ${profile.triWeeklyHours}h | ${profile.triSessions} séances/sem
-Combinaison : ${profile.triHasCombinaiison ? 'oui' : 'non'} | Vélo TT : ${profile.triHasTTBike ? 'oui' : 'non'}
-Durée : ${aiWeeks} semaines
+FORMAT CIBLE : ${fmt.toUpperCase()} — Nage ${fmtDist.swim}m · Vélo ${fmtDist.bike}km · Course ${fmtDist.run}km
+ÉPREUVE : ${profile.raceName} le ${profile.raceDate}
+ATHLÈTE :
+- Natation : ${profile.triSwimLevel} — CSS ${cssStr}/100m
+- Vélo : ${profile.triCyclingLevel} — FTP ${ftp}W — allures Z2 : ${paceZ2bike}
+- Course : ${profile.triRunLevel} — VMA ${vmaRun}km/h — allure EF : ${paceEF}/km
+- FCmax : ${profile.triFCmax} bpm | Transitions : ${profile.triTransition}
+- Discipline dominante : ${profile.triDominant} | À renforcer : ${profile.triWeakDiscipline}
+- Volume hebdo cible : ${profile.triWeeklyHours}h | ${profile.triSessions} séances/sem
+- Équipement : combinaison=${profile.triHasCombinaiison?'oui':'non'}, vélo TT=${profile.triHasTTBike?'oui':'non'}
+DURÉE : ${aiWeeks} semaines
 
-RÈGLES :
-- Alterner les 3 disciplines + séances BRIQUE (vélo→course enchaînés) chaque semaine
-- Mettre l'accent sur ${profile.triWeakDiscipline} (30% du volume)
-- Séances brique = tag "Brique" tagColor "#FF0040"
-- Natation tag "#38bdf8", Vélo "#f59e0b", Course "#22c55e"
-- Transitions dédiées si ${profile.triTransition} === 'slow'
-- Génère ${aiWeeks} semaines, ${profile.triSessions} séances max, descriptions concises
+RÈGLES COACHING OBLIGATOIRES :
+1. PHASES : Base (aérobie, technique) → Build (volume + intensité) → Peak (spécifique course) → Taper (affûtage)
+2. PROGRESSION : volume augmente 5-8%/semaine, décharge toutes les 3-4 semaines (volume -30%)
+3. RÉPARTITION HEBDO : 2-3 natation, 2-3 vélo, 2 course, 1 brique par semaine minimum
+4. BRIQUES : toujours vélo→course, distance proportionnelle à la semaine et au format
+5. DISCIPLINE FAIBLE (${profile.triWeakDiscipline}) : +1 séance supplémentaire chaque semaine
+6. ALLURES PRÉCISES : utiliser CSS natation (${cssStr}/100m), zones FTP vélo, allures VMA course
+7. TRANSITIONS : ${profile.triTransition === 'slow' ? 'inclure 1 séance transition T1/T2 par semaine' : 'transitions intégrées aux briques'}
+8. TAPER : 2 dernières semaines — réduire volume 40-50%, garder intensité
+9. isDeload=true toutes les 3-4 semaines
+10. isKey=true pour les semaines peak et les semaines avec brique longue
+
+COULEURS : Natation="#38bdf8", Vélo="#f59e0b", Course="#22c55e", Brique="#FF0040", Transition="#a78bfa"
 
 Réponds UNIQUEMENT en JSON valide sans markdown :
-[{"week":1,"phase":"base","label":"Base triathlon","color":"#a78bfa","bg":"rgba(167,139,250,0.12)","dateRange":"","weeklyKm":0,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Natation","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"1500m technique","detail":"Travail technique crawl, respiration bilatérale","allures":[{"dot":"#38bdf8","label":"CSS","val":"1:55/100m"}]}]}`
+[{"week":1,"phase":"base","label":"Base aérobie","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":0,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Natation","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"2000m technique","detail":"Travail technique crawl. Séries 10x100m avec 15s récup. Focus respiration bilatérale.","allures":[{"dot":"#38bdf8","label":"CSS","val":"${cssStr}/100m"}]},{"id":"w1_s1","day":"Mercredi","type":"ef","tag":"Vélo Z2","tagColor":"#f59e0b","tagBg":"rgba(245,158,11,0.12)","title":"60 min Z2","detail":"Endurance fondamentale vélo. Cadence 85-90 rpm. Terrain plat ou home-trainer.","allures":[{"dot":"#f59e0b","label":"Z2","val":"${paceZ2bike}"}]},{"id":"w1_s2","day":"Vendredi","type":"ef","tag":"Course EF","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"40 min EF","detail":"Endurance fondamentale course. Allure conversation. Terrain plat.","allures":[{"dot":"#22c55e","label":"EF","val":"${paceEF}/km"}]}]}\`;
+        })()
         : `Tu es un coach natation expert. Génère un plan d'entraînement natation complet en JSON.
 
 Profil du nageur :
