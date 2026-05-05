@@ -60,7 +60,13 @@ function TimelineRow({ time, label, detail, color }) {
 }
 
 function buildStrategy(profile, userSettings) {
-  const dist = parseFloat(profile.raceDistanceKm) || 10;
+  // Pour le triathlon, calculer la distance totale réelle
+  const TRI_FORMATS = {'sprint':{swim:0.75,bike:20,run:5},'olympic':{swim:1.5,bike:40,run:10},'half':{swim:1.9,bike:90,run:21},'ironman':{swim:3.8,bike:180,run:42}};
+  const triFormat = profile.triFormat || '';
+  const isTriathlonNutrition = profile.discipline === 'triathlon' && triFormat;
+  const dist = isTriathlonNutrition
+    ? (TRI_FORMATS[triFormat]?.run || 10)  // Utiliser la distance course pour les calculs
+    : parseFloat(profile.raceDistanceKm) || 10;
   const elev = parseFloat(profile.elevationM) || 0;
   const w = userSettings?.weight || 70;
   const vma = parseFloat(profile.vma) || 12;
@@ -74,7 +80,12 @@ function buildStrategy(profile, userSettings) {
   let estTimeMin;
   if (isCycling) {
     const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
-    estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
+    if (isTriathlonNutrition && TRI_FORMATS[triFormat]) {
+      const f = TRI_FORMATS[triFormat];
+      estTimeMin = Math.round(f.swim/1.3 + f.bike/35*60 + f.run*6);
+    } else {
+      estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
+    }
   } else if (isSwimming) {
     const pace100m = parseFloat(profile.swimTime100?.replace(':','.')) || 2.0;
     estTimeMin = Math.round((dist / 100) * pace100m);
@@ -107,7 +118,11 @@ function buildStrategy(profile, userSettings) {
   } else if (isSwimming) {
     kcalRace = Math.round(w * (dist/1000) * 400); // ~400 kcal/km natation
   } else {
-    kcalRace = Math.round(w * dist * (isTrail ? 1.3 : 1.0) * (elev > 0 ? 1 + elev/5000 : 1));
+    if (isTriathlonNutrition) {
+      kcalRace = Math.round(estTimeMin * 12); // ~12 kcal/min triathlon
+    } else {
+      kcalRace = Math.round(w * dist * (isTrail ? 1.3 : 1.0) * (elev > 0 ? 1 + elev/5000 : 1));
+    }
   }
 
   const strategies = {
