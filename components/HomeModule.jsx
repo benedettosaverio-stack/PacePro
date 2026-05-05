@@ -96,7 +96,7 @@ export default function HomeModule({ onNavigate }) {
 Contexte de l'athlète :
 ${context}
 
-Génère UNIQUEMENT une seule phrase de motivation courte et percutante (max 15 mots), sans introduction ni conclusion. Commence directement par le prénom. Langue : français.`;
+Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mots). Pas d'introduction, pas d'explication. La phrase doit être complète et se terminer par ! ou . Commence par le prénom. Langue : français.`;
 
       const res = await fetch('/api/gemini', {
         method: 'POST',
