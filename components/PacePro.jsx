@@ -1771,8 +1771,9 @@ useEffect(() => {
             localStorage.setItem('pp_user', JSON.stringify(u));
             localStorage.setItem('pp_user_id', u.id);
             setUser(u);
-           window.history.replaceState({}, '', '/');
-window.location.reload();
+            window.history.replaceState({}, '', '/');
+            window.location.reload();
+          }
         });
       });
     }
