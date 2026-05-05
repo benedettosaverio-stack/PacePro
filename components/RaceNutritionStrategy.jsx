@@ -90,7 +90,9 @@ function buildStrategy(profile, userSettings) {
   // Catégorie selon discipline
   let cat;
   if (isCycling) {
-    cat = dist <= 50 ? 'sprint' : dist <= 100 ? 'dix' : dist <= 150 ? 'semi' : dist <= 200 ? 'marathon' : 'ultra';
+    // Pour triathlon, utiliser le format directement
+    const triFormat = profile.triFormat || '';
+    cat = triFormat === 'sprint' ? 'sprint' : triFormat === 'olympic' ? 'dix' : triFormat === 'half' ? 'semi' : triFormat === 'ironman' ? 'marathon' : dist <= 50 ? 'sprint' : dist <= 100 ? 'dix' : dist <= 150 ? 'semi' : dist <= 200 ? 'marathon' : 'ultra';
   } else if (isSwimming) {
     cat = dist <= 750 ? 'sprint' : dist <= 1500 ? 'dix' : dist <= 3800 ? 'semi' : 'marathon';
   } else {
