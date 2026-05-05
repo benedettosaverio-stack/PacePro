@@ -57,21 +57,24 @@ function ScoreCard({ score, label, color, icon }) {
   const r = 32, circ = 2 * Math.PI * r;
   const dash = (animated / 100) * circ;
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px 8px' }}>
-      <div style={{ position: 'relative', width: 80, height: 80 }}>
-        <svg width={80} height={80} style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx={40} cy={40} r={r} fill="none" stroke="var(--progress-track)" strokeWidth={5} />
-          <circle cx={40} cy={40} r={r} fill="none" stroke={color} strokeWidth={5}
-            strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-            style={{ transition: 'stroke-dasharray 1.2s cubic-bezier(0.22,1,0.36,1)' }} />
-        </svg>
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: 18, fontWeight: 900, color, fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{score}</span>
+    <div style={{ flex:1, position:'relative', borderRadius:16, overflow:'hidden', border:`1px solid ${color}25`, background:`linear-gradient(135deg, ${color}08 0%, transparent 60%)` }}>
+      <div style={{ position:'absolute', top:-20, right:-20, width:80, height:80, borderRadius:'50%', background:`radial-gradient(circle, ${color}15 0%, transparent 70%)`, pointerEvents:'none' }}/>
+      <div style={{ padding:'14px 10px', display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
+        <div style={{ position:'relative', width:70, height:70 }}>
+          <svg width={70} height={70} style={{ transform:'rotate(-90deg)' }}>
+            <circle cx={35} cy={35} r={r} fill="none" stroke={`${color}20`} strokeWidth={4} />
+            <circle cx={35} cy={35} r={r} fill="none" stroke={color} strokeWidth={4}
+              strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+              style={{ transition:'stroke-dasharray 1.2s cubic-bezier(0.22,1,0.36,1)', filter:`drop-shadow(0 0 4px ${color})` }} />
+          </svg>
+          <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
+            <span style={{ fontSize:16, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{score}</span>
+          </div>
         </div>
-      </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)' }}>{label}</div>
-        <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>{score < 40 ? 'À améliorer' : score < 70 ? 'Correct' : score < 90 ? 'Bien' : 'Excellent'}</div>
+        <div style={{ textAlign:'center' }}>
+          <div style={{ fontSize:10, fontWeight:800, color:'var(--text-primary)', letterSpacing:'-0.01em' }}>{label}</div>
+          <div style={{ fontSize:8, color, marginTop:2, fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', textTransform:'uppercase', opacity:0.8 }}>{score < 40 ? 'À améliorer' : score < 70 ? 'Correct' : score < 90 ? 'Bien' : 'Excellent'}</div>
+        </div>
       </div>
     </div>
   );
@@ -81,13 +84,13 @@ function StatRow({ label, value, unit, color, max, icon }) {
   const [w, setW] = useState(0);
   useEffect(() => { const t = setTimeout(() => setW(Math.min((parseFloat(value) / max) * 100, 100)), 300); return () => clearTimeout(t); }, [value, max]);
   return (
-    <div style={{ marginBottom: 14 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{label}</span>
-        <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}<span style={{ fontSize: 10, fontWeight: 400, color: 'var(--text-muted)', marginLeft: 2 }}>{unit}</span></span>
+    <div style={{ marginBottom:12 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:5 }}>
+        <span style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>{label}</span>
+        <span style={{ fontSize:14, fontWeight:900, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{value}<span style={{ fontSize:9, fontWeight:400, color, marginLeft:3 }}>{unit}</span></span>
       </div>
-      <div style={{ height: 5, background: 'var(--progress-track)', borderRadius: 99, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 99, transition: 'width 1.2s cubic-bezier(0.22,1,0.36,1)' }} />
+      <div style={{ height:3, background:'rgba(255,255,255,0.05)', borderRadius:99, overflow:'hidden' }}>
+        <div style={{ height:'100%', width:`${w}%`, background:`linear-gradient(90deg, ${color}, ${color}aa)`, borderRadius:99, transition:'width 1.2s cubic-bezier(0.22,1,0.36,1)', boxShadow:`0 0 8px ${color}60` }} />
       </div>
     </div>
   );
@@ -96,12 +99,12 @@ function StatRow({ label, value, unit, color, max, icon }) {
 function BarChart({ data, color }) {
   const max = Math.max(...data.map(d => d.value), 1);
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 70 }}>
+    <div style={{ display:'flex', alignItems:'flex-end', gap:6, height:80 }}>
       {data.map((d, i) => (
-        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, height: '100%', justifyContent: 'flex-end' }}>
-          {d.value > 0 && <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{d.value}</div>}
-          <div style={{ width: '100%', borderRadius: '6px 6px 0 0', background: d.value > 0 ? color : 'var(--progress-track)', height: `${Math.max((d.value / max) * 52, d.value > 0 ? 8 : 4)}px`, transition: 'height 1s ease', opacity: d.value > 0 ? 0.85 : 0.3 }} />
-          <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{d.label}</div>
+        <div key={i} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, height:'100%', justifyContent:'flex-end' }}>
+          {d.value > 0 && <div style={{ fontSize:9, color:color, fontFamily:'DM Mono, monospace', fontWeight:700 }}>{d.value}</div>}
+          <div style={{ width:'100%', borderRadius:'4px 4px 0 0', background:d.value > 0 ? `linear-gradient(180deg, ${color}, ${color}60)` : 'rgba(255,255,255,0.04)', height:`${Math.max((d.value/max)*60, d.value>0?8:3)}px`, transition:'height 1s cubic-bezier(0.22,1,0.36,1)', boxShadow:d.value>0?`0 0 12px ${color}40`:'' }} />
+          <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>{d.label}</div>
         </div>
       ))}
     </div>
@@ -179,7 +182,10 @@ Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recomma
 
       {/* Scores */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 12 }}>Scores globaux</div>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+          <div style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Scores globaux</div>
+          <div style={{ flex:1, height:1, background:'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }}/>
+        </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <ScoreCard score={stats.scoreVolume} label="Volume" color="#FF0040" />
           <ScoreCard score={stats.scoreRegularite} label="Régularité" color="#F59E0B" />
@@ -188,8 +194,12 @@ Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recomma
       </div>
 
       {/* Course à pied */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: '3px solid #FF0040', borderRadius: 18, padding: '16px', marginBottom: 12 }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 14 }}>Course à pied</div>
+      <div style={{ position:'relative', background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, transparent 60%)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:18, padding:'16px', marginBottom:12, overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
+          <div style={{ width:3, height:14, background:'#FF0040', borderRadius:2, boxShadow:'0 0 8px #FF0040' }}/>
+          <div style={{ fontSize:9, fontWeight:700, color:'#FF0040', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Course à pied</div>
+        </div>
         <StatRow label="Volume total" value={stats.totalRunKm.toFixed(1)} unit="km" color="#FF0040" max={60} />
         <StatRow label="Séances" value={stats.runs.length} unit="" color="#FF0040" max={12} />
         {stats.avgHR && <StatRow label="FC moyenne" value={Math.round(stats.avgHR)} unit="bpm" color="#F59E0B" max={200} />}
@@ -206,14 +216,22 @@ Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recomma
       </div>
 
       {/* Évolution */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: '3px solid #F59E0B', borderRadius: 18, padding: '16px', marginBottom: 12 }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 14 }}>Évolution · km/semaine</div>
+      <div style={{ position:'relative', background:'linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 60%)', border:'1px solid rgba(245,158,11,0.2)', borderRadius:18, padding:'16px', marginBottom:12, overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
+          <div style={{ width:3, height:14, background:'#F59E0B', borderRadius:2, boxShadow:'0 0 8px #F59E0B' }}/>
+          <div style={{ fontSize:9, fontWeight:700, color:'#F59E0B', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Évolution · km/semaine</div>
+        </div>
         <BarChart data={stats.weeks} color="#F59E0B" />
       </div>
 
       {/* Muscu */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: '3px solid #6366F1', borderRadius: 18, padding: '16px', marginBottom: 12 }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 14 }}>Musculation & sport</div>
+      <div style={{ position:'relative', background:'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 60%)', border:'1px solid rgba(99,102,241,0.2)', borderRadius:18, padding:'16px', marginBottom:12, overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
+          <div style={{ width:3, height:14, background:'#6366F1', borderRadius:2, boxShadow:'0 0 8px #6366F1' }}/>
+          <div style={{ fontSize:9, fontWeight:700, color:'#6366F1', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Musculation & sport</div>
+        </div>
         <StatRow label="Séances muscu" value={stats.muscus.length} unit="" color="#6366F1" max={8} />
         {stats.muscus.length === 0 && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Aucune séance muscu détectée sur Strava.</div>}
       </div>
