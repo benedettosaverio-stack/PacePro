@@ -278,7 +278,7 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
                 {/* NATATION */}
                 <Section title="Natation" color="#38bdf8">
                   <div style={{ marginBottom:8 }}>
-                    {['Pas de nutrition pendant la nage', 'Hydrate-toi bien avant le départ', 'Gel énergétique 10 min avant la mise à l'eau'].map((item, i) => (
+                    {['Pas de nutrition pendant la nage', 'Hydrate-toi bien avant le départ', 'Gel énergétique 10 min avant la mise à l\'eau'].map((item, i) => (
                       <div key={i} style={{ display:'flex', gap:12, marginBottom:10, alignItems:'flex-start' }}>
                         <div style={{ width:22, height:22, borderRadius:6, background:'rgba(56,189,248,0.15)', border:'1px solid rgba(56,189,248,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                           <span style={{ fontSize:9, fontWeight:800, color:'#38bdf8', fontFamily:'DM Mono, monospace' }}>{i+1}</span>
