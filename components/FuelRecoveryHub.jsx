@@ -455,7 +455,10 @@ export default function FuelRecoveryHub({ onSync }) {
         {/* Suivi du poids */}
         <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 20, padding: '18px', marginBottom: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>🔥 Suivi du poids</div>
+              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                <div style={{ width:3, height:12, background:'#f97316', borderRadius:2, boxShadow:'0 0 6px #f97316' }}/>
+                <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>Suivi du poids</div>
+              </div>
               <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', borderRadius: 8, padding: '5px 12px', fontSize: 11, fontWeight: 700, color: '#f97316', cursor: 'pointer', fontFamily: 'inherit' }}>
                 + Peser
               </button>
@@ -463,7 +466,7 @@ export default function FuelRecoveryHub({ onSync }) {
 
             {showWeightInput && (
               <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-                <input type="number" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'var(--progress-track)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
+                <input type="number" inputMode="decimal" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'var(--progress-track)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
                 <button onClick={addWeight} style={{ background: '#f97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
               </div>
             )}
@@ -485,11 +488,11 @@ export default function FuelRecoveryHub({ onSync }) {
               return (
                 <div>
                   {/* KPIs */}
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+                    <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{sorted.length} mesure{sorted.length>1?'s':''}</div>
+                    <button onClick={() => { setWeightLog([]); try { localStorage.removeItem('pp_weight_log'); } catch {} }} style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:8, padding:'3px 10px', fontSize:10, color:'rgba(239,68,68,0.6)', cursor:'pointer', fontFamily:'inherit' }}>Tout effacer</button>
+                  </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 14 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-                <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{sorted.length} mesure{sorted.length>1?'s':''}</div>
-                <button onClick={() => { setWeightLog([]); try { localStorage.removeItem('pp_weight_log'); } catch {} }} style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:8, padding:'3px 10px', fontSize:10, color:'rgba(239,68,68,0.6)', cursor:'pointer', fontFamily:'inherit' }}>Tout effacer</button>
-              </div>
                     {[
                       ['Actuel', `${last} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
                       ['Évolution', `${diff > 0 ? '+' : ''}${diff} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
