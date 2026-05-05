@@ -1465,38 +1465,55 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
       {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
       {showNutrition && <RaceNutritionStrategy profile={profile} userSettings={JSON.parse(typeof window!=='undefined'?localStorage.getItem('pp_user_settings')||'{}':'{}')} onClose={()=>setShowNutrition(false)}/>}
       <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
-        {/* Hero card */}
-        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',marginBottom:14,position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,#FF0040,#fbbf24)`,borderRadius:'20px 20px 0 0'}}/>
-          <div style={{position:'absolute',top:0,right:0,width:120,height:120,background:'radial-gradient(circle,rgba(255,0,64,0.06) 0%,transparent 70%)',pointerEvents:'none'}}/>
-          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6}}>Objectif</div>
-          <div style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginBottom:4,color:'var(--text-primary)'}}>{profile.raceName||'Mon programme'}</div>
-          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:14}}>
-            <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'monospace',fontWeight:700}}>{profile.raceDistanceKm} km</span>
-            {profile.elevationM>0 && <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'monospace',fontWeight:700}}>D+{profile.elevationM}m</span>}
-            {profile.raceDate && <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{new Date(profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>}
-          </div>
-          <div style={{marginBottom:8}}>
-            <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
-              <span style={{fontSize:10,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.08em'}}>Progression globale</span>
-              <span style={{fontSize:12,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{doneCount}/{totalSessions} · {progress}%</span>
+        {/* Hero card — terminal premium */}
+        <div style={{position:'relative',borderRadius:20,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.03) 50%, transparent 100%)'}}>
+          <div style={{position:'absolute',top:-40,right:-40,width:200,height:200,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,0,64,0.08) 0%,transparent 70%)',pointerEvents:'none'}}/>
+          {/* Terminal header */}
+          <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
+            <div style={{display:'flex',gap:4}}>
+              <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,0,64,0.5)'}}/>
+              <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(245,158,11,0.5)'}}/>
+              <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(34,197,94,0.5)'}}/>
             </div>
-            <div style={{height:6,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
-              <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.8s cubic-bezier(0.22,1,0.36,1)'}}/>
+            <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.5)',letterSpacing:'0.15em'}}>PACEPRO · {(profile.discipline||'running').toUpperCase()} PROGRAM</div>
+            <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6}}>
+              <div style={{width:5,height:5,borderRadius:'50%',background:'#22c55e',boxShadow:'0 0 6px #22c55e'}}/>
+              <span style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'#22c55e',letterSpacing:'0.1em'}}>ACTIF</span>
             </div>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginTop:16}}>
-            {[
-              {label:'VMA',value:`${profile.vma.toFixed(1)}`,unit:'km/h',color:'#FF0040'},
-              {label:'Séances/sem',value:`${profile.sessionsPerWeek}×`,unit:profile.trainingDays.slice(0,2).join(', '),color:'var(--text-primary)'},
-              {label:'Programme',value:`${profile.weeks}`,unit:'semaines',color:'#f59e0b'},
-            ].map(({label,value,unit,color})=>(
-              <div key={label} style={{background:'var(--bg-input)',borderRadius:12,padding:'10px 12px',textAlign:'center'}}>
-                <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:4}}>{label}</div>
-                <div style={{fontSize:20,fontWeight:800,color,fontFamily:'DM Mono, monospace',lineHeight:1}}>{value}</div>
-                <div style={{fontSize:9,color:'var(--text-muted)',marginTop:3}}>{unit}</div>
+          <div style={{padding:'18px 16px'}}>
+            <div style={{fontSize:9,color:'rgba(255,0,64,0.6)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.2em',marginBottom:6}}>{'>'} OBJECTIF</div>
+            <div style={{fontSize:24,fontWeight:900,letterSpacing:'-0.03em',marginBottom:10,background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.5))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{profile.raceName||'Mon programme'}</div>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:16}}>
+              <span style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'DM Mono, monospace',fontWeight:700}}>{profile.raceDistanceKm} km</span>
+              {profile.elevationM>0 && <span style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'DM Mono, monospace',fontWeight:700}}>D+{profile.elevationM}m</span>}
+              {profile.raceDate && <span style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{new Date(profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>}
+            </div>
+            {/* Progress */}
+            <div style={{marginBottom:16}}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+                <span style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>Progression globale</span>
+                <span style={{fontSize:10,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{doneCount}/{totalSessions} · {progress}%</span>
               </div>
-            ))}
+              <div style={{height:3,background:'rgba(255,255,255,0.05)',borderRadius:99,overflow:'hidden'}}>
+                <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.8s cubic-bezier(0.22,1,0.36,1)',boxShadow:'0 0 8px rgba(255,0,64,0.4)'}}/>
+              </div>
+            </div>
+            {/* KPIs */}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+              {[
+                {label:'VMA',value:`${profile.vma.toFixed(1)}`,unit:'km/h',color:'#FF0040'},
+                {label:'Séances/sem',value:`${profile.sessionsPerWeek}×`,unit:profile.trainingDays.slice(0,2).join(', '),color:'#60a5fa'},
+                {label:'Programme',value:`${profile.weeks}`,unit:'semaines',color:'#f59e0b'},
+              ].map(({label,value,unit,color})=>(
+                <div key={label} style={{position:'relative',borderRadius:10,border:`1px solid ${color}15`,background:`${color}06`,padding:'10px 8px',textAlign:'center',overflow:'hidden'}}>
+                  <div style={{position:'absolute',bottom:-8,right:-8,width:32,height:32,borderRadius:'50%',background:`radial-gradient(circle,${color}20,transparent)`,pointerEvents:'none'}}/>
+                  <div style={{fontSize:8,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4}}>{label}</div>
+                  <div style={{fontSize:18,fontWeight:900,color,fontFamily:'DM Mono, monospace',lineHeight:1}}>{value}</div>
+                  <div style={{fontSize:8,color:`${color}80`,marginTop:3,fontFamily:'DM Mono, monospace'}}>{unit}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px',marginBottom:14}}>
