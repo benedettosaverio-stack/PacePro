@@ -530,9 +530,9 @@ function applyFeedback(plan, sessionId, feedback) {
 
 const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px 18px'};
 const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
-const lbl = {fontSize:11,fontWeight:700,color:'var(--text-muted)',display:'block',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.08em',fontFamily:'DM Mono, monospace'};
-const inp = () => ({background:'var(--bg-card)',border:'1.5px solid var(--border)',color:'var(--text-primary)',borderRadius:16,padding:'14px 16px',width:'100%',fontSize:15,fontFamily:'Syne, sans-serif',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'});
-const tog = (a) => ({background:a?'#FF0040':'var(--bg-card)',border:`1.5px solid ${a?'#FF0040':'var(--border)'}`,color:a?'#fff':'var(--text-primary)',borderRadius:14,padding:'13px 12px',fontSize:13,fontWeight:700,cursor:'pointer',fontFamily:'Syne, sans-serif',transition:'all 0.15s',outline:'none'});
+const lbl = {fontSize:9,fontWeight:700,color:'var(--text-muted)',display:'block',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.15em',fontFamily:'DM Mono, monospace'};
+const inp = () => ({background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--text-primary)',borderRadius:10,padding:'14px 16px',width:'100%',fontSize:15,fontFamily:'Syne, sans-serif',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'});
+const tog = (a) => ({background:a?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.03)',border:`1px solid ${a?'rgba(255,0,64,0.6)':'rgba(255,255,255,0.08)'}`,color:a?'#FF0040':'var(--text-muted)',borderRadius:8,padding:'12px 10px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'DM Mono, monospace',transition:'all 0.15s',outline:'none',letterSpacing:'0.04em',boxShadow:a?'0 0 12px rgba(255,0,64,0.15)':'none'});
 
 const SessionIcons = {
   frac: () => (<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/><path d="M12 24 L18 10 L24 24" stroke="#FF0040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 20 L22 20" stroke="#FF0040" strokeWidth="1.5" strokeLinecap="round"/><circle cx="18" cy="10" r="2" fill="#FF0040"/></svg>),
