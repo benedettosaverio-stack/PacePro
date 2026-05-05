@@ -273,25 +273,90 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
         {/* Pendant */}
         {tab === 'pendant' && (
           <div>
-            <Section title="Stratégie de course" color={accent}>
-              <div style={{ marginBottom:16 }}>
-                {strat.during.map((item, i) => (
-                  <div key={i} style={{ display:'flex', gap:12, marginBottom:12, alignItems:'flex-start' }}>
-                    <div style={{ width:24, height:24, borderRadius:8, background:`${accent}15`, border:`1px solid ${accent}30`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                      <span style={{ fontSize:10, fontWeight:800, color:accent, fontFamily:'DM Mono, monospace' }}>{i+1}</span>
-                    </div>
-                    <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{item}</span>
+            {strat.isTriathlonNutrition ? (
+              <div>
+                {/* NATATION */}
+                <Section title="Natation" color="#38bdf8">
+                  <div style={{ marginBottom:8 }}>
+                    {['Pas de nutrition pendant la nage', 'Hydrate-toi bien avant le départ', 'Gel énergétique 10 min avant la mise à l'eau'].map((item, i) => (
+                      <div key={i} style={{ display:'flex', gap:12, marginBottom:10, alignItems:'flex-start' }}>
+                        <div style={{ width:22, height:22, borderRadius:6, background:'rgba(56,189,248,0.15)', border:'1px solid rgba(56,189,248,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <span style={{ fontSize:9, fontWeight:800, color:'#38bdf8', fontFamily:'DM Mono, monospace' }}>{i+1}</span>
+                        </div>
+                        <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{item}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </Section>
+                {/* VÉLO */}
+                <Section title="Vélo" color="#f59e0b">
+                  <div style={{ marginBottom:8 }}>
+                    {[
+                      `60-80g glucides/heure dès les 20 premières minutes`,
+                      `500-750ml boisson isotonique/heure`,
+                      `Barre ou gel solide toutes les 45 min`,
+                      strat.triFmt.bike >= 90 ? 'Nourriture solide acceptée après 2h : banane, riz' : 'Gel caféiné dans le dernier tiers',
+                      `Sel crucial — 500mg/heure par temps chaud`,
+                    ].map((item, i) => (
+                      <div key={i} style={{ display:'flex', gap:12, marginBottom:10, alignItems:'flex-start' }}>
+                        <div style={{ width:22, height:22, borderRadius:6, background:'rgba(245,158,11,0.15)', border:'1px solid rgba(245,158,11,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <span style={{ fontSize:9, fontWeight:800, color:'#f59e0b', fontFamily:'DM Mono, monospace' }}>{i+1}</span>
+                        </div>
+                        <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+                {/* COURSE */}
+                <Section title="Course à pied" color="#22c55e">
+                  <div style={{ marginBottom:8 }}>
+                    {[
+                      '1 gel toutes les 30-40 min dès le km 3',
+                      '200ml eau à chaque ravitaillement',
+                      strat.triFmt.run >= 21 ? 'Coca ou bouillon en seconde moitié si fatigue' : 'Évite de manger solide — ton estomac est sollicité',
+                      'Réduire le rythme si crampes ou nausées',
+                    ].map((item, i) => (
+                      <div key={i} style={{ display:'flex', gap:12, marginBottom:10, alignItems:'flex-start' }}>
+                        <div style={{ width:22, height:22, borderRadius:6, background:'rgba(34,197,94,0.15)', border:'1px solid rgba(34,197,94,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <span style={{ fontSize:9, fontWeight:800, color:'#22c55e', fontFamily:'DM Mono, monospace' }}>{i+1}</span>
+                        </div>
+                        <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+                {/* Timeline */}
+                <Section title="Timeline" color="#a78bfa">
+                  <TimelineRow time="T1" label="Transition nage→vélo" detail="Gel + gorgée d'eau. Chaussures vite." color="#38bdf8" />
+                  <TimelineRow time={`${Math.round(strat.triFmt.bike*0.3)}km`} label="1er ravitaillement vélo" detail="Commence à manger même si tu te sens bien" color="#f59e0b" />
+                  <TimelineRow time="T2" label="Transition vélo→course" detail="Gel caféiné. Jambes lourdes les 2 premiers km." color="#f59e0b" />
+                  <TimelineRow time={`km ${Math.round(strat.triFmt.run*0.3)}`} label="1er gel course" detail="Anticipe avant la fatigue" color="#22c55e" />
+                  <TimelineRow time="Arr." label="Arrivée" detail="Félicitations — récupération dans les 30 min" color="#a78bfa" />
+                </Section>
               </div>
-            </Section>
-            <Section title="Timeline de ravitaillement" color="#38bdf8">
-              <TimelineRow time="Dép." label="Départ" detail="En bonne condition, bien hydraté, énergie disponible" color="#22c55e" />
-              {strat.dist > 10 && <TimelineRow time={`${Math.round(strat.dist*0.3)}km`} label="1er gel / ravitaillement" detail="Même si tu te sens bien — anticipe avant la fatigue" color={accent} />}
-              {strat.dist > 20 && <TimelineRow time={`${Math.round(strat.dist*0.5)}km`} label="Mi-course · Bilan" detail="Ajuste le rythme selon les sensations et les réserves" color="#f59e0b" />}
-              {strat.dist > 30 && <TimelineRow time={`${Math.round(strat.dist*0.75)}km`} label="Zone de combat" detail="Gel caféiné, motivation mentale, réduis le rythme si besoin" color="#FF0040" />}
-              <TimelineRow time="Arr." label="Arrivée" detail="Félicitations — récupération immédiate dans les 30 min" color="#a78bfa" />
-            </Section>
+            ) : (
+              <div>
+                <Section title="Stratégie de course" color={accent}>
+                  <div style={{ marginBottom:16 }}>
+                    {strat.during.map((item, i) => (
+                      <div key={i} style={{ display:'flex', gap:12, marginBottom:12, alignItems:'flex-start' }}>
+                        <div style={{ width:24, height:24, borderRadius:8, background:`${accent}15`, border:`1px solid ${accent}30`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <span style={{ fontSize:10, fontWeight:800, color:accent, fontFamily:'DM Mono, monospace' }}>{i+1}</span>
+                        </div>
+                        <span style={{ fontSize:13, color:'rgba(255,255,255,0.75)', lineHeight:1.6, paddingTop:2 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+                <Section title="Timeline de ravitaillement" color="#38bdf8">
+                  <TimelineRow time="Dép." label="Départ" detail="En bonne condition, bien hydraté, énergie disponible" color="#22c55e" />
+                  {strat.dist > 10 && <TimelineRow time={`${Math.round(strat.dist*0.3)}km`} label="1er gel / ravitaillement" detail="Même si tu te sens bien — anticipe avant la fatigue" color={accent} />}
+                  {strat.dist > 20 && <TimelineRow time={`${Math.round(strat.dist*0.5)}km`} label="Mi-course · Bilan" detail="Ajuste le rythme selon les sensations et les réserves" color="#f59e0b" />}
+                  {strat.dist > 30 && <TimelineRow time={`${Math.round(strat.dist*0.75)}km`} label="Zone de combat" detail="Gel caféiné, motivation mentale, réduis le rythme si besoin" color="#FF0040" />}
+                  <TimelineRow time="Arr." label="Arrivée" detail="Félicitations — récupération immédiate dans les 30 min" color="#a78bfa" />
+                </Section>
+              </div>
+            )}
           </div>
         )}
 
