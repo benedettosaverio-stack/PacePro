@@ -1697,7 +1697,7 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
               {user?.strava && <div style={{ position:'absolute', bottom:0, right:0, width:22, height:22, borderRadius:'50%', background:'#f59e0b', display:'flex', alignItems:'center', justifyContent:'center', border:'2px solid var(--bg-modal)' }}><Icon name="strava" size={12} color="#fff"/></div>}
             </div>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', color:'var(--text-primary)', marginBottom:4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{user?.name || 'Athlete'}</div>
+              <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', color:'var(--text-primary)', marginBottom:4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Athlete'}</div>
               <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>
                 {user?.strava ? 'Connecté via Strava' : user?.email || 'PacePro'}
               </div>
