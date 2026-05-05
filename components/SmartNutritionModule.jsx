@@ -138,7 +138,7 @@ export default function SmartNutritionModule({ onBack }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
+    <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
 
       {/* Background glow */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 300, background: `radial-gradient(ellipse at 50% 0%, ${accentColor}15 0%, transparent 70%)`, pointerEvents: 'none', transition: 'background 1s ease', zIndex: 0 }} />

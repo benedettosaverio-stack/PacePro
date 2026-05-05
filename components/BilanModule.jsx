@@ -166,7 +166,7 @@ Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recomma
   );
 
   return (
-    <div style={{ padding: '20px 16px 100px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', background: 'var(--bg-primary)', minHeight: '100vh' }}>
+    <div style={{ padding: '20px 16px 100px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', background: 'var(--bg-primary)', minHeight: '100%' }}>
 
       {/* Scores */}
       <div style={{ marginBottom: 16 }}>

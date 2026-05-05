@@ -102,7 +102,7 @@ export default function SettingsModule({ onBack, user, onSync }) {
   const bmiLabel = bmi < 18.5 ? 'Insuffisant' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Surpoids' : 'Obésité';
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
+    <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
       <div style={{ maxWidth: 600, margin: '0 auto', padding: '20px 16px 0' }}>
 
         {/* Header */}

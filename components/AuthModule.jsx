@@ -104,7 +104,7 @@ export default function AuthModule({ onAuth }) {
 
   if (mode === 'choice') {
     return (
-      <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 24px 80px', position:'relative', overflow:'hidden' }}>
+      <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 24px 80px', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:'500px', height:'500px', borderRadius:'50%', background:'radial-gradient(circle, rgba(219,59,61,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
 
         <img src="/logo.svg" alt="PacePro" style={{ width:100, height:100, objectFit:'contain', filter:'drop-shadow(0 0 30px rgba(219,59,61,0.3))', marginBottom:16 }} />
@@ -146,7 +146,7 @@ export default function AuthModule({ onAuth }) {
   }
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 24px 80px' }}>
+    <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 24px 80px' }}>
       <div style={{ width:'100%', maxWidth:380 }}>
         <button onClick={() => setMode('choice')} style={{ ...btnGhost, width:'auto', padding:'8px 16px', fontSize:12, marginBottom:24 }}>← Retour</button>
 

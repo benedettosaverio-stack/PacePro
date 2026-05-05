@@ -334,7 +334,7 @@ export default function FuelRecoveryHub({ onSync }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
+    <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
 
       {/* Background */}
       <div style={{ position: 'fixed', top: 0, inset: 0, pointerEvents: 'none', zIndex: 0 }}>

@@ -266,7 +266,7 @@ export default function HistoriqueModule() {
 
   if (loading) {
     return (
-      <div style={{ minHeight:'100vh', background:'var(--bg-primary)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Syne, sans-serif' }}>
+      <div style={{ minHeight:'100%', background:'var(--bg-primary)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Syne, sans-serif' }}>
         <div style={{ textAlign:'center' }}>
           <div style={{ fontSize:36, marginBottom:12 }}>⏳</div>
           <div style={{ fontSize:14, color:'var(--text-muted)' }}>Chargement...</div>
@@ -277,7 +277,7 @@ export default function HistoriqueModule() {
 
   if (!user) {
     return (
-      <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+      <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
         <div style={{ maxWidth:380, width:'100%', textAlign:'center' }}>
           <div style={{ fontSize:56, marginBottom:16 }}>📊</div>
           <h2 style={{ fontSize:22, fontWeight:800, marginBottom:8, letterSpacing:'-0.03em' }}>Historique des séances</h2>
@@ -298,7 +298,7 @@ export default function HistoriqueModule() {
   }
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:70 }}>
+    <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:70 }}>
       <div style={{ maxWidth:700, margin:'0 auto', padding:'18px 16px 0' }}>
 
         {!selected && (

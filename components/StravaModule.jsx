@@ -233,7 +233,7 @@ export default function StravaModule() {
 
   if (!token) {
     return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{ maxWidth: 400, width: '100%', textAlign: 'center' }}>
           <div style={{ fontSize: 60, marginBottom: 16 }}>🚴</div>
           <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, letterSpacing: '-0.03em' }}>Connecte Strava</h2>
@@ -267,7 +267,7 @@ export default function StravaModule() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 80 }}>
+    <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 80 }}>
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '20px 16px' }}>
         {activities.length > 0 && <Stats activities={activities} />}
 

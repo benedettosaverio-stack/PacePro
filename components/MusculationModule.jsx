@@ -708,7 +708,7 @@ export default function MusculationModule({ onSync }) {
   };
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:70 }}>
+    <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:70 }}>
       <div style={{ maxWidth:700, margin:'0 auto', padding:'calc(env(safe-area-inset-top, 44px) + 56px) 16px 0' }}>
 
         {/* Header */}
@@ -914,7 +914,7 @@ function LiveSession({ workout, onEnd }) {
       return sum + (v.weight || 0) * (parseInt(v.reps) || 0);
     }, 0);
     return (
-      <div style={{ minHeight:'100vh', background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'Syne, sans-serif' }}>
+      <div style={{ minHeight:'100%', background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'Syne, sans-serif' }}>
         <div style={{ width:64, height:64, borderRadius:20, background:'rgba(255,0,64,0.1)', border:'1px solid rgba(255,0,64,0.2)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:28, color:'#FF0040' }}>✓</div>
         <h2 style={{ fontSize:24, fontWeight:800, color:'var(--text-primary)', marginBottom:4, textAlign:'center' }}>Séance terminée</h2>
         <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:32, textAlign:'center' }}>{workout.name}</p>
@@ -945,7 +945,7 @@ function LiveSession({ workout, onEnd }) {
   }
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:80 }}>
+    <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:80 }}>
 
       {/* Header sticky */}
       <div style={{ position:'sticky', top:0, zIndex:50, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)', padding:'0 16px', height:52, display:'flex', alignItems:'center', justifyContent:'space-between' }}>

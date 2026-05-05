@@ -1283,7 +1283,7 @@ function Onboarding({ onComplete }) {
       const accentColor = step === 0 ? theme.accent : (disciplineTheme[form.discipline]||disciplineTheme.running).accent;
 
       return (
-    <div style={{minHeight:'100vh',background:'var(--onboarding-bg)',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden'}}>
+    <div style={{minHeight:'100%',background:'var(--onboarding-bg)',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden'}}>
       {/* Discipline glow */}
       <div style={{position:'fixed',top:-100,right:-100,width:400,height:400,borderRadius:'50%',background:`radial-gradient(circle, ${theme.glow} 0%, transparent 70%)`,pointerEvents:'none',transition:'background 0.5s',zIndex:0}}/>
       {/* Discipline decor */}
@@ -1460,7 +1460,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
   );
   return (
-    <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
+    <div style={{minHeight:'100%',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
       {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
       {showNutrition && <RaceNutritionStrategy profile={profile} userSettings={JSON.parse(typeof window!=='undefined'?localStorage.getItem('pp_user_settings')||'{}':'{}')} onClose={()=>setShowNutrition(false)}/>}
@@ -1605,7 +1605,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
 
 function PlansList({ plans, onSelect, onNew, onDelete }) {
   return (
-    <div style={{minHeight:'100vh',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
+    <div style={{minHeight:'100%',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
 
       <main style={{maxWidth:680,margin:'0 auto',padding:'28px 16px 40px'}}>
         <div style={{marginBottom:28}}>
