@@ -60,13 +60,16 @@ function TimelineRow({ time, label, detail, color }) {
 }
 
 function buildStrategy(profile, userSettings) {
-  // Pour le triathlon, calculer la distance totale réelle
-  const TRI_FORMATS = {'sprint':{swim:0.75,bike:20,run:5},'olympic':{swim:1.5,bike:40,run:10},'half':{swim:1.9,bike:90,run:21},'ironman':{swim:3.8,bike:180,run:42}};
-  const triFormat = profile.triFormat || '';
-  const isTriathlonNutrition = profile.discipline === 'triathlon' && triFormat;
-  const dist = isTriathlonNutrition
-    ? (TRI_FORMATS[triFormat]?.run || 10)  // Utiliser la distance course pour les calculs
-    : parseFloat(profile.raceDistanceKm) || 10;
+  const TRI_FORMATS = {
+    sprint:  {swim:0.75, bike:20,  run:5,  timeMin:70,  kcalPerKg:8,  label:'Sprint'},
+    olympic: {swim:1.5,  bike:40,  run:10, timeMin:120, kcalPerKg:12, label:'Olympique'},
+    half:    {swim:1.9,  bike:90,  run:21, timeMin:270, kcalPerKg:22, label:'Half Ironman'},
+    ironman: {swim:3.8,  bike:180, run:42, timeMin:600, kcalPerKg:45, label:'Ironman'},
+  };
+  const triFormat = profile.triFormat || 'olympic';
+  const isTriathlonNutrition = profile.discipline === 'triathlon';
+  const triFmt = TRI_FORMATS[triFormat] || TRI_FORMATS.olympic;
+  const dist = isTriathlonNutrition ? triFmt.run : parseFloat(profile.raceDistanceKm) || 10;
   const elev = parseFloat(profile.elevationM) || 0;
   const w = userSettings?.weight || 70;
   const vma = parseFloat(profile.vma) || 12;
@@ -80,9 +83,8 @@ function buildStrategy(profile, userSettings) {
   let estTimeMin;
   if (isCycling) {
     const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
-    if (isTriathlonNutrition && TRI_FORMATS[triFormat]) {
-      const f = TRI_FORMATS[triFormat];
-      estTimeMin = Math.round(f.swim/1.3 + f.bike/35*60 + f.run*6);
+    if (isTriathlonNutrition) {
+      estTimeMin = triFmt.timeMin;
     } else {
       estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
     }
@@ -119,7 +121,7 @@ function buildStrategy(profile, userSettings) {
     kcalRace = Math.round(w * (dist/1000) * 400); // ~400 kcal/km natation
   } else {
     if (isTriathlonNutrition) {
-      kcalRace = Math.round(estTimeMin * 12); // ~12 kcal/min triathlon
+      kcalRace = Math.round(w * triFmt.kcalPerKg);
     } else {
       kcalRace = Math.round(w * dist * (isTrail ? 1.3 : 1.0) * (elev > 0 ? 1 + elev/5000 : 1));
     }
@@ -210,7 +212,9 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
           <div style={{ fontSize:9, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Stratégie nutritionnelle · {strat.label}</div>
           <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.03em', marginBottom:8 }}>{profile.raceName || 'Ma course'}</div>
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:`${accent}15`, color:accent, border:`1px solid ${accent}30`, fontFamily:'DM Mono, monospace', fontWeight:700 }}>{profile.raceDistanceKm} km</span>
+            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:`${accent}15`, color:accent, border:`1px solid ${accent}30`, fontFamily:'DM Mono, monospace', fontWeight:700 }}>
+              {isTriathlonNutrition ? `${triFmt.swim}km nage · ${triFmt.bike}km vélo · ${triFmt.run}km course` : `${profile.raceDistanceKm} km`}
+            </span>
             {profile.elevationM > 0 && <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'rgba(245,158,11,0.1)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>D+{profile.elevationM}m</span>}
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>~{strat.estTimeStr}</span>
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'rgba(255,0,64,0.1)', color:'#FF0040', fontFamily:'DM Mono, monospace' }}>~{strat.kcalRace} kcal</span>
