@@ -180,16 +180,25 @@ Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recomma
   return (
     <div style={{ padding: '20px 16px 100px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', background: 'var(--bg-primary)', minHeight: '100%' }}>
 
-      {/* Scores */}
-      <div style={{ marginBottom: 16 }}>
+      {/* KPIs clés */}
+      <div style={{ marginBottom:16 }}>
         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Scores globaux</div>
+          <div style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>30 derniers jours</div>
           <div style={{ flex:1, height:1, background:'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }}/>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <ScoreCard score={stats.scoreVolume} label="Volume" color="#FF0040" />
-          <ScoreCard score={stats.scoreRegularite} label="Régularité" color="#F59E0B" />
-          <ScoreCard score={stats.scoreMuscu} label="Muscu" color="#6366F1" />
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+          {[
+            { label:'Km total', value: stats.totalRunKm.toFixed(1), unit:'km', color:'#FF0040' },
+            { label:'Séances', value: stats.runs.length, unit:'runs', color:'#f59e0b' },
+            { label:'FC moy', value: stats.avgHR ? Math.round(stats.avgHR) : '—', unit:'bpm', color:'#6366f1' },
+          ].map(({label, value, unit, color}) => (
+            <div key={label} style={{ position:'relative', borderRadius:14, border:`1px solid ${color}20`, background:`linear-gradient(135deg, ${color}08, transparent)`, padding:'12px 10px', overflow:'hidden' }}>
+              <div style={{ position:'absolute', bottom:-10, right:-10, width:50, height:50, borderRadius:'50%', background:`radial-gradient(circle, ${color}15, transparent)`, pointerEvents:'none' }}/>
+              <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>{label}</div>
+              <div style={{ fontSize:22, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+              <div style={{ fontSize:9, color:`${color}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>{unit}</div>
+            </div>
+          ))}
         </div>
       </div>
 
