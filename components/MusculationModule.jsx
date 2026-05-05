@@ -715,22 +715,28 @@ export default function MusculationModule({ onSync }) {
         <div style={{ marginBottom:20 }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:16 }}>
             <div>
-              <h1 style={{ fontSize:26, fontWeight:800, letterSpacing:'-0.04em', marginBottom:4 }}>Musculation</h1>
-              <p style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>{workouts.length} séance{workouts.length!==1?'s':''} sauvegardée{workouts.length!==1?'s':''}</p>
+              <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
+                <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040' }}/>
+                PACEPRO · TRAINING LAB
+              </div>
+              <h1 style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.04em', marginBottom:4, background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.4))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Musculation</h1>
+              <p style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>{workouts.length} séance{workouts.length!==1?'s':''} · SYSTÈME ACTIF</p>
             </div>
           </div>
 
-          {/* Stats rapides si séances */}
+          {/* Stats KPI premium */}
           {view==='list' && workouts.length>0 && (
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:4 }}>
               {[
-                { label:'Séances', value:workouts.length, color:'#FF0040' },
-                { label:'Exercices moy.', value:workouts.length>0?Math.round(workouts.reduce((a,w)=>a+(w.entries||[]).length,0)/workouts.length):0, color:'#60a5fa' },
-                { label:'Durée moy.', value:`${workouts.length>0?Math.round(workouts.reduce((a,w)=>a+(w.duration||0),0)/workouts.length):0} min`, color:'#f59e0b' },
-              ].map(({label,value,color})=>(
-                <div key={label} style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:14, padding:'12px', textAlign:'center' }}>
-                  <div style={{ fontSize:18, fontWeight:800, color, fontFamily:'DM Mono, monospace', lineHeight:1, marginBottom:4 }}>{value}</div>
-                  <div style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.08em' }}>{label}</div>
+                { label:'Séances', value:workouts.length, color:'#FF0040', unit:'' },
+                { label:'Exercices', value:workouts.length>0?Math.round(workouts.reduce((a,w)=>a+(w.entries||[]).length,0)/workouts.length):0, color:'#60a5fa', unit:'moy.' },
+                { label:'Durée', value:`${workouts.length>0?Math.round(workouts.reduce((a,w)=>a+(w.duration||0),0)/workouts.length):0}`, color:'#f59e0b', unit:'min' },
+              ].map(({label,value,color,unit})=>(
+                <div key={label} style={{ position:'relative', borderRadius:14, border:`1px solid ${color}20`, background:`linear-gradient(135deg, ${color}08, transparent)`, padding:'12px 10px', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', bottom:-8, right:-8, width:40, height:40, borderRadius:'50%', background:`radial-gradient(circle, ${color}20, transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>{label}</div>
+                  <div style={{ fontSize:22, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+                  {unit && <div style={{ fontSize:8, color:`${color}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>{unit}</div>}
                 </div>
               ))}
             </div>
@@ -739,21 +745,33 @@ export default function MusculationModule({ onSync }) {
 
         {view==='list' && (
           workouts.length===0 ? (
-            <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:20, padding:'48px 24px', textAlign:'center', position:'relative', overflow:'hidden' }}>
-              <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle,rgba(96,165,250,0.05) 0%,transparent 70%)', pointerEvents:'none' }}/>
-              <div style={{ width:48, height:48, borderRadius:14, background:'rgba(255,0,64,0.1)', border:'1px solid rgba(255,0,64,0.2)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:22 }}>⬡</div>
-              <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', marginBottom:8, color:'var(--text-primary)' }}>Aucune séance</div>
-              <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:28, lineHeight:1.6 }}>Crée ta première séance manuellement<br/>ou laisse l'IA en générer une pour toi.</p>
-              <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
-                <button onClick={()=>setView('ai')} style={{ background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'12px 20px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'Syne, sans-serif' }}>IA</button>
-                <button onClick={()=>setView('create')} style={{ background:'#FF0040', border:'none', color:'#fff', borderRadius:12, padding:'12px 20px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif' }}>+ Créer</button>
+            <div style={{ position:'relative', borderRadius:20, overflow:'hidden', border:'1px solid rgba(255,0,64,0.15)', background:'linear-gradient(135deg, rgba(255,0,64,0.04) 0%, transparent 60%)' }}>
+              <div style={{ position:'absolute', top:-60, left:'50%', transform:'translateX(-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.06) 0%, transparent 70%)', pointerEvents:'none' }}/>
+              {/* Terminal header */}
+              <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(255,0,64,0.1)', display:'flex', alignItems:'center', gap:8 }}>
+                <div style={{ display:'flex', gap:5 }}>
+                  <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(255,0,64,0.4)' }}/>
+                  <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+                  <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+                </div>
+                <div style={{ fontSize:9, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.6)', letterSpacing:'0.15em' }}>TRAINING.SYSTEM · INIT</div>
+                <div style={{ marginLeft:'auto', width:6, height:6, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 8px #FF0040' }}/>
+              </div>
+              <div style={{ padding:'40px 24px', textAlign:'center', position:'relative' }}>
+                <div style={{ fontSize:9, color:'rgba(255,255,255,0.15)', fontFamily:'DM Mono, monospace', letterSpacing:'0.1em', marginBottom:24 }}>{'>'} AUCUN PROGRAMME DÉTECTÉ · EN ATTENTE</div>
+                <div style={{ fontSize:22, fontWeight:900, letterSpacing:'-0.03em', marginBottom:8, color:'var(--text-primary)' }}>Commence ton programme</div>
+                <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:28, lineHeight:1.6 }}>Crée manuellement ou laisse l'IA générer<br/>un plan adapté à ton niveau.</p>
+                <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
+                  <button onClick={()=>setView('ai')} style={{ background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'13px 24px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>✦ IA</button>
+                  <button onClick={()=>setView('create')} style={{ background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'13px 24px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 20px rgba(255,0,64,0.3)' }}>+ Créer</button>
+                </div>
               </div>
             </div>
           ) : (
             <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-              <div style={{ display:'flex', gap:8, marginBottom:4 }}>
-                <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} style={{ flex:1, background:'#FF0040', border:'none', color:'#fff', borderRadius:12, padding:'11px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Nouvelle séance</button>
-                <button onClick={()=>setView('ai')} style={{ flex:1, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'11px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'-0.01em' }}>✦ IA</button>
+              <div style={{ display:'flex', gap:8, marginBottom:12 }}>
+                <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} style={{ flex:2, background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'12px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 16px rgba(255,0,64,0.25)' }}>+ Nouvelle séance</button>
+                <button onClick={()=>setView('ai')} style={{ flex:1, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'12px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.04em' }}>✦ IA</button>
               </div>
               {workouts.map(w => (
                 <WorkoutCard key={w.id} workout={w}
