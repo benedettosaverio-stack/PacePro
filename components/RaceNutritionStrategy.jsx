@@ -81,13 +81,11 @@ function buildStrategy(profile, userSettings) {
 
   // Estimation temps selon discipline
   let estTimeMin;
-  if (isCycling) {
+  if (isTriathlonNutrition) {
+    estTimeMin = triFmt.timeMin;
+  } else if (isCycling) {
     const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
-    if (isTriathlonNutrition) {
-      estTimeMin = triFmt.timeMin;
-    } else {
-      estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
-    }
+    estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
   } else if (isSwimming) {
     const pace100m = parseFloat(profile.swimTime100?.replace(':','.')) || 2.0;
     estTimeMin = Math.round((dist / 100) * pace100m);
