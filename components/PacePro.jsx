@@ -1606,63 +1606,89 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
 function PlansList({ plans, onSelect, onNew, onDelete }) {
   return (
     <div style={{minHeight:'100%',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
-
       <main style={{maxWidth:680,margin:'0 auto',padding:'28px 16px 40px'}}>
-        <div style={{marginBottom:28}}>
-          <h1 style={{fontSize:28,fontWeight:800,letterSpacing:'-0.04em',marginBottom:4,color:'var(--text-primary)'}}>Mes programmes</h1>
-          <p style={{fontSize:12,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>{plans.length} plan{plans.length>1?'s':''} sauvegardé{plans.length>1?'s':''}</p>
+
+        {/* Header terminal */}
+        <div style={{marginBottom:24}}>
+          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.2em',marginBottom:6,display:'flex',alignItems:'center',gap:6}}>
+            <div style={{width:5,height:5,borderRadius:'50%',background:'#FF0040',boxShadow:'0 0 6px #FF0040'}}/>
+            PACEPRO · TRAINING SYSTEM
+          </div>
+          <h1 style={{fontSize:28,fontWeight:900,letterSpacing:'-0.04em',marginBottom:4,background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.4))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Mes programmes</h1>
+          <p style={{fontSize:10,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>{plans.length} plan{plans.length>1?'s':''} · SYSTÈME ACTIF</p>
         </div>
-        <div style={{display:'flex',flexDirection:'column',gap:14}}>
+
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
           {plans.map((p,i) => {
             const done = Object.values(p.completed||{}).filter(Boolean).length;
             const total = p.plan?.reduce((a,w)=>a+w.sessions.length,0)||0;
             const pct = total>0?Math.round((done/total)*100):0;
-            const currentPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
+            const nextPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
             return (
-              <div key={i} onClick={()=>onSelect(i)} className='card-hover' style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:20,padding:'20px',cursor:'pointer',position:'relative',overflow:'hidden'}}>
-                {/* Accent bar */}
-                <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:'20px 20px 0 0',opacity: pct>0?1:0.3}}/>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}}>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:18,fontWeight:800,letterSpacing:'-0.02em',marginBottom:6,color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
-                    <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'monospace'}}>{p.profile.raceDistanceKm} km</span>
-                      {p.profile.elevationM>0 && <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'monospace'}}>D+{p.profile.elevationM}m</span>}
-                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.weeks} sem.</span>
-                      <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--btn-ghost-bg)',color:'var(--text-muted)',border:'1px solid var(--border)',fontFamily:'monospace'}}>{p.profile.type==='trail'?'Trail':'Route'}</span>
+              <div key={i} onClick={()=>onSelect(i)} style={{position:'relative',borderRadius:20,overflow:'hidden',border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.05) 0%, transparent 60%)',cursor:'pointer',transition:'all 0.2s'}}>
+                {/* Glow top */}
+                <div style={{position:'absolute',top:-30,right:-30,width:150,height:150,borderRadius:'50%',background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)',pointerEvents:'none'}}/>
+                {/* Terminal header */}
+                <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
+                  <div style={{display:'flex',gap:4}}>
+                    <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,0,64,0.5)'}}/>
+                    <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(245,158,11,0.5)'}}/>
+                    <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(34,197,94,0.5)'}}/>
+                  </div>
+                  <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.5)',letterSpacing:'0.15em'}}>PROGRAMME · {(p.profile.discipline||'running').toUpperCase()}</div>
+                  <div style={{marginLeft:'auto',fontSize:9,fontFamily:'DM Mono, monospace',color:pct===100?'#22c55e':pct>0?'#f59e0b':'var(--text-muted)'}}>{pct}% COMPLÉTÉ</div>
+                </div>
+                <div style={{padding:'16px'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
+                    <div style={{flex:1}}>
+                      <div style={{fontSize:20,fontWeight:900,letterSpacing:'-0.03em',marginBottom:8,color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
+                      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                        <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'DM Mono, monospace'}}>{p.profile.raceDistanceKm} km</span>
+                        {p.profile.elevationM>0 && <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'DM Mono, monospace'}}>D+{p.profile.elevationM}m</span>}
+                        <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{p.profile.weeks} sem.</span>
+                        {p.profile.type && <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{p.profile.type==='trail'?'Trail':'Route'}</span>}
+                      </div>
                     </div>
                   </div>
-                  <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,0,64,0.08)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginLeft:12}}>
-                    <span style={{fontSize:18,fontWeight:900,color:'#FF0040'}}>›</span>
+                  {/* Progress bar */}
+                  <div style={{marginBottom:10}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+                      <span style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>Progression</span>
+                      <span style={{fontSize:9,color:'var(--text-primary)',fontFamily:'DM Mono, monospace',fontWeight:700}}>{done}/{total} séances</span>
+                    </div>
+                    <div style={{height:3,background:'rgba(255,255,255,0.05)',borderRadius:99,overflow:'hidden'}}>
+                      <div style={{height:'100%',width:`${pct}%`,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:99,transition:'width 0.6s',boxShadow:'0 0 8px rgba(255,0,64,0.4)'}}/>
+                    </div>
                   </div>
-                </div>
-                {/* Progress */}
-                <div style={{marginBottom:10}}>
-                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
-                    <span style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace',textTransform:'uppercase',letterSpacing:'0.08em'}}>Progression</span>
-                    <span style={{fontSize:10,color:'var(--text-primary)',fontFamily:'monospace',fontWeight:700}}>{done}/{total} séances · {pct}%</span>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>
+                      VMA {p.profile.vma?.toFixed(1)} km/h · {p.profile.sessionsPerWeek}×/sem{p.profile.raceDate?` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}` : ''}
+                    </div>
+                    <button onClick={e=>{e.stopPropagation();onDelete(i);}} style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.15)',borderRadius:8,padding:'4px 10px',color:'rgba(239,68,68,0.6)',fontSize:9,cursor:'pointer',fontFamily:'DM Mono, monospace',fontWeight:600}}>Supprimer</button>
                   </div>
-                  <div style={{height:4,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
-                    <div style={{height:'100%',width:`${pct}%`,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:99,transition:'width 0.6s'}}/>
-                  </div>
-                </div>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                  <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'monospace'}}>
-                    VMA {p.profile.vma.toFixed(1)} km/h · {p.profile.sessionsPerWeek}×/sem
-                    {p.profile.raceDate && ` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}`}
-                  </div>
-                  <button onClick={e=>{e.stopPropagation();onDelete(i);}} style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.15)',borderRadius:8,padding:'4px 10px',color:'rgba(239,68,68,0.6)',fontSize:10,cursor:'pointer',fontFamily:'inherit',fontWeight:600}}>Supprimer</button>
                 </div>
               </div>
             );
           })}
         </div>
+
         {plans.length === 0 && (
-          <div style={{textAlign:'center',padding:'60px 20px',color:'var(--text-muted)'}}>
-            <div style={{fontSize:48,marginBottom:16}}>🏃</div>
-            <div style={{fontSize:16,fontWeight:700,marginBottom:8,color:'var(--text-secondary)'}}>Aucun programme</div>
-            <div style={{fontSize:13,marginBottom:24}}>Crée ton premier plan d'entraînement personnalisé</div>
-            <button onClick={onNew} style={{background:'#FF0040',color:'#fff',border:'none',borderRadius:12,padding:'12px 24px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>Créer un programme</button>
+          <div style={{position:'relative',borderRadius:20,overflow:'hidden',border:'1px solid rgba(255,0,64,0.15)',background:'linear-gradient(135deg, rgba(255,0,64,0.04) 0%, transparent 60%)'}}>
+            <div style={{padding:'12px 18px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
+              <div style={{display:'flex',gap:4}}>
+                <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,0,64,0.4)'}}/>
+                <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(245,158,11,0.4)'}}/>
+                <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(34,197,94,0.4)'}}/>
+              </div>
+              <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.5)',letterSpacing:'0.15em'}}>TRAINING.SYSTEM · INIT</div>
+              <div style={{marginLeft:'auto',width:5,height:5,borderRadius:'50%',background:'#FF0040',boxShadow:'0 0 6px #FF0040'}}/>
+            </div>
+            <div style={{padding:'48px 24px',textAlign:'center'}}>
+              <div style={{fontSize:9,color:'rgba(255,255,255,0.12)',fontFamily:'DM Mono, monospace',letterSpacing:'0.1em',marginBottom:20}}>{'>'} AUCUN PROGRAMME DÉTECTÉ · EN ATTENTE</div>
+              <div style={{fontSize:22,fontWeight:900,letterSpacing:'-0.03em',marginBottom:8,color:'var(--text-primary)'}}>Crée ton programme</div>
+              <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:28,lineHeight:1.6}}>Lance-toi avec un plan personnalisé<br/>généré par l'IA selon ton profil.</div>
+              <button onClick={onNew} style={{background:'linear-gradient(135deg, #FF0040, #cc0033)',color:'#fff',border:'none',borderRadius:12,padding:'14px 28px',fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'Syne, sans-serif',boxShadow:'0 4px 20px rgba(255,0,64,0.3)'}}>Créer un programme</button>
+            </div>
           </div>
         )}
       </main>
