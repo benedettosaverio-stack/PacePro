@@ -1582,7 +1582,8 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                 </div>
                 <div style={{fontSize:16,fontWeight:700,marginBottom:4,color:'var(--text-primary)'}}>{profile.raceName} 🎯</div>
                 <div style={{fontSize:12,color:'var(--text-secondary)',marginBottom:12}}>
-                  {profile.raceDistanceKm} km{profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : <span style={{color:'var(--text-primary)',fontFamily:'monospace'}}>{paces.ef} /km</span>
+                  {isTriathlonDash ? `${profile.triFormat||'olympic'} · ${profile.triSessions||3} séances/sem` : `${profile.raceDistanceKm} km${profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : `}
+                  {!isTriathlonDash && <span style={{color:'var(--text-primary)',fontFamily:'monospace'}}>{paces.ef} /km</span>}
                 </div>
                 <button onClick={()=>setShowNutrition(true)} style={{display:'flex',alignItems:'center',gap:8,background:'rgba(245,158,11,0.1)',border:'1px solid rgba(245,158,11,0.3)',borderRadius:12,padding:'10px 14px',cursor:'pointer',fontFamily:'Syne,sans-serif',width:'100%'}}>
                   <span style={{fontSize:16}}>🥗</span>
