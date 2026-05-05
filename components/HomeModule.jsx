@@ -17,6 +17,30 @@ export default function HomeModule({ onNavigate }) {
     return null;
   });
   const [motivLoading, setMotivLoading] = useState(false);
+  const [displayed, setDisplayed] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    if (!motivation) return;
+    // Une seule phrase max
+    const sentence = motivation.split(/[.!?]/)[0].trim() + '.';
+    let i = 0;
+    setDisplayed('');
+    // Pause de 800ms avant de commencer
+    const pause = setTimeout(() => {
+      const interval = setInterval(() => {
+        if (i < sentence.length) {
+          setDisplayed(sentence.slice(0, i + 1));
+          i++;
+        } else {
+          clearInterval(interval);
+          setShowCursor(false);
+        }
+      }, 28);
+      return () => clearInterval(interval);
+    }, 800);
+    return () => clearTimeout(pause);
+  }, [motivation]);
 
   useEffect(() => {
     try {
@@ -71,7 +95,7 @@ export default function HomeModule({ onNavigate }) {
 Contexte de l'athlète :
 ${context}
 
-Génère UNIQUEMENT le message de motivation, sans introduction ni conclusion. Commence directement. Langue : français.`;
+Génère UNIQUEMENT une seule phrase de motivation courte et percutante (max 15 mots), sans introduction ni conclusion. Commence directement par le prénom. Langue : français.`;
 
       const res = await fetch('/api/gemini', {
         method: 'POST',
@@ -121,26 +145,14 @@ Génère UNIQUEMENT le message de motivation, sans introduction ni conclusion. C
           <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1 }}>{firstName} 👋</div>
         </div>
 
-        {/* Message de motivation */}
+        {/* Message de motivation — typewriter inline */}
         {(motivation || motivLoading) && (
-          <div style={{ marginBottom: 20, position: 'relative' }}>
+          <div style={{ marginBottom: 24 }}>
             {motivLoading ? (
-              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ fontSize: 18 }}>✨</div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>Génération de ton message du jour...</div>
-              </div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic', letterSpacing: '0.01em' }}>...</div>
             ) : (
-              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: '14px 16px', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #6366f1, #FF0040)' }} />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-                      {(() => { try { return JSON.parse(localStorage.getItem('pp_user_settings') || '{}').motivationTone === 'goggins' ? '💀 Goggins mode' : '✨ Message du jour'; } catch { return '✨ Message du jour'; } })()}
-                    </div>
-                    <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--text-primary)', fontStyle: 'italic' }}>{motivation}</div>
-                  </div>
-                  <button onClick={generateMotivation} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 14, padding: 4, flexShrink: 0 }}>↻</button>
-                </div>
+              <div style={{ fontSize: 14, color: 'var(--text-secondary)', fontStyle: 'italic', lineHeight: 1.6, letterSpacing: '0.01em' }}>
+                {displayed}<span style={{ opacity: showCursor ? 1 : 0, color: '#FF0040', fontStyle: 'normal', transition: 'opacity 0.3s' }}>|</span>
               </div>
             )}
           </div>
