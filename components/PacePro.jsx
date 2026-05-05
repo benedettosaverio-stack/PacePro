@@ -2071,14 +2071,33 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         // Fallback — plan minimaliste de 4 semaines
         const fallbackVma = parseFloat(profile.vma || profile.triRunVMA || 14);
         const fallbackPaces = calcPaces(fallbackVma);
+        const fallbackDiscipline = profile.discipline || 'running';
+        const fallbackSessions = {
+          triathlon: (idx) => [
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'swim',tag:'Natation',tagColor:'#38bdf8',tagBg:'rgba(56,189,248,0.12)',title:`${1500+idx*200}m technique`,detail:'Crawl, respiration bilatérale.',allures:[{dot:'#38bdf8',label:'CSS',val:'2:00/100m'}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Vélo Z2',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${60+idx*10} min Z2`,detail:'Endurance fondamentale vélo.',allures:[{dot:'#f59e0b',label:'Z2',val:'150-180W'}]},
+            {id:`w${idx+1}_s2`,day:'Vendredi',type:'ef',tag:'Course EF',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${5+idx} km EF`,detail:'Allure conversation.',allures:[{dot:'#22c55e',label:'EF',val:fallbackPaces.ef}]},
+            {id:`w${idx+1}_s3`,day:'Samedi',type:'key',tag:'Brique',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:`${20+idx*5}km vélo + ${3+idx}km course`,detail:'Enchaînement clé. Transition rapide.',allures:[{dot:'#f59e0b',label:'Vélo',val:'Z2'},{dot:'#22c55e',label:'Course',val:fallbackPaces.ef}]},
+          ],
+          cycling: (idx) => [
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'ef',tag:'Vélo Z2',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${60+idx*15} min Z2`,detail:'Endurance fondamentale.',allures:[{dot:'#f59e0b',label:'Z2',val:'150-180W'}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'frac',tag:'Intervalles',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:`5 × 5 min / 3 min`,detail:'Effort seuil, récup active.',allures:[{dot:'#FF0040',label:'Effort',val:'200-220W'},{dot:'#22c55e',label:'Récup',val:'<130W'}]},
+            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${80+idx*10} km`,detail:'Allure Z2 constante.',allures:[{dot:'#f59e0b',label:'Z2',val:'150-175W'}]},
+          ],
+          swimming: (idx) => [
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Séries',tagColor:'#38bdf8',tagBg:'rgba(56,189,248,0.12)',title:`10 × 100m`,detail:'Récup 20s entre chaque.',allures:[{dot:'#38bdf8',label:'CSS',val:'2:00/100m'}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${1500+idx*300}m continu`,detail:'Allure confortable.',allures:[{dot:'#22c55e',label:'Allure',val:'2:10/100m'}]},
+          ],
+          running: (idx) => [
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Fractionné',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:'6 × 1 min / 1 min',detail:'Échauffement 15 min. 6 répétitions vif/trot.',allures:[{dot:'#ef4444',label:'Effort',val:fallbackPaces.vma90},{dot:'#22c55e',label:'Récup',val:fallbackPaces.recov}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${8+idx} km EF`,detail:'Allure conversation.',allures:[{dot:'#22c55e',label:'Allure',val:fallbackPaces.ef}]},
+            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${12+idx*2} km`,detail:'Allure maîtrisée.',allures:[{dot:'#22c55e',label:'Début',val:fallbackPaces.ef},{dot:'#f59e0b',label:'Fin',val:fallbackPaces.tempo}]},
+          ],
+        };
         const fallbackPlan = Array.from({length:4},(_,idx)=>({
           week:idx+1, phase:'base', label:'Base', color:'#6366f1', bg:'rgba(99,102,241,0.12)',
           dateRange:'', weeklyKm:0, isKey:false, isDeload:false,
-          sessions:[
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Fractionné',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:'6 × 1 min / 1 min',detail:'Échauffement 15 min. 6 répétitions vif/trot. Retour calme 10 min.',allures:[{dot:'#ef4444',label:'Effort',val:fallbackPaces.vma90},{dot:'#22c55e',label:'Récup',val:fallbackPaces.recov}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${8+idx} km EF`,detail:'Allure conversation. Terrain varié.',allures:[{dot:'#22c55e',label:'Allure',val:fallbackPaces.ef}]},
-            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${12+idx*2} km`,detail:'Allure maîtrisée. Progression sur le dernier tiers.',allures:[{dot:'#22c55e',label:'Début',val:fallbackPaces.ef},{dot:'#f59e0b',label:'Fin',val:fallbackPaces.tempo}]},
-          ]
+          sessions: (fallbackSessions[fallbackDiscipline] || fallbackSessions.running)(idx),
         }));
         const newPlans = [...plans, { profile, plan: fallbackPlan }];
         savePlans(newPlans);
