@@ -23,7 +23,8 @@ export default function HomeModule({ onNavigate }) {
   useEffect(() => {
     if (!motivation) return;
     // Une seule phrase max
-    const sentence = motivation.split(/[.!?]/)[0].trim() + '.';
+    const match = motivation.match(/^[^.!?]*[.!?]/);
+    const sentence = match ? match[0].trim() : motivation.trim();
     let i = 0;
     setDisplayed('');
     // Pause de 800ms avant de commencer
