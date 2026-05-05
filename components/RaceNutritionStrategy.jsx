@@ -82,7 +82,16 @@ function buildStrategy(profile, userSettings) {
   // Estimation temps selon discipline
   let estTimeMin;
   if (isTriathlonNutrition) {
-    estTimeMin = triFmt.timeMin;
+    // Estimer le temps depuis les chronos du profil si disponibles
+    if (profile.triSwimTime && profile.triCyclingFTP && profile.triRunVMA) {
+      const swimMin = (() => { const [m,s]=(profile.triSwimTime||'8:00').split(':').map(Number); return ((m||8)*60+(s||0))/60 * (triFmt.swim*1000/400); })();
+      const bikeMin = triFmt.bike / (profile.triCyclingLevel==='beginner'?25:profile.triCyclingLevel==='intermediate'?32:profile.triCyclingLevel==='advanced'?37:40) * 60;
+      const runMin = triFmt.run * (60 / (parseFloat(profile.triRunVMA)*0.75));
+      const transMin = triFmt === TRI_FORMATS.ironman ? 15 : 8;
+      estTimeMin = Math.round(swimMin + bikeMin + runMin + transMin);
+    } else {
+      estTimeMin = triFmt.timeMin;
+    }
   } else if (isCycling) {
     const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
     estTimeMin = Math.round((dist / avgSpeed) * 60 * (1 + elev/10000));
