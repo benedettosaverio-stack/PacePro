@@ -57,11 +57,6 @@ export default function HomeModule({ onNavigate }) {
   }, []);
 
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    try {
-      const cached = JSON.parse(localStorage.getItem('pp_motivation') || '{}');
-      if (cached.date === today && cached.text) return;
-    } catch {}
     generateMotivation();
   }, []);
 
