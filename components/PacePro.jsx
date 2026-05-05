@@ -991,31 +991,12 @@ function buildTriathlonPrompt(profile, aiWeeks) {
   const paceEF = Math.floor(mPerKm)+':'+(Math.round((mPerKm%1)*60)).toString().padStart(2,'0');
   const paceZ2bike = Math.round(ftp*0.68)+'-'+Math.round(ftp*0.78)+'W';
   const transitionRule = profile.triTransition === 'slow' ? 'inclure 1 seance transition T1/T2 par semaine' : 'transitions integrees aux briques';
-  return 'Tu es un coach triathlon expert niveau Ironman (methode Friel/Coggan). Genere un plan entrainement triathlon COMPLET et PROGRESSIF en JSON.'
-    + '\n\nFORMAT CIBLE : ' + fmt.toUpperCase() + ' — Nage ' + fmtDist.swim + 'm · Velo ' + fmtDist.bike + 'km · Course ' + fmtDist.run + 'km'
-    + '\nEPREUVE : ' + (profile.raceName||'') + ' le ' + (profile.raceDate||'')
-    + '\nATHLETE :'
-    + '\n- Natation : ' + profile.triSwimLevel + ' — CSS ' + cssStr + '/100m'
-    + '\n- Velo : ' + profile.triCyclingLevel + ' — FTP ' + ftp + 'W — Z2 : ' + paceZ2bike
-    + '\n- Course : ' + profile.triRunLevel + ' — VMA ' + vmaRun + 'km/h — EF : ' + paceEF + '/km'
-    + '\n- FCmax : ' + profile.triFCmax + ' bpm | Transitions : ' + profile.triTransition
-    + '\n- Dominant : ' + profile.triDominant + ' | A renforcer : ' + profile.triWeakDiscipline
-    + '\n- Volume : ' + profile.triWeeklyHours + 'h/sem | ' + profile.triSessions + ' seances/sem'
-    + '\n- combinaison=' + (profile.triHasCombinaiison?'oui':'non') + ', velo TT=' + (profile.triHasTTBike?'oui':'non')
-    + '\nDUREE : ' + aiWeeks + ' semaines (IMPORTANT: genere exactement ' + aiWeeks + ' semaines, MAX 3 seances par semaine pour rester concis)'
-    + '\n\nREGLES COACHING :'
-    + '\n1. PHASES : Base (aerobie, technique) -> Build (volume+intensite) -> Peak (specifique) -> Taper (affutage)'
-    + '\n2. PROGRESSION : volume +5-8%/sem, decharge toutes les 3-4 sem (-30%)'
-    + '\n3. HEBDO : 2-3 natation, 2-3 velo, 2 course, 1 brique minimum'
-    + '\n4. BRIQUES : velo->course, distance proportionnelle semaine/format'
-    + '\n5. DISCIPLINE FAIBLE (' + profile.triWeakDiscipline + ') : +1 seance/semaine'
-    + '\n6. ALLURES : CSS natation ' + cssStr + '/100m, zones FTP velo, VMA course'
-    + '\n7. TRANSITIONS : ' + transitionRule
-    + '\n8. TAPER : 2 dernieres semaines, volume -40-50%, garder intensite'
-    + '\n9. isDeload=true toutes les 3-4 semaines, isKey=true semaines peak/brique longue'
-    + '\nCOULEURS : Natation="#38bdf8", Velo="#f59e0b", Course="#22c55e", Brique="#FF0040"'
-    + '\n\nReponds UNIQUEMENT en JSON valide sans markdown :'
-    + '\n[{"week":1,"phase":"base","label":"Base aerobie","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":0,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Natation","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"2000m technique","detail":"Travail technique crawl.","allures":[{"dot":"#38bdf8","label":"CSS","val":"2:00/100m"}]}]}]';
+  return 'Genere ' + aiWeeks + ' semaines plan triathlon ' + fmt + ' en JSON. MAX 3 seances/semaine courtes.'
+    + ' Nage CSS ' + cssStr + '/100m. Velo FTP ' + ftp + 'W Z2=' + paceZ2bike + '. Course VMA ' + vmaRun + 'km/h EF=' + paceEF + '/km.'
+    + ' Couleurs: natation=#38bdf8 velo=#f59e0b course=#22c55e brique=#FF0040.'
+    + ' 1 brique velo+course par semaine. Descriptions max 50 chars. Progressif.'
+    + ' UNIQUEMENT JSON valide sans markdown ni texte:'
+    + ' [{"week":1,"phase":"base","label":"Base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":0,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Natation","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"1500m technique","detail":"Crawl technique.","allures":[{"dot":"#38bdf8","label":"CSS","val":"' + cssStr + '/100m"}]},{"id":"w1_s1","day":"Mercredi","type":"ef","tag":"Velo Z2","tagColor":"#f59e0b","tagBg":"rgba(245,158,11,0.12)","title":"60 min Z2","detail":"Endurance velo.","allures":[{"dot":"#f59e0b","label":"Z2","val":"' + paceZ2bike + '"}]},{"id":"w1_s2","day":"Samedi","type":"key","tag":"Brique","tagColor":"#FF0040","tagBg":"rgba(255,0,64,0.12)","title":"30km velo + 5km course","detail":"Enchainement cle.","allures":[{"dot":"#FF0040","label":"Zone","val":"Z2-Z3"}]}]}]';
 }
 
 function Onboarding({ onComplete }) {
