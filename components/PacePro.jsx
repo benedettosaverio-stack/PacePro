@@ -1748,6 +1748,36 @@ export default function PacePro() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [showSplash]);
   const [showProfile, setShowProfile] = useState(false);
+  // Détection du callback OAuth Supabase
+useEffect(() => {
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) {
+    const params = new URLSearchParams(hash.replace('#', ''));
+    const accessToken = params.get('access_token');
+    if (accessToken) {
+      import('@supabase/supabase-js').then(({ createClient }) => {
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        );
+        supabase.auth.getUser(accessToken).then(({ data }) => {
+          if (data?.user) {
+            const u = {
+              id: data.user.id,
+              name: data.user.user_metadata?.full_name || data.user.email,
+              email: data.user.email,
+              photo: data.user.user_metadata?.avatar_url || null,
+            };
+            localStorage.setItem('pp_user', JSON.stringify(u));
+            localStorage.setItem('pp_user_id', u.id);
+            setUser(u);
+            window.history.replaceState({}, '', '/');
+          }
+        });
+      });
+    }
+  }
+}, []);
   const [user, setUser] = useState(() => {
     try {
       // Vérifie d'abord pp_user (email auth)
