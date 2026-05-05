@@ -1995,7 +1995,22 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
                 tagBg: s.tagBg || `${color}18`,
                 title: s.title || s.name || 'Entraînement',
                 detail: s.detail || s.description || '',
-                allures: s.allures || (s.intensity ? [{dot:color, label:'Intensité', val:s.intensity}] : [{dot:color, label:'Zone', val:'Z2'}]),
+                allures: s.allures || (() => {
+                  const vmaRun = parseFloat(profile.triRunVMA || profile.vma || 12);
+                  const ftp = parseFloat(profile.triCyclingFTP || 200);
+                  const t400 = profile.triSwimTime || '8:00';
+                  const [tm2,ts2] = t400.split(':').map(Number);
+                  const sec400 = (tm2||8)*60+(ts2||0);
+                  const css = Math.round(sec400/4*0.95);
+                  const cssStr = Math.floor(css/60)+':'+(css%60).toString().padStart(2,'0');
+                  const pRun = calcPaces(vmaRun);
+                  const intensityMap = {
+                    low: discipline==='swim' ? [{dot:color,label:'CSS',val:cssStr+'/100m'}] : discipline==='bike' ? [{dot:color,label:'Z1-Z2',val:Math.round(ftp*0.56)+'-'+Math.round(ftp*0.75)+'W'}] : [{dot:color,label:'EF',val:pRun.ef}],
+                    moderate: discipline==='swim' ? [{dot:color,label:'CSS',val:cssStr+'/100m'}] : discipline==='bike' ? [{dot:color,label:'Tempo',val:Math.round(ftp*0.76)+'-'+Math.round(ftp*0.90)+'W'}] : [{dot:color,label:'Tempo',val:pRun.tempo}],
+                    high: discipline==='swim' ? [{dot:color,label:'Vitesse',val:cssStr+'/100m'}] : discipline==='bike' ? [{dot:color,label:'Seuil',val:Math.round(ftp*0.91)+'-'+Math.round(ftp*1.05)+'W'}] : [{dot:color,label:'Seuil',val:pRun.threshold}],
+                  };
+                  return intensityMap[s.intensity] || intensityMap[s.intensity?.toLowerCase()] || [{dot:color,label:'Zone',val:'Z2'}];
+                })(),
                 completed: false,
                 ...s,
                 id: s.id || `w${idx+1}_s${si}`,
