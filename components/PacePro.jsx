@@ -1994,13 +1994,15 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
       } catch(e) {
         console.error('AI plan error:', e);
         // Fallback — plan minimaliste de 4 semaines
+        const fallbackVma = parseFloat(profile.vma || profile.triRunVMA || 14);
+        const fallbackPaces = calcPaces(fallbackVma);
         const fallbackPlan = Array.from({length:4},(_,idx)=>({
           week:idx+1, phase:'base', label:'Base', color:'#6366f1', bg:'rgba(99,102,241,0.12)',
           dateRange:'', weeklyKm:0, isKey:false, isDeload:false,
           sessions:[
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Course · Fractionné',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:'6 × 1 min / 1 min',detail:'Échauffement 15 min. 6 répétitions vif/trot. Retour calme 10 min.',allures:[{dot:'#ef4444',label:'Effort',val:calcPaces(profile.vma||14).vma90},{dot:'#22c55e',label:'Récup',val:calcPaces(profile.vma||14).recov}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Course · Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${8+idx} km EF`,detail:'Allure conversation. Terrain varié.',allures:[{dot:'#22c55e',label:'Allure',val:calcPaces(profile.vma||14).ef}]},
-            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Course · Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${12+idx*2} km`,detail:'Allure maîtrisée. Progression sur le dernier tiers.',allures:[{dot:'#22c55e',label:'Début',val:calcPaces(profile.vma||14).ef},{dot:'#f59e0b',label:'Fin',val:calcPaces(profile.vma||14).tempo}]},
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Fractionné',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:'6 × 1 min / 1 min',detail:'Échauffement 15 min. 6 répétitions vif/trot. Retour calme 10 min.',allures:[{dot:'#ef4444',label:'Effort',val:fallbackPaces.vma90},{dot:'#22c55e',label:'Récup',val:fallbackPaces.recov}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${8+idx} km EF`,detail:'Allure conversation. Terrain varié.',allures:[{dot:'#22c55e',label:'Allure',val:fallbackPaces.ef}]},
+            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${12+idx*2} km`,detail:'Allure maîtrisée. Progression sur le dernier tiers.',allures:[{dot:'#22c55e',label:'Début',val:fallbackPaces.ef},{dot:'#f59e0b',label:'Fin',val:fallbackPaces.tempo}]},
           ]
         }));
         const newPlans = [...plans, { profile, plan: fallbackPlan }];
