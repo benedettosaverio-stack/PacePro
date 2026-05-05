@@ -991,7 +991,7 @@ function buildTriathlonPrompt(profile, aiWeeks) {
   const paceEF = Math.floor(mPerKm)+':'+(Math.round((mPerKm%1)*60)).toString().padStart(2,'0');
   const paceZ2bike = Math.round(ftp*0.68)+'-'+Math.round(ftp*0.78)+'W';
   const transitionRule = profile.triTransition === 'slow' ? 'inclure 1 seance transition T1/T2 par semaine' : 'transitions integrees aux briques';
-  return 'Genere ' + aiWeeks + ' semaines plan triathlon ' + fmt + ' en JSON. MAX 3 seances/semaine courtes.'
+  return 'Genere ' + aiWeeks + ' semaines plan triathlon ' + fmt + ' en JSON. ' + profile.triSessions + ' seances/semaine.'
     + ' Nage CSS ' + cssStr + '/100m. Velo FTP ' + ftp + 'W Z2=' + paceZ2bike + '. Course VMA ' + vmaRun + 'km/h EF=' + paceEF + '/km.'
     + ' Couleurs: natation=#38bdf8 velo=#f59e0b course=#22c55e brique=#FF0040.'
     + ' 1 brique velo+course par semaine. Descriptions max 50 chars. Progressif.'
