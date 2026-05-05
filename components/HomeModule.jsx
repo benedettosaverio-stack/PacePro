@@ -156,25 +156,40 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
 
         {/* Next session card */}
         {nextSession ? (
-          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: 'var(--bg-card)', borderTop: '1px solid rgba(255,0,64,0.12)', borderLeft: '1px solid rgba(255,0,64,0.12)', borderRight: '1px solid rgba(255,0,64,0.12)', borderBottom: 'none', minHeight: 160 }}>
+          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(255,0,64,0.08) 0%, rgba(0,0,0,0.95) 60%)', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
+            {/* Glow top right */}
+            <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.1) 0%, transparent 70%)', pointerEvents:'none' }}/>
             {/* SVG background */}
-            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.45 }} />
-            <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)', borderRadius:20 }} />
+            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.3 }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 100%)', borderRadius:20 }} />
 
+            {/* Terminal header */}
+            <div style={{ position:'relative', zIndex:1, padding:'10px 14px', borderBottom:'1px solid rgba(255,0,64,0.15)', display:'flex', alignItems:'center', gap:8 }}>
+              <div style={{ display:'flex', gap:4 }}>
+                <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(255,0,64,0.6)' }}/>
+                <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(245,158,11,0.6)' }}/>
+                <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(34,197,94,0.6)' }}/>
+              </div>
+              <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.6)', letterSpacing:'0.15em' }}>PROCHAINE SÉANCE · S{nextSession.week} · {nextSession.day}</div>
+              <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5 }}>
+                <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040' }}/>
+                <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.7)', letterSpacing:'0.1em' }}>LIVE</span>
+              </div>
+            </div>
 
             {/* Content */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '16px 16px 48px' }}>
+            <div style={{ position: 'relative', zIndex: 1, padding: '14px 14px 48px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 9, color: 'rgba(255,0,64,0.8)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>‹ Prochaine séance · S{nextSession.week} · {nextSession.day}</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4, color: '#fff' }}>{nextSession.title}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{nextSession.detail}</div>
+                  <div style={{ fontSize: 9, color: 'rgba(255,0,64,0.7)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>{'>'} {nextSession.tag}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6, color: '#fff', textShadow:'0 2px 20px rgba(0,0,0,0.5)' }}>{nextSession.title}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>{nextSession.detail}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 12 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,0,64,0.15)', border: '1px solid rgba(255,0,64,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(255,0,64,0.3), rgba(255,0,64,0.1))', border: '1px solid rgba(255,0,64,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow:'0 0 16px rgba(255,0,64,0.2)' }}>
                     <svg width={14} height={14} viewBox="0 0 24 24" fill="#FF0040"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   </div>
-                  <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Go</span>
+                  <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Go</span>
                 </div>
               </div>
             </div>
