@@ -344,23 +344,30 @@ export default function FuelRecoveryHub({ onSync }) {
 
       <div style={{ position: 'relative', zIndex: 1, padding: '16px 16px 0' }}>
 
-        {/* Status badge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: energyColor, boxShadow: `0 0 10px ${energyColor}` }}/>
-            <span style={{ fontSize: 10, fontWeight: 700, color: energyColor, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>
-              {isIntense ? 'Recharge · Post-Intensif' : isPostRun ? 'Récupération · Post-Run' : 'Maintenance · Repos'}
-            </span>
-          </div>
-          <div style={{ display:'flex', gap:6, alignItems:'center' }}>
-            {isPerte && <span style={{ fontSize:9, padding:'2px 7px', borderRadius:99, background:'rgba(255,100,0,0.15)', color:'#f97316', border:'1px solid rgba(255,100,0,0.3)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>-{deficit} kcal déficit</span>}
-            <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{kcal} kcal/j</span>
+        {/* Terminal header */}
+        <div style={{ position:'relative', borderRadius:16, overflow:'hidden', marginBottom:16, border:'1px solid rgba(56,189,248,0.2)', background:'linear-gradient(135deg, rgba(56,189,248,0.04) 0%, transparent 60%)' }}>
+          <div style={{ padding:'10px 14px', display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(255,0,64,0.5)' }}/>
+              <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(245,158,11,0.5)' }}/>
+              <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(34,197,94,0.5)' }}/>
+            </div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(56,189,248,0.6)', letterSpacing:'0.15em' }}>PACEPRO · NUTRITION LAB</div>
+            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:6 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:energyColor, boxShadow:`0 0 6px ${energyColor}` }}/>
+              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:energyColor, letterSpacing:'0.1em', textTransform:'uppercase' }}>{isIntense ? 'POST-INTENSIF' : isPostRun ? 'POST-RUN' : 'REPOS'}</span>
+              {isPerte && <span style={{ fontSize:8, padding:'1px 6px', borderRadius:4, background:'rgba(249,115,22,0.15)', color:'#f97316', fontFamily:'DM Mono, monospace', fontWeight:700 }}>-{deficit} kcal</span>}
+              <span style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{kcal} kcal/j</span>
+            </div>
           </div>
         </div>
 
         {/* ── HYDRATATION ── */}
-        <SectionHeader label="Hydratation" color={waterColor} />
-        <div style={{ background: 'var(--bg-card)', border: `1px solid ${waterColor}30`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+          <div style={{ width:3, height:14, background:waterColor, borderRadius:2, boxShadow:`0 0 8px ${waterColor}` }}/>
+          <div style={{ fontSize:9, fontWeight:700, color:waterColor, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Hydratation</div>
+        </div>
+        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${waterColor}25`, background:`linear-gradient(135deg, ${waterColor}06 0%, transparent 60%)`, padding:'20px' }}>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 16 }}>
             {/* Wave circle */}
             <div style={{ width: 100, height: 100, flexShrink: 0 }}>
@@ -386,11 +393,17 @@ export default function FuelRecoveryHub({ onSync }) {
         </div>
 
         {/* ── ÉNERGIE & MACROS ── */}
-        <SectionHeader label="Énergie & Macros" color={energyColor} />
-        <div style={{ background: 'var(--bg-card)', border: `1px solid ${energyColor}30`, borderRadius: 20, padding: '20px', marginBottom: 16 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+          <div style={{ width:3, height:14, background:energyColor, borderRadius:2, boxShadow:`0 0 8px ${energyColor}` }}/>
+          <div style={{ fontSize:9, fontWeight:700, color:energyColor, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Énergie & Macros</div>
+        </div>
+        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${energyColor}25`, background:`linear-gradient(135deg, ${energyColor}06 0%, transparent 60%)`, padding:'20px' }}>
           {/* Analyse IA */}
-          <div style={{ marginBottom: 16, background: 'var(--bg-card)', borderRadius: 14, padding: '12px 14px', borderLeft: `3px solid ${energyColor}` }}>
-            <div style={{ fontSize: 8, color: energyColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 6 }}>✦ ANALYSE IA</div>
+          <div style={{ marginBottom: 16, background: 'rgba(255,255,255,0.02)', borderRadius: 12, padding: '12px 14px', border:`1px solid ${energyColor}20` }}>
+            <div style={{ fontSize: 8, color: energyColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 6, display:'flex', alignItems:'center', gap:6 }}>
+              <div style={{ width:4, height:4, borderRadius:'50%', background:energyColor, boxShadow:`0 0 4px ${energyColor}` }}/>
+              ANALYSE IA
+            </div>
             <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, minHeight: 40 }}>
               {status === 'loading' ? 'Analyse en cours...' : typedAI}
               {status === 'done' && typedAI.length < aiText.length && <span style={{ opacity: 0.5 }}>|</span>}
@@ -431,7 +444,10 @@ export default function FuelRecoveryHub({ onSync }) {
         </div>
 
         {/* ── REPAS RECOMMANDÉ ── */}
-        <SectionHeader label="Repas recommandé" color="#a78bfa" />
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+          <div style={{ width:3, height:14, background:'#a78bfa', borderRadius:2, boxShadow:'0 0 8px #a78bfa' }}/>
+          <div style={{ fontSize:9, fontWeight:700, color:'#a78bfa', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Repas recommandé</div>
+        </div>
         <MealCard meal={meals[0]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[0])} />
         {meals[1] && <div style={{marginTop:10}}><MealCard meal={meals[1]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[1])} /></div>}
         {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
