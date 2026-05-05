@@ -603,6 +603,9 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
       key: { title:'Répétition générale ⭐', text:'Cette séance simule les conditions du jour J. Même équipement, même terrain si possible. L\'objectif est de valider ta stratégie de course et de gagner en confiance.', benefit:'↑ Confiance · ✓ Stratégie validée · ↑ Préparation mentale' },
       taper: { title:'Pourquoi cette séance légère ?', text:'En phase d\'affûtage, l\'objectif est de maintenir la vivacité sans accumuler de fatigue. Ton corps absorbe les adaptations des semaines précédentes. Moins c\'est plus.', benefit:'↓ Fatigue · ↑ Fraîcheur · ✓ Arriver reposé' },
     };
+      swim: { title:'Pourquoi cette séance natation ?', text:'La natation développe l\'endurance aérobie avec un impact minimal sur les articulations. Cruciale en triathlon pour arriver frais sur le vélo.', benefit:'↑ Technique · ↑ Économie · ↓ Impact articulaire' },
+
+    if (s.title && (s.title.toLowerCase().includes('repos') || s.title.toLowerCase().includes('récup'))) return why.recov;
     return why[s.type] || why.ef;
   };
 
