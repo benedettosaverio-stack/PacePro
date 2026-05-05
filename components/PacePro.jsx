@@ -1404,10 +1404,31 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     }
     return calcPaces(profile.vma);
   })();
-  const totalSessions = plan.reduce((a,w)=>a+w.sessions.length,0);
+  // Recalcule les allures dynamiquement pour les plans running
+  const livePlan = (discipline === 'running') ? plan.map(week => ({
+    ...week,
+    sessions: week.sessions.map(s => {
+      const rePaces = calcPaces(profile.vma);
+      const allureMap = {
+        'ef': [{dot:'#22c55e',label:'Sortie entière',val:rePaces.ef}],
+        'long': [{dot:'#22c55e',label:'Début 2/3',val:rePaces.ef},{dot:'#f59e0b',label:'Fin 1/3',val:rePaces.tempo}],
+        'trail': [{dot:'#22c55e',label:'Plat',val:rePaces.ef},{dot:'#a78bfa',label:'Montées',val:'marche active'}],
+        'taper': [{dot:'#22c55e',label:'Sortie',val:rePaces.recov}],
+      };
+      if (s.type === 'frac') {
+        const effortAllure = s.title.includes('seuil') || s.title.includes('min') 
+          ? [{dot:'#FF0040',label:'Effort',val:rePaces.threshold},{dot:'#22c55e',label:'Récup',val:rePaces.recov}]
+          : [{dot:'#ef4444',label:'Effort',val:rePaces.vma90},{dot:'#22c55e',label:'Récup',val:rePaces.recov}];
+        return {...s, allures: effortAllure};
+      }
+      return allureMap[s.type] ? {...s, allures: allureMap[s.type]} : s;
+    })
+  })) : plan;
+
+  const totalSessions = livePlan.reduce((a,w)=>a+w.sessions.length,0);
   const doneCount = Object.values(completed).filter(Boolean).length;
   const progress = Math.round((doneCount/totalSessions)*100);
-  const week = plan[activeWeek] || plan[0] || {sessions:[], phase:'base', label:'', color:'#FF0040', bg:'', dateRange:'', weeklyKm:0};
+  const week = livePlan[activeWeek] || livePlan[0] || {sessions:[], phase:'base', label:'', color:'#FF0040', bg:'', dateRange:'', weeklyKm:0};
   const nextSession = plan.flatMap(w=>w.sessions.map(s=>({...s,week:w.week}))).find(s=>!completed[s.id]);
   const handleComplete = (id, undo = false) => {
     if (undo) {
@@ -1520,7 +1541,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
         ) : (
           <div>
             <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:4,marginBottom:18}}>
-              {plan.map((w,i)=>(
+              {livePlan.map((w,i)=>(
                 <button key={i} onClick={()=>setActiveWeek(i)} style={{flexShrink:0,borderRadius:12,padding:'6px 14px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeWeek===i?'rgba(255,0,64,0.15)':'var(--week-tabs-inactive)',border:`1px solid ${activeWeek===i?'rgba(255,0,64,0.4)':'var(--week-tabs-border)'}`,color:activeWeek===i?'#FF0040':'var(--week-tabs-color)'}}>
                   S{w.week}{w.isKey?' ★':''}
                 </button>
