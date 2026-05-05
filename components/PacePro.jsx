@@ -1969,8 +1969,10 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
         const aiPlan = JSON.parse(text);
         console.log('AI Plan week count:', aiPlan.length);
         console.log('Week 1 sessions:', aiPlan[0]?.sessions?.length, JSON.stringify(aiPlan[0]?.sessions?.[0]).slice(0,200));
-        // Ajouter dateRange si manquant
+        // Ajouter dateRange si manquant + normaliser sessions
         const startDate = new Date();
+        const disciplineColors = {swim:'#38bdf8', bike:'#f59e0b', run:'#22c55e', brique:'#FF0040', transition:'#a78bfa'};
+        const disciplineLabels = {swim:'Natation', bike:'Vélo', run:'Course', brique:'Brique', transition:'Transition', technique:'Technique', ef:'Endurance', frac:'Fractionné', long:'Sortie longue', key:'Séance clé'};
         const enrichedPlan = aiPlan.map((week, idx) => {
           const wStart = new Date(startDate);
           wStart.setDate(startDate.getDate() + idx * 7);
@@ -1980,10 +1982,24 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
           return {
             ...week,
             dateRange: week.dateRange || `${fmt(wStart)} – ${fmt(wEnd)}`,
-            sessions: (week.sessions || []).map((s, si) => ({
-              ...s,
-              id: s.id || `w${idx+1}_s${si}`,
-            }))
+            sessions: (week.sessions || []).map((s, si) => {
+              const discipline = s.discipline || s.type || 'run';
+              const color = disciplineColors[discipline] || '#22c55e';
+              const label = disciplineLabels[discipline] || discipline;
+              return {
+                day: s.day || 'Lundi',
+                type: s.type || discipline,
+                tag: s.tag || label,
+                tagColor: s.tagColor || color,
+                tagBg: s.tagBg || `${color}18`,
+                title: s.title || s.name || 'Entraînement',
+                detail: s.detail || s.description || '',
+                allures: s.allures || (s.intensity ? [{dot:color, label:'Intensité', val:s.intensity}] : [{dot:color, label:'Zone', val:'Z2'}]),
+                completed: false,
+                ...s,
+                id: s.id || `w${idx+1}_s${si}`,
+              };
+            })
           };
         });
         const newPlans = [...plans, { profile, plan: enrichedPlan }];
