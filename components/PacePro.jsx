@@ -606,6 +606,12 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
       recov: { title:'Récupération active', text:'La récupération active élimine les déchets métaboliques tout en maintenant la circulation. Elle accélère la régénération sans fatiguer le système nerveux.', benefit:'↓ Fatigue · ↑ Récupération · ↑ Préparation' },
     };
     if (s.title && (s.title.toLowerCase().includes('repos') || s.title.toLowerCase().includes('récup'))) return why.recov;
+    // Utiliser le tag pour les séances triathlon avec type générique
+    const tagLower = (s.tag||'').toLowerCase();
+    if (tagLower.includes('natation') || tagLower.includes('nage')) return why.swim;
+    if (tagLower.includes('brique')) return why.key;
+    if (tagLower.includes('vélo') || tagLower.includes('velo')) return { title:'Pourquoi cette séance vélo ?', text:'Le travail vélo développe l\'endurance spécifique et la puissance aérobie. En triathlon, le vélo représente 50% du temps de course — c\'est la discipline la plus déterminante pour le classement final.', benefit:'↑ Puissance aérobie · ↑ Économie · ↑ Préparation course à pied' };
+    if (tagLower.includes('transition')) return { title:'Pourquoi travailler les transitions ?', text:'Les transitions T1 et T2 sont souvent négligées mais peuvent représenter plusieurs minutes sur un triathlon. Un bon enchaînement mental et physique est crucial pour maintenir le rythme.', benefit:'↑ Gestion mentale · ↓ Perte de temps · ↑ Performance globale' };
     return why[s.type] || why.ef;
   };
 
