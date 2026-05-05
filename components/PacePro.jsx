@@ -1503,7 +1503,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
             <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
               {[
                 {label:'VMA',value:`${profile.vma.toFixed(1)}`,unit:'km/h',color:'#FF0040'},
-                {label:'Séances/sem',value:`${profile.sessionsPerWeek}×`,unit:profile.trainingDays.slice(0,2).join(', '),color:'#60a5fa'},
+                {label:'Séances/sem',value:`${profile.sessionsPerWeek}×`,unit:(profile.trainingDays||[]).slice(0,2).join(', ')||`${profile.sessionsPerWeek} fois/sem`,color:'#60a5fa'},
                 {label:'Programme',value:`${profile.weeks}`,unit:'semaines',color:'#f59e0b'},
               ].map(({label,value,unit,color})=>(
                 <div key={label} style={{position:'relative',borderRadius:10,border:`1px solid ${color}15`,background:`${color}06`,padding:'10px 8px',textAlign:'center',overflow:'hidden'}}>
