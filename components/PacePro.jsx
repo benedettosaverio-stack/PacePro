@@ -1002,7 +1002,7 @@ function buildTriathlonPrompt(profile, aiWeeks) {
     + '\n- Dominant : ' + profile.triDominant + ' | A renforcer : ' + profile.triWeakDiscipline
     + '\n- Volume : ' + profile.triWeeklyHours + 'h/sem | ' + profile.triSessions + ' seances/sem'
     + '\n- combinaison=' + (profile.triHasCombinaiison?'oui':'non') + ', velo TT=' + (profile.triHasTTBike?'oui':'non')
-    + '\nDUREE : ' + aiWeeks + ' semaines'
+    + '\nDUREE : ' + aiWeeks + ' semaines (IMPORTANT: genere exactement ' + aiWeeks + ' semaines, MAX 3 seances par semaine pour rester concis)'
     + '\n\nREGLES COACHING :'
     + '\n1. PHASES : Base (aerobie, technique) -> Build (volume+intensite) -> Peak (specifique) -> Taper (affutage)'
     + '\n2. PROGRESSION : volume +5-8%/sem, decharge toutes les 3-4 sem (-30%)'
@@ -1889,7 +1889,7 @@ window.location.reload();
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
-        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 8 : 6); // Max tokens par appel IA
+        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 4 : 6); // Max tokens par appel IA
         const raceKm = parseFloat(profile.raceDistanceKm) || 100;
         const weeklyHours = profile.cyclingWeeklyHours || 8;
         const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
@@ -1982,7 +1982,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
           return {
             ...week,
             dateRange: week.dateRange || `${fmt(wStart)} – ${fmt(wEnd)}`,
-            sessions: (week.sessions || []).map((s, si) => {
+            sessions: Array.isArray(week.sessions) ? week.sessions.map((s, si) => {
               const discipline = s.discipline || s.type || 'run';
               const color = disciplineColors[discipline] || '#22c55e';
               const label = disciplineLabels[discipline] || discipline;
@@ -1999,7 +1999,7 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
                 ...s,
                 id: s.id || `w${idx+1}_s${si}`,
               };
-            })
+            }) : []
           };
         });
         const newPlans = [...plans, { profile, plan: enrichedPlan }];
