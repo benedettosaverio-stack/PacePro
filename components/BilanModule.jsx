@@ -218,37 +218,79 @@ Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recomma
         {stats.muscus.length === 0 && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Aucune séance muscu détectée sur Strava.</div>}
       </div>
 
-      {/* Bilan IA */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderLeft: '3px solid #FF0040', borderRadius: 18, padding: '16px' }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 14 }}>Bilan IA</div>
-        {!aiText && !aiLoading && (
-          <button onClick={getAIBilan} style={{ width: '100%', padding: '14px', borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #FF0040, #b91c1c)', color: '#fff', fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <Icon name="lightning" size={16} color="#fff" /> Générer mon bilan IA
-          </button>
-        )}
-        {aiLoading && (
-          <div style={{ textAlign: 'center', padding: '16px 0', color: 'var(--text-muted)', fontSize: 13 }}>Analyse en cours…</div>
-        )}
-        {aiText && (
-          <div>
-            {aiText.split('\n').map((line, i) => {
-              const trimmed = line.trim();
-              if (!trimmed) return null;
-              const isReco = /^[1-9][.)]\s/.test(trimmed);
-              const isTitle = /^(Bilan|Recommandation|Points?|État|Analyse)/i.test(trimmed) && trimmed.endsWith(':');
-              if (isTitle) return <div key={i} style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginTop: 14, marginBottom: 8, fontFamily: 'DM Mono, monospace' }}>{trimmed.replace(/:$/, '')}</div>;
-              if (isReco) return (
-                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
-                  <div style={{ minWidth: 22, height: 22, borderRadius: 7, background: 'rgba(255,0,64,0.12)', color: '#FF0040', fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Mono, monospace', flexShrink: 0 }}>{trimmed[0]}</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)' }}>{trimmed.replace(/^[1-9][.)]\s*/, '')}</div>
-                </div>
-              );
-              return <div key={i} style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)', marginBottom: 6 }}>{trimmed}</div>;
-            })}
-            <button onClick={getAIBilan} style={{ marginTop: 14, background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', gap: 6 }}>↻ Régénérer</button>
+      {/* Bilan IA — design premium */}
+      <div style={{ position:'relative', borderRadius: 20, overflow:'hidden', marginBottom: 12 }}>
+        {/* Fond glassmorphism + glow */}
+        <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.04) 50%, rgba(0,0,0,0) 100%)', pointerEvents:'none' }}/>
+        <div style={{ position:'absolute', top:-40, right:-40, width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
+        <div style={{ position:'relative', border:'1px solid rgba(255,0,64,0.2)', borderRadius: 20, padding:'20px' }}>
+          {/* Header terminal */}
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16, paddingBottom:12, borderBottom:'1px solid rgba(255,0,64,0.1)' }}>
+            <div style={{ display:'flex', gap:5 }}>
+              <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(255,0,64,0.4)' }}/>
+              <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+            </div>
+            <div style={{ fontSize:9, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.7)', letterSpacing:'0.2em', textTransform:'uppercase' }}>PACEPRO · AI ANALYSIS v2.0</div>
+            <div style={{ marginLeft:'auto', width:6, height:6, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 8px #FF0040', animation:'pulse 2s infinite' }}/>
           </div>
-        )}
+
+          {!aiText && !aiLoading && (
+            <div style={{ textAlign:'center', padding:'8px 0 4px' }}>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,0.2)', fontFamily:'DM Mono, monospace', marginBottom:20, letterSpacing:'0.1em' }}>{'>'} SYSTÈME PRÊT · EN ATTENTE D'INITIALISATION</div>
+              <button onClick={getAIBilan} style={{ position:'relative', width:'100%', padding:'16px', borderRadius:14, border:'1px solid rgba(255,0,64,0.4)', background:'linear-gradient(135deg, rgba(255,0,64,0.15), rgba(255,0,64,0.05))', color:'#FF0040', fontFamily:'DM Mono, monospace', fontWeight:800, fontSize:13, cursor:'pointer', letterSpacing:'0.1em', textTransform:'uppercase', overflow:'hidden' }}>
+                <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.05), transparent)', animation:'scan 2s linear infinite' }}/>
+                ◈ LANCER L'ANALYSE IA
+              </button>
+            </div>
+          )}
+
+          {aiLoading && (
+            <div style={{ padding:'8px 0' }}>
+              <div style={{ fontFamily:'DM Mono, monospace', fontSize:11, color:'rgba(255,0,64,0.6)', marginBottom:12, letterSpacing:'0.08em' }}>{'>'} INITIALISATION DU MODÈLE...</div>
+              {['Lecture des données Strava', 'Analyse biomécanique', "Calcul des zones d'effort", 'Génération des recommandations'].map((step, i) => (
+                <div key={i} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:8, opacity: 0.6 + i*0.1 }}>
+                  <div style={{ width:14, height:14, borderRadius:4, border:'1px solid rgba(255,0,64,0.3)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <div style={{ width:6, height:6, borderRadius:2, background:'#FF0040', animation:'pulse 1s infinite', animationDelay:`${i*0.2}s` }}/>
+                  </div>
+                  <div style={{ fontSize:10, fontFamily:'DM Mono, monospace', color:'var(--text-muted)', letterSpacing:'0.06em' }}>{step}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {aiText && (
+            <div>
+              {aiText.split('\n').map((line, i) => {
+                const trimmed = line.trim();
+                if (!trimmed) return null;
+                const isReco = /^[1-9][.)]\s/.test(trimmed);
+                const isTitle = /^(Bilan|Recommandation|Points?|État|Analyse)/i.test(trimmed) && trimmed.endsWith(':');
+                if (isTitle) return (
+                  <div key={i} style={{ display:'flex', alignItems:'center', gap:8, marginTop:16, marginBottom:10 }}>
+                    <div style={{ width:3, height:12, background:'#FF0040', borderRadius:2 }}/>
+                    <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'#FF0040', fontFamily:'DM Mono, monospace' }}>{trimmed.replace(/:$/, '')}</div>
+                  </div>
+                );
+                if (isReco) return (
+                  <div key={i} style={{ display:'flex', gap:12, alignItems:'flex-start', marginBottom:12, padding:'10px 12px', background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.04)', borderRadius:12 }}>
+                    <div style={{ minWidth:24, height:24, borderRadius:8, background:'linear-gradient(135deg,rgba(255,0,64,0.2),rgba(255,0,64,0.05))', border:'1px solid rgba(255,0,64,0.3)', color:'#FF0040', fontSize:11, fontWeight:900, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'DM Mono, monospace', flexShrink:0 }}>{trimmed[0]}</div>
+                    <div style={{ fontSize:12, lineHeight:1.7, color:'var(--text-secondary)', paddingTop:2 }}>{trimmed.replace(/^[1-9][.)]\s*/, '')}</div>
+                  </div>
+                );
+                return (
+                  <div key={i} style={{ fontSize:13, lineHeight:1.8, color:'var(--text-primary)', marginBottom:4, fontFamily:'Syne, sans-serif', paddingLeft:4, borderLeft:'2px solid rgba(255,0,64,0.15)' }}>{trimmed}</div>
+                );
+              })}
+              <button onClick={getAIBilan} style={{ marginTop:16, background:'none', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'8px 16px', fontSize:10, color:'var(--text-muted)', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', display:'flex', alignItems:'center', gap:6 }}>↻ RÉGÉNÉRER</button>
+            </div>
+          )}
+        </div>
       </div>
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        @keyframes scan { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+      `}</style>
     </div>
   );
 }
