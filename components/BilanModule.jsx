@@ -122,10 +122,19 @@ export default function BilanModule({ onBack }) {
     const token = getToken();
     if (!token) { setStatus('no_token'); return; }
     setStatus('loading');
-    fetch(`/api/strava?action=activities&token=${token}`)
+    const refreshToken = localStorage.getItem('strava_refresh_token') || '';
+    const expiresAt = localStorage.getItem('strava_expires_at') || '0';
+    fetch(`/api/strava?action=activities&token=${token}&refresh_token=${refreshToken}&expires_at=${expiresAt}`)
       .then(r => r.json())
       .then(data => {
-        if (!Array.isArray(data)) { setStatus('error'); return; }
+        if (data.newToken) {
+          localStorage.setItem('strava_token', data.newToken);
+          localStorage.setItem('strava_refresh_token', data.newRefresh);
+          localStorage.setItem('strava_expires_at', String(data.newExpires));
+        }
+        const activities = data.activities || data;
+        if (!Array.isArray(activities)) { setStatus('error'); return; }
+        data = activities;
         setActivities(data);
         setStats(analyseActivities(data));
         setStatus('done');
