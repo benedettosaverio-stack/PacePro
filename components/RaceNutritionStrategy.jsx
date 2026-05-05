@@ -180,7 +180,7 @@ function buildStrategy(profile, userSettings) {
     },
   };
 
-  return { ...strategies[cat], estTimeStr, kcalRace, dist, elev, isTrail, isCycling, isSwimming, cat, discipline };
+  return { ...strategies[cat], estTimeStr, kcalRace, dist, elev, isTrail, isCycling, isSwimming, cat, discipline, isTriathlonNutrition, triFmt };
 }
 
 export default function RaceNutritionStrategy({ profile, userSettings, onClose }) {
