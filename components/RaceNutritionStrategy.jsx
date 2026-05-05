@@ -109,10 +109,10 @@ function buildStrategy(profile, userSettings) {
 
   // Catégorie selon discipline
   let cat;
-  if (isCycling) {
-    // Pour triathlon, utiliser le format directement
-    const triFormat = profile.triFormat || '';
-    cat = triFormat === 'sprint' ? 'sprint' : triFormat === 'olympic' ? 'dix' : triFormat === 'half' ? 'semi' : triFormat === 'ironman' ? 'marathon' : dist <= 50 ? 'sprint' : dist <= 100 ? 'dix' : dist <= 150 ? 'semi' : dist <= 200 ? 'marathon' : 'ultra';
+  if (isTriathlonNutrition) {
+    cat = triFormat === 'sprint' ? 'sprint' : triFormat === 'olympic' ? 'dix' : triFormat === 'half' ? 'semi' : 'marathon';
+  } else if (isCycling) {
+    cat = dist <= 50 ? 'sprint' : dist <= 100 ? 'dix' : dist <= 150 ? 'semi' : dist <= 200 ? 'marathon' : 'ultra';
   } else if (isSwimming) {
     cat = dist <= 750 ? 'sprint' : dist <= 1500 ? 'dix' : dist <= 3800 ? 'semi' : 'marathon';
   } else {
@@ -216,7 +216,7 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
 
         {/* Header */}
         <div style={{ marginBottom:20 }}>
-          <div style={{ fontSize:9, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Stratégie nutritionnelle · {strat.label}</div>
+          <div style={{ fontSize:9, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.15em', marginBottom:6 }}>Stratégie nutritionnelle · {strat.isTriathlonNutrition ? strat.triFmt.label : strat.label}</div>
           <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.03em', marginBottom:8 }}>{profile.raceName || 'Ma course'}</div>
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:`${accent}15`, color:accent, border:`1px solid ${accent}30`, fontFamily:'DM Mono, monospace', fontWeight:700 }}>
