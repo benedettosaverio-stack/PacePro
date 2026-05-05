@@ -1889,7 +1889,7 @@ useEffect(() => {
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
-        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 12 : 6); // Max tokens par appel IA
+        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 8 : 6); // Max tokens par appel IA
         const raceKm = parseFloat(profile.raceDistanceKm) || 100;
         const weeklyHours = profile.cyclingWeeklyHours || 8;
         const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
