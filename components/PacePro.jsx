@@ -1998,9 +1998,9 @@ Réponds UNIQUEMENT en JSON valide sans markdown :
           week:idx+1, phase:'base', label:'Base', color:'#6366f1', bg:'rgba(99,102,241,0.12)',
           dateRange:'', weeklyKm:0, isKey:false, isDeload:false,
           sessions:[
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'ef',tag:'Séance 1',tagColor:'#6366f1',tagBg:'rgba(99,102,241,0.12)',title:'Entraînement',detail:'Séance à adapter selon ta discipline.',allures:[{dot:'#6366f1',label:'Intensité',val:'Modérée'}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Séance 2',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:'Endurance',detail:'Sortie longue à allure confortable.',allures:[{dot:'#22c55e',label:'Allure',val:'Facile'}]},
-            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:'Sortie clé',detail:'Sortie principale de la semaine.',allures:[{dot:'#f59e0b',label:'Allure',val:'Modérée'}]},
+            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Fractionné',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:'6 × 1 min / 1 min',detail:'Échauffement 15 min. 6 répétitions vif/trot. Retour calme 10 min.',allures:[{dot:'#ef4444',label:'Effort',val:calcPaces(profile.vma||14).vma90},{dot:'#22c55e',label:'Récup',val:calcPaces(profile.vma||14).recov}]},
+            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance fondamentale',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${8+idx} km EF`,detail:'Allure conversation. Terrain varié.',allures:[{dot:'#22c55e',label:'Allure',val:calcPaces(profile.vma||14).ef}]},
+            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${12+idx*2} km`,detail:'Allure maîtrisée. Progression sur le dernier tiers.',allures:[{dot:'#22c55e',label:'Début',val:calcPaces(profile.vma||14).ef},{dot:'#f59e0b',label:'Fin',val:calcPaces(profile.vma||14).tempo}]},
           ]
         }));
         const newPlans = [...plans, { profile, plan: fallbackPlan }];
