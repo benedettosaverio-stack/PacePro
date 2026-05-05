@@ -213,7 +213,7 @@ export default function RaceNutritionStrategy({ profile, userSettings, onClose }
           <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', letterSpacing:'-0.03em', marginBottom:8 }}>{profile.raceName || 'Ma course'}</div>
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:`${accent}15`, color:accent, border:`1px solid ${accent}30`, fontFamily:'DM Mono, monospace', fontWeight:700 }}>
-              {isTriathlonNutrition ? `${triFmt.swim}km nage · ${triFmt.bike}km vélo · ${triFmt.run}km course` : `${profile.raceDistanceKm} km`}
+              {strat.isTriathlonNutrition ? `${strat.triFmt.swim}km nage · ${strat.triFmt.bike}km vélo · ${strat.triFmt.run}km course` : `${profile.raceDistanceKm} km`}
             </span>
             {profile.elevationM > 0 && <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'rgba(245,158,11,0.1)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>D+{profile.elevationM}m</span>}
             <span style={{ fontSize:10, padding:'3px 10px', borderRadius:99, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>~{strat.estTimeStr}</span>
