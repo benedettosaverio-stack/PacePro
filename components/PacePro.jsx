@@ -85,7 +85,6 @@ import HomeModule from './HomeModule';
 import HistoriqueModule from './HistoriqueModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
-import ParticleBackground from './ParticleBackground';
 import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
 import SettingsModule from './SettingsModule';
@@ -163,8 +162,63 @@ function ThemeStyles() {
       }
       * { box-sizing: border-box; }
       body { background: var(--bg-primary); }
-      .particle-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
-      .app-content { position:relative; z-index:1; }
+      @keyframes scanLine {
+        0% { transform: translateY(-100%); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(500%); opacity: 0; }
+      }
+      @keyframes dataFlicker {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+        75% { opacity: 0.8; }
+      }
+      @keyframes borderGlow {
+        0%, 100% { border-color: rgba(255,0,64,0.2); box-shadow: 0 0 0 rgba(255,0,64,0); }
+        50% { border-color: rgba(255,0,64,0.5); box-shadow: 0 0 20px rgba(255,0,64,0.1); }
+      }
+      @keyframes countUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes lineExpand {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+      @keyframes dotBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      .scan-card {
+        position: relative;
+        overflow: hidden;
+      }
+      .scan-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,0,64,0.4), transparent);
+        animation: scanLine 4s ease-in-out infinite;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .glow-border {
+        animation: borderGlow 3s ease-in-out infinite;
+      }
+      .data-flicker {
+        animation: dataFlicker 3s ease-in-out infinite;
+      }
+      .dot-blink {
+        animation: dotBlink 1s step-start infinite;
+      }
+      .count-up {
+        animation: countUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .line-expand {
+        animation: lineExpand 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
       input, select, button { font-family: inherit; }
       @keyframes fadeSlideUp {
         from { opacity: 0; transform: translateY(16px); }
@@ -1453,7 +1507,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
       {showNutrition && <RaceNutritionStrategy profile={profile} userSettings={JSON.parse(typeof window!=='undefined'?localStorage.getItem('pp_user_settings')||'{}':'{}')} onClose={()=>setShowNutrition(false)}/>}
       <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
         {/* Hero card — terminal premium */}
-        <div style={{position:'relative',borderRadius:20,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.03) 50%, transparent 100%)'}}>
+        <div className='scan-card glow-border' style={{position:'relative',borderRadius:20,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.03) 50%, transparent 100%)'}}>
           <div style={{position:'absolute',top:-40,right:-40,width:200,height:200,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,0,64,0.08) 0%,transparent 70%)',pointerEvents:'none'}}/>
           {/* Terminal header */}
           <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
@@ -1496,7 +1550,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                 <div key={label} style={{position:'relative',borderRadius:10,border:`1px solid ${color}15`,background:`${color}06`,padding:'10px 8px',textAlign:'center',overflow:'hidden'}}>
                   <div style={{position:'absolute',bottom:-8,right:-8,width:32,height:32,borderRadius:'50%',background:`radial-gradient(circle,${color}20,transparent)`,pointerEvents:'none'}}/>
                   <div style={{fontSize:8,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4}}>{label}</div>
-                  <div style={{fontSize:18,fontWeight:900,color,fontFamily:'DM Mono, monospace',lineHeight:1}}>{value}</div>
+                  <div className='count-up' style={{fontSize:18,fontWeight:900,color,fontFamily:'DM Mono, monospace',lineHeight:1}}>{value}</div>
                   <div style={{fontSize:8,color:`${color}80`,marginTop:3,fontFamily:'DM Mono, monospace'}}>{unit}</div>
                 </div>
               ))}
@@ -2165,7 +2219,6 @@ useEffect(() => {
   if (tab === 'home') {
     return (
       <div className='app-shell'>
-        <ParticleBackground color='#FF0040' opacity={0.3} />
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <AppHeader />
