@@ -1452,6 +1452,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
       <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
         {/* Hero card — terminal premium */}
         <div className='scan-card glow-border' style={{position:'relative',borderRadius:20,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.03) 50%, transparent 100%)'}}>
+          <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,transparent,rgba(255,0,64,0.6),transparent)',animation:'scanLine 3s ease-in-out infinite',zIndex:10,pointerEvents:'none'}}/>
           <div style={{position:'absolute',top:-40,right:-40,width:200,height:200,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,0,64,0.08) 0%,transparent 70%)',pointerEvents:'none'}}/>
           {/* Terminal header */}
           <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
