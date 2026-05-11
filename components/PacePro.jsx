@@ -189,13 +189,7 @@ function ThemeStyles() {
       .nav-btn-active svg, .nav-btn-active span {
         animation: navPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       }
-      .card-hover {
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-      }
-      .card-hover:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-      }
+
       @keyframes navActivate {
         0%   { transform: scale(1); opacity: 0.5; }
         50%  { transform: scale(1.15); opacity: 1; }
