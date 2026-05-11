@@ -1924,68 +1924,23 @@ useEffect(() => {
       setGeneratingPlan(true);
       const isCycling = profile.discipline === 'cycling';
       try {
-        const aiWeeks = Math.min(profile.weeks || 8, profile.discipline === 'triathlon' ? 4 : 6); // Max tokens par appel IA
+        const aiWeeks = Math.min(profile.weeks || 12, profile.discipline === 'triathlon' ? 6 : 8); // Max tokens par appel IA
         const raceKm = parseFloat(profile.raceDistanceKm) || 100;
         const weeklyHours = profile.cyclingWeeklyHours || 8;
         const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
         const maxWeeklyKm = Math.round(weeklyHours * avgSpeed * 0.8);
         const longRideTarget = Math.round(raceKm * 0.85);
-        const prompt = isCycling ? `Tu es un coach cycliste expert. Génère un plan d'entraînement cycliste en JSON.
-
-RÈGLES IMPORTANTES :
-- L'objectif est ${raceKm}km. La sortie longue finale doit atteindre ${longRideTarget}km.
-- Volume hebdo max : ${maxWeeklyKm}km/semaine (${weeklyHours}h × ${avgSpeed}km/h moyen).
-- Progression linéaire : semaine 1 = ${Math.round(maxWeeklyKm*0.5)}km → semaine ${aiWeeks} = ${maxWeeklyKm}km.
-- Décharge toutes les 4 semaines : réduire le volume de 30%.
-- La sortie longue = 60-85% du volume hebdo selon la phase.
-
-Profil :
-- Niveau : ${profile.cyclingBackground} | Profil : ${profile.cyclingProfile}
-- FTP : ${profile.vma}W | FCmax : ${profile.cyclingFCmax} bpm | Puissancemètre : ${profile.cyclingHasPower ? 'oui' : 'non'}
-- Blessures : ${profile.cyclingInjuries} | Sommeil : ${profile.cyclingSleep} | Stress : ${profile.cyclingStress}
-- Matériel : ${profile.cyclingMaterial} | Préfère : ${profile.cyclingSolo ? 'solo' : 'groupe'}
-- Déteste : ${profile.cyclingWeakPoint} | Point fort : ${profile.cyclingStrongPoint}
-- Durée : ${aiWeeks} semaines | ${profile.sessionsPerWeek} séances/sem
-
-Génère exactement ${aiWeeks} semaines, ${profile.sessionsPerWeek} séances max par semaine.
-Jours : Lundi, Mercredi, Vendredi, Samedi.
-Descriptions concises (max 100 chars).
-Adapte intensité selon blessures/stress.
-
-Réponds UNIQUEMENT en JSON valide sans markdown :
-[{"week":1,"phase":"base","label":"Endurance de base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":80,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Endurance","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"80 km Z2","detail":"...","allures":[{"dot":"#22c55e","label":"Z2","val":"150-180W"}]}]}]`
+        const z2 = profile.cyclingHasPower ? Math.round(parseFloat(profile.vma)*0.68)+'-'+Math.round(parseFloat(profile.vma)*0.78)+'W' : Math.round(parseFloat(profile.cyclingFCmax)*0.65)+'-'+Math.round(parseFloat(profile.cyclingFCmax)*0.75)+' bpm';
+        const seuilW = profile.cyclingHasPower ? Math.round(parseFloat(profile.vma)*0.91)+'-'+Math.round(parseFloat(profile.vma)*1.05)+'W' : Math.round(parseFloat(profile.cyclingFCmax)*0.82)+'-'+Math.round(parseFloat(profile.cyclingFCmax)*0.89)+' bpm';
+        const prompt = isCycling ? 'Genere ' + aiWeeks + ' semaines plan cyclisme en JSON. ' + profile.sessionsPerWeek + ' seances/sem. FTP=' + profile.vma + 'W niveau=' + profile.cyclingBackground + ' objectif=' + raceKm + 'km. Volume S1=' + Math.round(maxWeeklyKm*0.5) + 'km->S' + aiWeeks + '=' + maxWeeklyKm + 'km. Decharge sem4. Couleurs: Z2=#f59e0b seuil=#FF0040 long=#22c55e. Descriptions max 50 chars. UNIQUEMENT JSON: [{"week":1,"phase":"base","label":"Base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":' + Math.round(maxWeeklyKm*0.5) + ',"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Velo Z2","tagColor":"#f59e0b","tagBg":"rgba(245,158,11,0.12)","title":"60 min Z2","detail":"Endurance fondamentale.","allures":[{"dot":"#f59e0b","label":"Z2","val":"' + z2 + '"}]},{"id":"w1_s1","day":"Mercredi","type":"frac","tag":"Intervalles","tagColor":"#FF0040","tagBg":"rgba(255,0,64,0.12)","title":"5x5 min / 3 min","detail":"Effort seuil.","allures":[{"dot":"#FF0040","label":"Seuil","val":"' + seuilW + '"}]},{"id":"w1_s2","day":"Samedi","type":"long","tag":"Sortie longue","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"' + Math.round(maxWeeklyKm*0.4) + ' km","detail":"Endurance Z2.","allures":[{"dot":"#22c55e","label":"Z2","val":"' + z2 + '"}]}]}'
         : profile.discipline === 'triathlon' ? buildTriathlonPrompt(profile, aiWeeks)
-        : `Tu es un coach natation expert. Génère un plan d'entraînement natation complet en JSON.
-
-Profil du nageur :
-- Niveau : ${profile.swimLevel}
-- Nages : ${profile.swimStrokes}
-- Respiration : ${profile.swimBreathing}
-- Flottabilité : ${profile.swimFloatability}
-- Culbutes : ${profile.swimHasTurns ? 'oui' : 'non'}
-- Temps 100m : ${profile.swimTime100} / Temps 400m : ${profile.swimTime400}
-- SWOLF : ${profile.swimSwolf} / Battement : ${profile.swimKick}
-- Objectif : ${profile.swimGoal} — ${profile.raceName} ${profile.raceDistanceKm}m le ${profile.raceDate}
-- Eau libre : ${profile.swimOpenWater ? 'oui' : 'non'}
-- Bassin : ${profile.swimPool}
-- Matériel : ${profile.swimMaterial}
-- Douleurs épaules : ${profile.swimShoulderPain}
-- Mobilité scapulaire : ${profile.swimMobility}
-- PPG : ${profile.swimPPG ? 'oui' : 'non'}
-- Séances/semaine : ${profile.sessionsPerWeek}
-- Heures/semaine : ${profile.swimWeeklyHours}h
-- Durée plan : ${aiWeeks} semaines
-
-Génère exactement ${aiWeeks} semaines. Chaque semaine a ${profile.sessionsPerWeek} séances maximum (3 max).
-Les jours : Lundi, Mercredi, Vendredi.
-Sois concis dans les descriptions (max 80 chars par detail).
-Utilise des couleurs bleues (#38bdf8) pour la natation.
-Si douleurs épaules chroniques : réduire le volume et éviter les nages trop sollicitantes.
-Intègre du travail technique (pull-buoy, plaquettes) si matériel disponible.
-Si eau libre : ajouter des séances spécifiques orientation et drafting.
-
-Réponds UNIQUEMENT en JSON valide sans markdown :
-[{"week":1,"phase":"base","label":"Technique & endurance","color":"#38bdf8","bg":"rgba(56,189,248,0.12)","dateRange":"","weeklyKm":3,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Technique","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"2000m technique","detail":"...","allures":[{"dot":"#38bdf8","label":"CSS","val":"1:55/100m"}]}]}]`;
+        : (() => {
+          const [sm,ss]=(profile.swimTime100||'2:00').split(':').map(Number);
+          const sec100=(sm||2)*60+(ss||0);
+          const css=Math.round(sec100*0.95);
+          const cssStr=Math.floor(css/60)+':'+(css%60).toString().padStart(2,'0');
+          return 'Genere ' + aiWeeks + ' semaines plan natation en JSON. ' + profile.sessionsPerWeek + ' seances/sem. Niveau=' + profile.swimLevel + ' CSS=' + cssStr + '/100m objectif=' + profile.raceDistanceKm + 'm. Couleur=#38bdf8. Descriptions max 50 chars. Progressif. UNIQUEMENT JSON: [{"week":1,"phase":"base","label":"Base technique","color":"#38bdf8","bg":"rgba(56,189,248,0.12)","dateRange":"","weeklyKm":2,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Technique","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"2000m technique","detail":"Crawl, respiration bilaterale.","allures":[{"dot":"#38bdf8","label":"CSS","val":"' + cssStr + '/100m"}]},{"id":"w1_s1","day":"Mercredi","type":"frac","tag":"Series","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"10x100m","detail":"Recup 20s entre chaque.","allures":[{"dot":"#38bdf8","label":"CSS","val":"' + cssStr + '/100m"}]}]}]';
+        })();
 
         const res = await fetch('/api/gemini', {
           method: 'POST',
