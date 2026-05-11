@@ -162,63 +162,7 @@ function ThemeStyles() {
       }
       * { box-sizing: border-box; }
       body { background: var(--bg-primary); }
-      @keyframes scanLine {
-        0% { transform: translateY(-100%); opacity: 0; }
-        10% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { transform: translateY(500%); opacity: 0; }
-      }
-      @keyframes dataFlicker {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-        75% { opacity: 0.8; }
-      }
-      @keyframes borderGlow {
-        0%, 100% { border-color: rgba(255,0,64,0.2); box-shadow: 0 0 0 rgba(255,0,64,0); }
-        50% { border-color: rgba(255,0,64,0.5); box-shadow: 0 0 20px rgba(255,0,64,0.1); }
-      }
-      @keyframes countUp {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes lineExpand {
-        from { width: 0; }
-        to { width: 100%; }
-      }
-      @keyframes dotBlink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-      }
-      .scan-card {
-        position: relative;
-        overflow: hidden;
-      }
-      .scan-card::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,0,64,0.4), transparent);
-        animation: scanLine 4s ease-in-out infinite;
-        z-index: 2;
-        pointer-events: none;
-      }
-      .glow-border {
-        animation: borderGlow 3s ease-in-out infinite;
-      }
-      .data-flicker {
-        animation: dataFlicker 3s ease-in-out infinite;
-      }
-      .dot-blink {
-        animation: dotBlink 1s step-start infinite;
-      }
-      .count-up {
-        animation: countUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-      .line-expand {
-        animation: lineExpand 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
+
       input, select, button { font-family: inherit; }
       @keyframes fadeSlideUp {
         from { opacity: 0; transform: translateY(16px); }

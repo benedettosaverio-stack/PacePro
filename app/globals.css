@@ -182,3 +182,48 @@ button:active:not(:disabled) {
 .tab-enter {
   animation: fadeSlideUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+@keyframes scanLine {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(2000%); opacity: 0; }
+}
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 0px rgba(255,0,64,0); }
+  50% { box-shadow: 0 0 24px rgba(255,0,64,0.15), 0 0 8px rgba(255,0,64,0.1); }
+}
+@keyframes dotBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scan-card {
+  position: relative;
+  overflow: hidden;
+}
+.scan-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,0,64,0.5) 50%, transparent 100%);
+  animation: scanLine 4s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+  top: 0;
+}
+.glow-border {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+.dot-blink {
+  animation: dotBlink 1s step-start infinite;
+}
+.count-up {
+  animation: countUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
