@@ -770,7 +770,7 @@ export default function MusculationModule({ onSync }) {
           ) : (
             <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
               <div style={{ display:'flex', gap:8, marginBottom:12 }}>
-                <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} style={{ flex:2, background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'12px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 16px rgba(255,0,64,0.25)' }}>+ Nouvelle séance</button>
+                <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} className='btn-ripple' style={{ flex:2, background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'12px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 16px rgba(255,0,64,0.25)' }}>+ Nouvelle séance</button>
                 <button onClick={()=>setView('ai')} style={{ flex:1, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'12px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.04em' }}>✦ IA</button>
               </div>
               {workouts.map(w => (

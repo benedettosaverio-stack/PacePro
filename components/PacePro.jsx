@@ -1633,7 +1633,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
             const pct = total>0?Math.round((done/total)*100):0;
             const nextPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
             return (
-              <div key={i} onClick={()=>onSelect(i)} style={{position:'relative',borderRadius:20,overflow:'hidden',border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.05) 0%, transparent 60%)',cursor:'pointer',transition:'all 0.2s'}}>
+              <div key={i} onClick={()=>onSelect(i)} className="card-hover stagger-item" style={{position:'relative',borderRadius:20,overflow:'hidden',border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.05) 0%, transparent 60%)',cursor:'pointer',transition:'all 0.2s'}}>
                 {/* Glow top */}
                 <div style={{position:'absolute',top:-30,right:-30,width:150,height:150,borderRadius:'50%',background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)',pointerEvents:'none'}}/>
                 {/* Terminal header */}
