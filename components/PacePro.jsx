@@ -2162,14 +2162,16 @@ useEffect(() => {
   );
   if (tab === 'home') {
     return (
-      <div className='app-shell'>
+      <>
         <ParticleBackground color='#FF0040' opacity={0.3} />
+      <div className='app-shell'>
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <AppHeader />
         <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
       </div>
+      </>
     );
   }
   if (tab === 'strava') {
