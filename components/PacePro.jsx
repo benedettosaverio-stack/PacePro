@@ -85,6 +85,7 @@ import HomeModule from './HomeModule';
 import HistoriqueModule from './HistoriqueModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
+import ParticleBackground from './ParticleBackground';
 import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
 import SettingsModule from './SettingsModule';
@@ -2162,6 +2163,7 @@ useEffect(() => {
   if (tab === 'home') {
     return (
       <div className='app-shell'>
+        <ParticleBackground color='#FF0040' opacity={0.3} />
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <AppHeader />
