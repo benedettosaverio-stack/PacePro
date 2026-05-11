@@ -163,6 +163,8 @@ function ThemeStyles() {
       }
       * { box-sizing: border-box; }
       body { background: var(--bg-primary); }
+      .particle-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+      .app-content { position:relative; z-index:1; }
       input, select, button { font-family: inherit; }
       @keyframes fadeSlideUp {
         from { opacity: 0; transform: translateY(16px); }
@@ -2162,16 +2164,14 @@ useEffect(() => {
   );
   if (tab === 'home') {
     return (
-      <>
-        <ParticleBackground color='#FF0040' opacity={0.3} />
       <div className='app-shell'>
+        <ParticleBackground color='#FF0040' opacity={0.3} />
         <ThemeStyles/>
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <AppHeader />
         <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
         <BottomNav/>
       </div>
-      </>
     );
   }
   if (tab === 'strava') {
