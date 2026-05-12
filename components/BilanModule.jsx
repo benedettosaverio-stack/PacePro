@@ -117,6 +117,8 @@ export default function BilanModule({ onBack }) {
   const [stats, setStats] = useState(null);
   const [aiText, setAiText] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [pdfData, setPdfData] = useState(null);
+  const [pdfName, setPdfName] = useState('');
   const didFetch = useRef(false);
 
   useEffect(() => {
@@ -149,24 +151,52 @@ export default function BilanModule({ onBack }) {
     if (!stats) return;
     setAiLoading(true);
     setAiText('');
-    const prompt = `Tu es un coach sportif expert. Voici les données Strava des 20 dernières activités :
-- Courses à pied : ${stats.runs.length} séances, ${stats.totalRunKm.toFixed(1)} km total
+    const stravaContext = `Données Strava (20 dernières activités) :
+- Courses : ${stats.runs.length} séances, ${stats.totalRunKm.toFixed(1)} km total
 - Allure moyenne : ${mpsToMinKm(stats.avgPace)} min/km
 - FC moyenne : ${stats.avgHR ? Math.round(stats.avgHR) + ' bpm' : 'non disponible'}
 - Sortie la plus longue : ${stats.longestRun.toFixed(1)} km
 - Séances muscu/sport : ${stats.muscus.length}
-- Score volume : ${stats.scoreVolume}/100
-- Score régularité : ${stats.scoreRegularite}/100
-- Score muscu : ${stats.scoreMuscu}/100
+- Score volume : ${stats.scoreVolume}/100 | régularité : ${stats.scoreRegularite}/100`;
 
+    let prompt;
+    if (pdfData) {
+      prompt = `Tu es un coach sportif et nutritionniste expert en composition corporelle. 
+${stravaContext}
+
+Le rapport d'impédancemètre ci-joint contient la composition corporelle détaillée de l'athlète.
+Analyse ce rapport et les données Strava pour faire :
+1. Un bilan physique complet (masse grasse, masse musculaire, hydratation, métabolisme de base) en 3-4 lignes
+2. 3 recommandations concrètes numérotées basées sur la composition corporelle ET les performances sportives
+3. Un objectif prioritaire à atteindre dans les 4 prochaines semaines
+
+Sois direct, précis, sans intro ni outro. Langue : français.`;
+    } else {
+      prompt = `Tu es un coach sportif expert. ${stravaContext}
 Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recommandations concrètes numérotées. Sois direct, sans intro ni outro. Langue : français.`;
+    }
 
     try {
-      const res = await fetch('/api/gemini', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+      const body = pdfData
+        ? { prompt, pdf: pdfData }
+        : { prompt };
+      const res = await fetch('/api/gemini', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const d = await res.json();
       setAiText(d.text || 'Erreur IA.');
     } catch { setAiText('Erreur lors de la génération.'); }
     setAiLoading(false);
+  }
+
+  function handlePdfUpload(e) {
+    const file = e.target.files[0];
+    if (!file || file.type !== 'application/pdf') return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      setPdfData(base64);
+      setPdfName(file.name);
+    };
+    reader.readAsDataURL(file);
   }
 
   if (!stats) return (
