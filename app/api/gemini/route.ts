@@ -8,27 +8,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No API key', text: '' });
   }
 
-  // Construire le contenu du message avec ou sans PDF
-  let messageContent: unknown;
-  if (pdf) {
-    messageContent = [
-      {
-        type: 'document',
-        source: {
-          type: 'base64',
-          media_type: 'application/pdf',
-          data: pdf,
-        }
-      },
-      {
-        type: 'text',
-        text: prompt
-      }
-    ];
-  } else {
-    messageContent = prompt;
-  }
-
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -37,8 +16,8 @@ export async function POST(req: NextRequest) {
       'HTTP-Referer': 'https://pacepro-virid.vercel.app',
     },
     body: JSON.stringify({
-      model: pdf ? 'anthropic/claude-3-5-sonnet' : 'anthropic/claude-3-5-haiku',
-      messages: [{ role: 'user', content: messageContent }],
+      model: 'anthropic/claude-3-5-haiku',
+      messages: [{ role: 'user', content: prompt }],
       max_tokens: 12000,
     })
   });

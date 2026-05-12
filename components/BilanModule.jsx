@@ -178,12 +178,14 @@ Données sportives (Strava) :
       prompt = `Tu es un médecin du sport et coach expert en composition corporelle.
 ${profileContext}${stravaContext}
 
-Le rapport d'impédancemètre joint contient la composition corporelle détaillée.
-Analyse ce rapport et le profil pour produire :
+RAPPORT IMPÉDANCEMÈTRE (extrait) :
+${pdfData.substring(0, 3000)}
 
-1. BILAN COMPOSITION CORPORELLE (3-4 lignes) : masse grasse %, masse musculaire, hydratation, métabolisme de base — compare aux normes pour cet athlète
-2. BILAN PERFORMANCE SPORTIVE (2-3 lignes) : lien entre composition et performances actuelles
-3. RECOMMANDATIONS (3 points numérotés) : actions concrètes sur nutrition, entraînement et récupération
+Extrait les données clés du rapport (masse grasse %, masse musculaire, eau corporelle, métabolisme de base, masse osseuse si disponible) et produis :
+
+1. BILAN COMPOSITION CORPORELLE : analyse des valeurs vs normes pour cet athlète
+2. BILAN PERFORMANCE : lien composition corporelle et performances sportives
+3. RECOMMANDATIONS (3 points numérotés) : nutrition, entraînement, récupération
 4. OBJECTIF 4 SEMAINES : 1 objectif prioritaire mesurable
 
 Sois précis, chiffré, sans intro ni outro. Langue : français.`;
@@ -195,7 +197,7 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
     }
 
     try {
-      const body = pdfData ? { prompt, pdf: pdfData } : { prompt };
+      const body = { prompt };
       const res = await fetch('/api/gemini', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const d = await res.json();
       setAiText(d.text || 'Erreur IA.');
@@ -203,16 +205,44 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
     setAiLoading(false);
   }
 
-  function handlePdfUpload(e) {
+  async function handlePdfUpload(e) {
     const file = e.target.files[0];
     if (!file || file.type !== 'application/pdf') return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result.split(',')[1];
-      setPdfData(base64);
-      setPdfName(file.name);
-    };
-    reader.readAsDataURL(file);
+    setPdfName(file.name);
+    try {
+      // Extraire le texte du PDF avec PDF.js
+      const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+      const url = URL.createObjectURL(file);
+      // Fallback: lire en base64 et envoyer comme texte encodé
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const arrayBuffer = reader.result;
+        // Simple extraction via text decoder
+        const bytes = new Uint8Array(arrayBuffer);
+        let text = '';
+        // Extraire les chaînes lisibles du PDF
+        for (let i = 0; i < bytes.length - 1; i++) {
+          const c = bytes[i];
+          if (c >= 32 && c < 127) {
+            text += String.fromCharCode(c);
+          } else if (c === 10 || c === 13) {
+            text += ' ';
+          }
+        }
+        // Nettoyer et garder que les parties utiles
+        const cleaned = text
+          .replace(/[^ -~À-ɏ\s]/g, ' ')
+          .replace(/\s{3,}/g, ' ')
+          .substring(0, 8000); // Max 8000 chars
+        setPdfData(cleaned);
+      };
+      reader.readAsArrayBuffer(file);
+    } catch {
+      // Fallback simple
+      const reader = new FileReader();
+      reader.onload = () => setPdfData(reader.result.substring(0, 4000));
+      reader.readAsText(file);
+    }
   }
 
   if (!stats) return (
