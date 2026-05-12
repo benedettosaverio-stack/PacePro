@@ -219,8 +219,7 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
         const pageText = textContent.items.map(item => ('str' in item ? item.str : '')).join(' ');
-        fullText += pageText + '
-';
+        fullText += pageText + '\n';
       }
       setPdfData(fullText.substring(0, 6000));
     } catch(err) {
@@ -233,8 +232,7 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
         for (let i = 0; i < bytes.length; i++) {
           const c = bytes[i];
           if (c >= 32 && c < 127) text += String.fromCharCode(c);
-          else if (c === 10 || c === 13) text += '
-';
+          else if (c === 10 || c === 13) text += '\n';
         }
         const cleaned = text.replace(/\s{3,}/g, ' ').replace(/[^\w\s.,:%\-\/\(\)]/g, '').substring(0, 6000);
         setPdfData(cleaned);
