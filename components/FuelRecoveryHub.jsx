@@ -532,21 +532,26 @@ export default function FuelRecoveryHub({ onSync }) {
         {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
 
         {/* Suivi du poids */}
-        <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 20, padding: '18px', marginBottom: 16 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                <div style={{ width:3, height:12, background:'#f97316', borderRadius:2, boxShadow:'0 0 6px #f97316' }}/>
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>Suivi du poids</div>
-              </div>
-              <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', borderRadius: 8, padding: '5px 12px', fontSize: 11, fontWeight: 700, color: '#f97316', cursor: 'pointer', fontFamily: 'inherit' }}>
-                + Peser
-              </button>
+        <div style={{ marginTop: 16, position:'relative', borderRadius: 20, overflow:'hidden', marginBottom: 16, border: '1px solid rgba(249,115,22,0.2)', background:'linear-gradient(135deg, rgba(249,115,22,0.05) 0%, transparent 60%)' }}>
+          {/* Scan */}
+          <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:'linear-gradient(90deg, transparent, rgba(249,115,22,0.04), transparent)', animation:'scanLine 16s ease-in-out infinite 3s', zIndex:1, pointerEvents:'none', left:0 }}/>
+          {/* Terminal header */}
+          <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(249,115,22,0.15)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(249,115,22,0.6)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
             </div>
-
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(249,115,22,0.6)', letterSpacing:'0.15em' }}>WEIGHT.SYS · BODY TRACKING</div>
+            <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ marginLeft:'auto', background:'rgba(249,115,22,0.12)', border:'1px solid rgba(249,115,22,0.3)', borderRadius:6, padding:'4px 10px', fontSize:9, fontWeight:700, color:'#f97316', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>
+              + PESER
+            </button>
+          </div>
+          <div style={{ padding:'14px 16px', position:'relative', zIndex:2 }}>
             {showWeightInput && (
-              <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-                <input type="number" inputMode="decimal" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex: 1, background: 'var(--progress-track)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
-                <button onClick={addWeight} style={{ background: '#f97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
+              <div style={{ display:'flex', gap:8, marginBottom:14 }}>
+                <input type="number" inputMode="decimal" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex:1, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(249,115,22,0.3)', borderRadius:8, padding:'10px 12px', color:'var(--text-primary)', fontSize:16, fontFamily:'DM Mono, monospace', outline:'none' }} />
+                <button onClick={addWeight} style={{ background:'linear-gradient(135deg,#f97316,#ea580c)', border:'none', borderRadius:8, padding:'10px 18px', fontSize:12, fontWeight:800, color:'#fff', cursor:'pointer', fontFamily:'DM Mono, monospace', boxShadow:'0 4px 14px rgba(249,115,22,0.3)' }}>OK</button>
               </div>
             )}
 
@@ -577,9 +582,10 @@ export default function FuelRecoveryHub({ onSync }) {
                       ['Évolution', `${diff > 0 ? '+' : ''}${diff} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
                       ['Mesures', `${sorted.length}j`, '#f97316'],
                     ].map(([l,v,col]) => (
-                      <div key={l} style={{ background: 'var(--bg-input)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
-                        <div style={{ fontSize: 15, fontWeight: 800, color: col, fontFamily: 'DM Mono, monospace' }}>{v}</div>
-                        <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 2 }}>{l}</div>
+                      <div key={l} style={{ position:'relative', borderRadius:10, border:`1px solid ${col}18`, background:`${col}06`, padding:'10px 8px', textAlign:'center', overflow:'hidden' }}>
+                        <div style={{ position:'absolute', bottom:-6, right:-6, width:28, height:28, borderRadius:'50%', background:`radial-gradient(circle, ${col}20, transparent)`, pointerEvents:'none' }}/>
+                        <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{l}</div>
+                        <div style={{ fontSize:16, fontWeight:900, color:col, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{v}</div>
                       </div>
                     ))}
                   </div>
@@ -633,6 +639,7 @@ export default function FuelRecoveryHub({ onSync }) {
               </div>
             )}
           </div>
+        </div>
 
         {/* Générateur IA personnalisé */}
         <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 20, padding: '18px' }}>
