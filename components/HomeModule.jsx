@@ -137,27 +137,52 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
 
       <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* Greeting */}
-        <div style={{ marginBottom: 24, paddingTop: 8 }}>
-          <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
-            <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040' }}/>
-            {greeting}
-          </div>
-          <div style={{ fontSize:32, fontWeight:900, letterSpacing:'-0.04em', lineHeight:1.1, background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.5))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{firstName} 👋</div>
-        </div>
-
-        {/* Message de motivation — typewriter inline */}
-        {(motivation || motivLoading) && (
-          <div style={{ marginBottom: 24 }}>
-            {motivLoading ? (
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic', letterSpacing: '0.01em' }}>...</div>
-            ) : (
-              <div style={{ fontSize: 14, color: 'var(--text-secondary)', fontStyle: 'italic', lineHeight: 1.6, letterSpacing: '0.01em' }}>
-                {displayed}<span style={{ opacity: showCursor ? 1 : 0, color: '#FF0040', fontStyle: 'normal', transition: 'opacity 0.3s' }}>|</span>
+        {/* HERO CARD — clock + stats + motivation */}
+        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', border:'1px solid rgba(255,0,64,0.2)', background:'linear-gradient(135deg, rgba(255,0,64,0.07) 0%, rgba(0,0,0,0.95) 70%)', marginBottom:14 }}>
+          {/* Scan */}
+          <div style={{ position:'absolute', top:0, bottom:0, width:'40%', background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.04), transparent)', animation:'scanLine 10s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
+          {/* Ambient glow */}
+          <div style={{ position:'absolute', top:-40, right:-40, width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.1) 0%, transparent 70%)', pointerEvents:'none' }}/>
+          <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
+            {/* Top row: greeting + clock */}
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
+              <div>
+                <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:5, display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040', animation:'dotBlink 2s step-start infinite' }}/>
+                  {greeting}
+                </div>
+                <div style={{ fontSize:30, fontWeight:900, letterSpacing:'-0.04em', lineHeight:1, background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.5))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{firstName}</div>
+              </div>
+              <div style={{ textAlign:'right' }}>
+                <div style={{ fontSize:24, fontWeight:900, color:'#FF0040', fontFamily:'DM Mono, monospace', lineHeight:1 }}>{time.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+                <div style={{ fontSize:8, color:'rgba(255,255,255,0.25)', fontFamily:'DM Mono, monospace', letterSpacing:'0.1em', marginTop:2 }}>{time.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase()}</div>
+              </div>
+            </div>
+            {/* Motivation */}
+            {(motivation || motivLoading) && (
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', fontStyle:'italic', lineHeight:1.5, marginBottom:14, borderLeft:'2px solid rgba(255,0,64,0.4)', paddingLeft:10 }}>
+                {motivLoading ? '...' : <>{displayed}<span style={{ opacity:showCursor?1:0, color:'#FF0040', fontStyle:'normal' }}>|</span></>}
               </div>
             )}
+            {/* Stats KPI */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+              {[
+                { label:'Programme', value: activePlan ? `${progress}%` : '—', color:'#FF0040' },
+                { label:'Séances', value: activePlan ? `${doneSessions}/${totalSessions}` : '—', color:'#60a5fa' },
+                { label:'VMA', value: activePlan ? `${activePlan.profile?.vma?.toFixed(1)||'—'}` : '—', color:'#f59e0b' },
+              ].map(({label,value,color})=>(
+                <div key={label} style={{ background:`${color}10`, border:`1px solid ${color}20`, borderRadius:10, padding:'8px', textAlign:'center' }}>
+                  <div style={{ fontSize:16, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+                  <div style={{ fontSize:7, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:3 }}>{label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        )}
+          {/* Progress bar */}
+          <div style={{ height:2, background:'rgba(255,255,255,0.04)' }}>
+            <div style={{ height:'100%', width:`${activePlan?progress:0}%`, background:'linear-gradient(90deg,#FF0040,#f59e0b)', boxShadow:'0 0 8px rgba(255,0,64,0.5)', transition:'width 1s' }}/>
+          </div>
+        </div>
 
         {/* Next session card */}
         {nextSession ? (
