@@ -796,8 +796,8 @@ function FeedbackModal({ session, onClose, onSubmit }) {
   const effortColors = ['','#22c55e','#22c55e','#22c55e','#4ade80','#f59e0b','#f59e0b','#f59e0b','#FF0040','#FF0040','#FF0040'];
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:200,display:'flex',flexDirection:'column',justifyContent:'flex-end'}} onClick={onClose}>
-      <div className='sheet-enter' onClick={e=>e.stopPropagation()} style={{width:'100%',background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 20px calc(env(safe-area-inset-bottom,16px) + 24px)',maxHeight:'88vh',overflowY:'auto',backdropFilter:'blur(20px)'}}>
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:200}} onClick={onClose}>
+      <div onClick={e=>e.stopPropagation()} style={{position:'fixed',bottom:0,left:0,right:0,background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 20px calc(env(safe-area-inset-bottom,16px) + 24px)',maxHeight:'88vh',overflowY:'auto',zIndex:201,boxShadow:'0 -20px 60px rgba(0,0,0,0.8)'}}>
         <div style={{width:40,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
         {/* Terminal header */}
         <div style={{position:'relative',borderRadius:14,overflow:'hidden',marginBottom:16,border:'1px solid rgba(255,0,64,0.15)',background:'linear-gradient(135deg,rgba(255,0,64,0.06),transparent)'}}>
