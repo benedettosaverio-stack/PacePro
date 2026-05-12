@@ -311,16 +311,33 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
 
         </div>
 
-        {/* Bilan IA */}
-        <button onClick={() => onNavigate('bilan')} style={{ width: '100%', background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(99,102,241,0.04))', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 18, padding: '16px 18px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(99,102,241,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon name="lightning" size={22} color="#6366f1" />
+        {/* Bilan Santé IA */}
+        <button onClick={() => onNavigate('bilan')} style={{ width: '100%', position:'relative', overflow:'hidden', background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(99,102,241,0.03))', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 18, padding: '0', cursor: 'pointer', fontFamily: 'Syne, sans-serif', textAlign:'left' }}>
+          {/* Scan sweep */}
+          <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.05), transparent)', animation:'scanLine 16s ease-in-out infinite 2s', zIndex:1, pointerEvents:'none', left:0 }}/>
+          {/* Terminal header */}
+          <div style={{ padding:'8px 14px', borderBottom:'1px solid rgba(99,102,241,0.12)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+            <div style={{ display:'flex', gap:3 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(99,102,241,0.6)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+            </div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(99,102,241,0.6)', letterSpacing:'0.15em' }}>HEALTH.AI · BILAN SANTÉ</div>
+            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4 }}>
+              <div style={{ width:4, height:4, borderRadius:'50%', background:'#6366f1', boxShadow:'0 0 5px #6366f1' }}/>
+              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'#6366f1' }}>ACTIF</span>
+            </div>
           </div>
-          <div style={{ flex: 1, textAlign: 'left' }}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Bilan physique IA</div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Analyse Strava · Recommandations</div>
+          <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', gap:14, position:'relative', zIndex:2 }}>
+            <div style={{ width:44, height:44, borderRadius:13, background:'rgba(99,102,241,0.12)', border:'1px solid rgba(99,102,241,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <Icon name="lightning" size={22} color="#6366f1" />
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:15, fontWeight:800, color:'var(--text-primary)', marginBottom:3, letterSpacing:'-0.02em' }}>Bilan Santé IA</div>
+              <div style={{ fontSize:9, color:'rgba(99,102,241,0.7)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>Profil · Composition corporelle · PDF</div>
+            </div>
+            <Icon name="arrow_right" size={16} color="rgba(99,102,241,0.5)" />
           </div>
-          <Icon name="arrow_right" size={16} color="rgba(99,102,241,0.6)" />
         </button>
 
         {/* Logo footer */}

@@ -223,147 +223,175 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
     </div>
   );
 
+  const settings = (() => { try { return JSON.parse(localStorage.getItem('pp_user_settings') || '{}'); } catch { return {}; } })();
+  const plans = (() => { try { return JSON.parse(localStorage.getItem('pp_plans') || '[]'); } catch { return []; } })();
+  const workouts = (() => { try { return JSON.parse(localStorage.getItem('pp_workouts_pro') || '[]'); } catch { return []; } })();
+  const activePlan = plans[plans.length - 1];
+
   return (
     <div style={{ padding: '20px 16px 100px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', background: 'var(--bg-primary)', minHeight: '100%' }}>
 
-      {/* KPIs clés */}
-      <div style={{ marginBottom:16 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-          <div style={{ fontSize:9, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>30 derniers jours</div>
-          <div style={{ flex:1, height:1, background:'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }}/>
+      {/* Header terminal */}
+      <div style={{ marginBottom:20 }}>
+        <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
+          <div style={{ width:5, height:5, borderRadius:'50%', background:'#6366f1', boxShadow:'0 0 6px #6366f1' }}/>
+          PACEPRO · HEALTH LAB
         </div>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
-          {[
-            { label:'Km total', value: stats.totalRunKm.toFixed(1), unit:'km', color:'#FF0040' },
-            { label:'Séances', value: stats.runs.length, unit:'runs', color:'#f59e0b' },
-            { label:'FC moy', value: stats.avgHR ? Math.round(stats.avgHR) : '—', unit:'bpm', color:'#6366f1' },
-          ].map(({label, value, unit, color}) => (
-            <div key={label} style={{ position:'relative', borderRadius:14, border:`1px solid ${color}20`, background:`linear-gradient(135deg, ${color}08, transparent)`, padding:'12px 10px', overflow:'hidden' }}>
-              <div style={{ position:'absolute', bottom:-10, right:-10, width:50, height:50, borderRadius:'50%', background:`radial-gradient(circle, ${color}15, transparent)`, pointerEvents:'none' }}/>
-              <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>{label}</div>
-              <div style={{ fontSize:22, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
-              <div style={{ fontSize:9, color:`${color}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>{unit}</div>
+        <h1 style={{ fontSize:26, fontWeight:900, letterSpacing:'-0.04em', marginBottom:4, background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.4))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Bilan Santé</h1>
+        <p style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>IA · Profil · Composition corporelle</p>
+      </div>
+
+      {/* Profil utilisateur */}
+      {(settings.weight || settings.height || settings.age) && (
+        <div style={{ position:'relative', borderRadius:18, overflow:'hidden', marginBottom:14, border:'1px solid rgba(99,102,241,0.2)', background:'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 60%)' }}>
+          <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(99,102,241,0.12)', display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(99,102,241,0.6)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Course à pied */}
-      <div style={{ position:'relative', background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, transparent 60%)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:18, padding:'16px', marginBottom:12, overflow:'hidden' }}>
-        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
-          <div style={{ width:3, height:14, background:'#FF0040', borderRadius:2, boxShadow:'0 0 8px #FF0040' }}/>
-          <div style={{ fontSize:9, fontWeight:700, color:'#FF0040', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Course à pied</div>
-        </div>
-        <StatRow label="Volume total" value={stats.totalRunKm.toFixed(1)} unit="km" color="#FF0040" max={60} />
-        <StatRow label="Séances" value={stats.runs.length} unit="" color="#FF0040" max={12} />
-        {stats.avgHR && <StatRow label="FC moyenne" value={Math.round(stats.avgHR)} unit="bpm" color="#F59E0B" max={200} />}
-        <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-          <div style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 12, padding: '12px', textAlign: 'center' }}>
-            <div style={{ fontSize: 20, fontWeight: 900, color: '#FF0040', fontFamily: 'DM Mono, monospace' }}>{mpsToMinKm(stats.avgPace)}</div>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 4, letterSpacing: '0.08em' }}>Allure moy.</div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(99,102,241,0.7)', letterSpacing:'0.15em' }}>PROFIL · DONNÉES BIOMÉTRIQUES</div>
           </div>
-          <div style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 12, padding: '12px', textAlign: 'center' }}>
-            <div style={{ fontSize: 20, fontWeight: 900, color: '#FF0040', fontFamily: 'DM Mono, monospace' }}>{stats.longestRun.toFixed(1)}</div>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 4, letterSpacing: '0.08em' }}>Km max sortie</div>
+          <div style={{ padding:'14px 16px', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+            {[
+              { label:'Poids', value: settings.weight ? `${settings.weight}` : '—', unit:'kg', color:'#6366f1' },
+              { label:'Taille', value: settings.height ? `${settings.height}` : '—', unit:'cm', color:'#38bdf8' },
+              { label:'IMC', value: (settings.weight && settings.height) ? (settings.weight / ((settings.height/100)**2)).toFixed(1) : '—', unit:'', color:'#22c55e' },
+            ].map(({label, value, unit, color}) => (
+              <div key={label} style={{ position:'relative', borderRadius:10, border:`1px solid ${color}18`, background:`${color}06`, padding:'10px 8px', textAlign:'center', overflow:'hidden' }}>
+                <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{label}</div>
+                <div style={{ fontSize:20, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+                <div style={{ fontSize:8, color:`${color}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>{unit}</div>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
-
-      {/* Évolution */}
-      <div style={{ position:'relative', background:'linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 60%)', border:'1px solid rgba(245,158,11,0.2)', borderRadius:18, padding:'16px', marginBottom:12, overflow:'hidden' }}>
-        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
-          <div style={{ width:3, height:14, background:'#F59E0B', borderRadius:2, boxShadow:'0 0 8px #F59E0B' }}/>
-          <div style={{ fontSize:9, fontWeight:700, color:'#F59E0B', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Évolution · km/semaine</div>
-        </div>
-        <BarChart data={stats.weeks} color="#F59E0B" />
-      </div>
-
-      {/* Muscu */}
-      <div style={{ position:'relative', background:'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 60%)', border:'1px solid rgba(99,102,241,0.2)', borderRadius:18, padding:'16px', marginBottom:12, overflow:'hidden' }}>
-        <div style={{ position:'absolute', top:-30, right:-30, width:120, height:120, borderRadius:'50%', background:'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
-          <div style={{ width:3, height:14, background:'#6366F1', borderRadius:2, boxShadow:'0 0 8px #6366F1' }}/>
-          <div style={{ fontSize:9, fontWeight:700, color:'#6366F1', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Musculation & sport</div>
-        </div>
-        <StatRow label="Séances muscu" value={stats.muscus.length} unit="" color="#6366F1" max={8} />
-        {stats.muscus.length === 0 && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Aucune séance muscu détectée sur Strava.</div>}
-      </div>
-
-      {/* Bilan IA — design premium */}
-      <div style={{ position:'relative', borderRadius: 20, overflow:'hidden', marginBottom: 12 }}>
-        {/* Fond glassmorphism + glow */}
-        <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.04) 50%, rgba(0,0,0,0) 100%)', pointerEvents:'none' }}/>
-        <div style={{ position:'absolute', top:-40, right:-40, width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents:'none' }}/>
-        <div style={{ position:'relative', border:'1px solid rgba(255,0,64,0.2)', borderRadius: 20, padding:'20px' }}>
-          {/* Header terminal */}
-          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16, paddingBottom:12, borderBottom:'1px solid rgba(255,0,64,0.1)' }}>
-            <div style={{ display:'flex', gap:5 }}>
-              <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(255,0,64,0.4)' }}/>
-              <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-              <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
-            </div>
-            <div style={{ fontSize:9, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.7)', letterSpacing:'0.2em', textTransform:'uppercase' }}>PACEPRO · AI ANALYSIS v2.0</div>
-            <div style={{ marginLeft:'auto', width:6, height:6, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 8px #FF0040', animation:'pulse 2s infinite' }}/>
-          </div>
-
-          {!aiText && !aiLoading && (
-            <div style={{ textAlign:'center', padding:'8px 0 4px' }}>
-              <div style={{ fontSize:10, color:'rgba(255,255,255,0.2)', fontFamily:'DM Mono, monospace', marginBottom:20, letterSpacing:'0.1em' }}>{'>'} SYSTÈME PRÊT · EN ATTENTE D'INITIALISATION</div>
-              <button onClick={getAIBilan} style={{ position:'relative', width:'100%', padding:'16px', borderRadius:14, border:'1px solid rgba(255,0,64,0.4)', background:'linear-gradient(135deg, rgba(255,0,64,0.15), rgba(255,0,64,0.05))', color:'#FF0040', fontFamily:'DM Mono, monospace', fontWeight:800, fontSize:13, cursor:'pointer', letterSpacing:'0.1em', textTransform:'uppercase', overflow:'hidden' }}>
-                <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.05), transparent)', animation:'scan 2s linear infinite' }}/>
-                ◈ LANCER L'ANALYSE IA
-              </button>
+          {activePlan && (
+            <div style={{ padding:'0 16px 14px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+              <div style={{ background:'rgba(255,255,255,0.02)', borderRadius:10, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>Programme actif</div>
+                <div style={{ fontSize:11, fontWeight:700, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{activePlan.profile?.raceName || 'En cours'}</div>
+              </div>
+              <div style={{ background:'rgba(255,255,255,0.02)', borderRadius:10, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>Séances muscu</div>
+                <div style={{ fontSize:11, fontWeight:700, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{workouts.length} enregistrées</div>
+              </div>
             </div>
           )}
+        </div>
+      )}
 
-          {aiLoading && (
-            <div style={{ padding:'8px 0' }}>
-              <div style={{ fontFamily:'DM Mono, monospace', fontSize:11, color:'rgba(255,0,64,0.6)', marginBottom:12, letterSpacing:'0.08em' }}>{'>'} INITIALISATION DU MODÈLE...</div>
-              {['Lecture des données Strava', 'Analyse biomécanique', "Calcul des zones d'effort", 'Génération des recommandations'].map((step, i) => (
-                <div key={i} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:8, opacity: 0.6 + i*0.1 }}>
-                  <div style={{ width:14, height:14, borderRadius:4, border:'1px solid rgba(255,0,64,0.3)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                    <div style={{ width:6, height:6, borderRadius:2, background:'#FF0040', animation:'pulse 1s infinite', animationDelay:`${i*0.2}s` }}/>
-                  </div>
-                  <div style={{ fontSize:10, fontFamily:'DM Mono, monospace', color:'var(--text-muted)', letterSpacing:'0.06em' }}>{step}</div>
+      {/* Données Strava si dispo */}
+      {stats && (
+        <div style={{ position:'relative', borderRadius:18, overflow:'hidden', marginBottom:14, border:'1px solid rgba(255,0,64,0.15)', background:'linear-gradient(135deg, rgba(255,0,64,0.04) 0%, transparent 60%)' }}>
+          <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(255,0,64,0.1)', display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(255,0,64,0.5)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+            </div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.6)', letterSpacing:'0.15em' }}>STRAVA · DONNÉES SPORTIVES 30J</div>
+          </div>
+          <div style={{ padding:'14px 16px', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+            {[
+              { label:'Km total', value: stats.totalRunKm.toFixed(1), unit:'km', color:'#FF0040' },
+              { label:'Allure moy', value: mpsToMinKm(stats.avgPace), unit:'/km', color:'#f59e0b' },
+              { label:'FC moy', value: stats.avgHR ? Math.round(stats.avgHR) : '—', unit:'bpm', color:'#6366f1' },
+            ].map(({label, value, unit, color}) => (
+              <div key={label} style={{ position:'relative', borderRadius:10, border:`1px solid ${color}18`, background:`${color}06`, padding:'10px 8px', textAlign:'center', overflow:'hidden' }}>
+                <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{label}</div>
+                <div style={{ fontSize:18, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+                <div style={{ fontSize:8, color:`${color}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>{unit}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Bilan IA */}
+      <div style={{ position:'relative', borderRadius:18, overflow:'hidden', marginBottom:14, border:'1px solid rgba(99,102,241,0.25)', background:'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, transparent 60%)' }}>
+        <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.05), transparent)', animation:'scanLine 14s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
+        <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(99,102,241,0.15)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+          <div style={{ display:'flex', gap:4 }}>
+            <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(99,102,241,0.6)' }}/>
+            <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+            <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+          </div>
+          <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(99,102,241,0.7)', letterSpacing:'0.15em' }}>HEALTH.AI · ANALYSE PERSONNALISÉE</div>
+          {pdfData && (
+            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4 }}>
+              <div style={{ width:4, height:4, borderRadius:'50%', background:'#22c55e', boxShadow:'0 0 4px #22c55e' }}/>
+              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'#22c55e' }}>PDF CHARGÉ</span>
+            </div>
+          )}
+        </div>
+        <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
+          {/* Upload PDF */}
+          <div style={{ marginBottom:14 }}>
+            {!pdfData ? (
+              <label style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:12, border:'1px dashed rgba(99,102,241,0.3)', background:'rgba(99,102,241,0.04)', cursor:'pointer' }}>
+                <input type="file" accept="application/pdf" onChange={handlePdfUpload} style={{ display:'none' }} />
+                <div style={{ width:32, height:32, borderRadius:8, background:'rgba(99,102,241,0.12)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth={2} strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 </div>
-              ))}
+                <div>
+                  <div style={{ fontSize:11, fontWeight:700, color:'#6366f1', fontFamily:'DM Mono, monospace' }}>Ajouter rapport impédancemètre</div>
+                  <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', marginTop:2 }}>PDF · Optionnel · Améliore l'analyse IA</div>
+                </div>
+              </label>
+            ) : (
+              <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:12, border:'1px solid rgba(34,197,94,0.25)', background:'rgba(34,197,94,0.05)' }}>
+                <div style={{ width:32, height:32, borderRadius:8, background:'rgba(34,197,94,0.12)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth={2} strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#22c55e', fontFamily:'DM Mono, monospace', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{pdfName}</div>
+                  <div style={{ fontSize:9, color:'rgba(34,197,94,0.6)', fontFamily:'DM Mono, monospace', marginTop:1 }}>Rapport inclus dans l'analyse</div>
+                </div>
+                <button onClick={() => { setPdfData(null); setPdfName(''); }} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(255,255,255,0.3)', fontSize:16, padding:'2px 6px' }}>✕</button>
+              </div>
+            )}
+          </div>
+
+          {/* Bouton générer */}
+          {!aiText && !aiLoading && (
+            <button onClick={getAIBilan} style={{ width:'100%', padding:'14px', borderRadius:12, border:'1px solid rgba(99,102,241,0.4)', background:'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(99,102,241,0.05))', color:'#6366f1', fontFamily:'DM Mono, monospace', fontWeight:800, fontSize:12, cursor:'pointer', letterSpacing:'0.1em', textTransform:'uppercase' }}>
+              {pdfData ? '✦ ANALYSER MON BILAN SANTÉ + PDF' : '✦ GÉNÉRER MON BILAN SANTÉ IA'}
+            </button>
+          )}
+
+          {/* Loading */}
+          {aiLoading && (
+            <div style={{ textAlign:'center', padding:'20px 0' }}>
+              <div style={{ fontSize:9, color:'#6366f1', fontFamily:'DM Mono, monospace', letterSpacing:'0.15em', marginBottom:8 }}>{'>'} ANALYSE EN COURS...</div>
+              <div style={{ height:2, background:'rgba(99,102,241,0.1)', borderRadius:99, overflow:'hidden' }}>
+                <div style={{ height:'100%', background:'linear-gradient(90deg, #6366f1, #a78bfa)', borderRadius:99, animation:'scanLine 2s ease-in-out infinite', width:'40%' }}/>
+              </div>
             </div>
           )}
 
+          {/* Résultat */}
           {aiText && (
             <div>
-              {aiText.split('\n').map((line, i) => {
-                const trimmed = line.trim();
-                if (!trimmed) return null;
-                const isReco = /^[1-9][.)]\s/.test(trimmed);
-                const isTitle = /^(Bilan|Recommandation|Points?|État|Analyse)/i.test(trimmed) && trimmed.endsWith(':');
-                if (isTitle) return (
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:8, marginTop:16, marginBottom:10 }}>
-                    <div style={{ width:3, height:12, background:'#FF0040', borderRadius:2 }}/>
-                    <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'#FF0040', fontFamily:'DM Mono, monospace' }}>{trimmed.replace(/:$/, '')}</div>
-                  </div>
-                );
-                if (isReco) return (
-                  <div key={i} style={{ display:'flex', gap:12, alignItems:'flex-start', marginBottom:12, padding:'10px 12px', background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.04)', borderRadius:12 }}>
-                    <div style={{ minWidth:24, height:24, borderRadius:8, background:'linear-gradient(135deg,rgba(255,0,64,0.2),rgba(255,0,64,0.05))', border:'1px solid rgba(255,0,64,0.3)', color:'#FF0040', fontSize:11, fontWeight:900, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'DM Mono, monospace', flexShrink:0 }}>{trimmed[0]}</div>
-                    <div style={{ fontSize:12, lineHeight:1.7, color:'var(--text-secondary)', paddingTop:2 }}>{trimmed.replace(/^[1-9][.)]\s*/, '')}</div>
-                  </div>
-                );
-                return (
-                  <div key={i} style={{ fontSize:13, lineHeight:1.8, color:'var(--text-primary)', marginBottom:4, fontFamily:'Syne, sans-serif', paddingLeft:4, borderLeft:'2px solid rgba(255,0,64,0.15)' }}>{trimmed}</div>
-                );
-              })}
-              <button onClick={getAIBilan} style={{ marginTop:16, background:'none', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:'8px 16px', fontSize:10, color:'var(--text-muted)', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', display:'flex', alignItems:'center', gap:6 }}>↻ RÉGÉNÉRER</button>
+              <div style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.8, fontFamily:'DM Mono, monospace' }}>
+                {aiText.split('\n').map((line, i) => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return <div key={i} style={{ height:8 }}/>;
+                  const isTitle = /^[A-Z0-9À-ÿ\s&·:]{4,}$/.test(trimmed) && trimmed.length < 40;
+                  if (isTitle) return <div key={i} style={{ fontSize:9, color:'#6366f1', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', marginTop:14, marginBottom:6 }}>{trimmed}</div>;
+                  const isNum = /^[1-9][\.\)]/.test(trimmed);
+                  if (isNum) return <div key={i} style={{ display:'flex', gap:10, marginBottom:8, alignItems:'flex-start' }}>
+                    <span style={{ fontSize:9, color:'#6366f1', fontWeight:800, fontFamily:'DM Mono, monospace', minWidth:16 }}>{trimmed[0]}.</span>
+                    <span style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.6 }}>{trimmed.slice(2).trim()}</span>
+                  </div>;
+                  return <p key={i} style={{ fontSize:11, marginBottom:6, lineHeight:1.7 }}>{trimmed}</p>;
+                })}
+              </div>
+              <button onClick={getAIBilan} style={{ marginTop:14, background:'none', border:'1px solid rgba(255,255,255,0.08)', borderRadius:8, padding:'7px 14px', fontSize:9, color:'var(--text-muted)', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>↻ RÉGÉNÉRER</button>
             </div>
           )}
         </div>
       </div>
-      <style>{`
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-        @keyframes scan { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-      `}</style>
+
     </div>
   );
 }
