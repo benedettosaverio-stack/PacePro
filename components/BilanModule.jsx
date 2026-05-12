@@ -210,38 +210,36 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
     if (!file || file.type !== 'application/pdf') return;
     setPdfName(file.name);
     try {
-      // Extraire le texte du PDF avec PDF.js
-      const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-      const url = URL.createObjectURL(file);
-      // Fallback: lire en base64 et envoyer comme texte encodé
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfjsLib = await import('pdfjs-dist');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, useWorkerFetch: false, isEvalSupported: false, useSystemFonts: true }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => ('str' in item ? item.str : '')).join(' ');
+        fullText += pageText + '
+';
+      }
+      setPdfData(fullText.substring(0, 6000));
+    } catch(err) {
+      console.error('PDF parse error:', err);
+      // Fallback: lire bytes pour extraction basique
       const reader = new FileReader();
-      reader.onload = async () => {
-        const arrayBuffer = reader.result;
-        // Simple extraction via text decoder
-        const bytes = new Uint8Array(arrayBuffer);
+      reader.onload = () => {
+        const bytes = new Uint8Array(reader.result);
         let text = '';
-        // Extraire les chaînes lisibles du PDF
-        for (let i = 0; i < bytes.length - 1; i++) {
+        for (let i = 0; i < bytes.length; i++) {
           const c = bytes[i];
-          if (c >= 32 && c < 127) {
-            text += String.fromCharCode(c);
-          } else if (c === 10 || c === 13) {
-            text += ' ';
-          }
+          if (c >= 32 && c < 127) text += String.fromCharCode(c);
+          else if (c === 10 || c === 13) text += '
+';
         }
-        // Nettoyer et garder que les parties utiles
-        const cleaned = text
-          .replace(/[^ -~À-ɏ\s]/g, ' ')
-          .replace(/\s{3,}/g, ' ')
-          .substring(0, 8000); // Max 8000 chars
+        const cleaned = text.replace(/\s{3,}/g, ' ').replace(/[^\w\s.,:%\-\/\(\)]/g, '').substring(0, 6000);
         setPdfData(cleaned);
       };
       reader.readAsArrayBuffer(file);
-    } catch {
-      // Fallback simple
-      const reader = new FileReader();
-      reader.onload = () => setPdfData(reader.result.substring(0, 4000));
-      reader.readAsText(file);
     }
   }
 
