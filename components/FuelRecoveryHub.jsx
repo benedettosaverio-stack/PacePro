@@ -79,20 +79,30 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
 // ── Meal card ────────────────────────────────────────────────────────────────
 function MealCard({ meal, tag, accent, onClick }) {
   return (
-    <div onClick={onClick} style={{ borderRadius: 16, padding: '14px 16px', background: 'var(--bg-card)', border: `1px solid ${accent}25`, position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
-      <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: `radial-gradient(circle, ${accent}12 0%, transparent 70%)`, pointerEvents: 'none' }}/>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', flex: 1, marginRight: 8 }}>{meal.name}</div>
-        <span style={{ fontSize: 8, fontWeight: 700, padding: '3px 7px', borderRadius: 99, background: `${accent}20`, color: accent, border: `1px solid ${accent}40`, fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{tag}</span>
+    <div onClick={onClick} style={{ position:'relative', borderRadius:16, overflow:'hidden', border:`1px solid ${accent}20`, background:`linear-gradient(135deg, ${accent}05 0%, transparent 60%)`, cursor:'pointer' }}>
+      {/* Scan sweep */}
+      <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:`linear-gradient(90deg, transparent, ${accent}04, transparent)`, animation:'scanLine 14s ease-in-out infinite 1s', zIndex:1, pointerEvents:'none', left:0 }}/>
+      {/* Terminal header */}
+      <div style={{ padding:'8px 14px', borderBottom:`1px solid ${accent}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+        <div style={{ display:'flex', gap:3 }}>
+          <div style={{ width:4, height:4, borderRadius:'50%', background:`${accent}60` }}/>
+          <div style={{ width:4, height:4, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+          <div style={{ width:4, height:4, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+        </div>
+        <div style={{ fontSize:7, fontFamily:'DM Mono, monospace', color:`${accent}70`, letterSpacing:'0.12em' }}>MEAL.SYS · NUTRITION</div>
+        <span style={{ marginLeft:'auto', fontSize:7, fontWeight:700, padding:'2px 6px', borderRadius:4, background:`${accent}15`, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>{tag}</span>
       </div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10, lineHeight: 1.5 }}>{meal.desc}</div>
-      <div style={{ display: 'flex', gap: 6 }}>
-        {[['Kcal', meal.kcal, 'var(--text-primary)'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
-          <div key={l} style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 8, padding: '6px 4px', textAlign: 'center' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: c, fontFamily: 'DM Mono, monospace' }}>{v}</div>
-            <div style={{ fontSize: 7, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 1 }}>{l}</div>
-          </div>
-        ))}
+      <div style={{ padding:'12px 14px', position:'relative', zIndex:2 }}>
+        <div style={{ fontSize:14, fontWeight:800, color:'var(--text-primary)', marginBottom:4, letterSpacing:'-0.02em' }}>{meal.name}</div>
+        <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:12, lineHeight:1.5, fontFamily:'DM Mono, monospace' }}>{meal.desc}</div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:6 }}>
+          {[['Kcal', meal.kcal, 'var(--text-primary)'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
+            <div key={l} style={{ position:'relative', background:`rgba(255,255,255,0.02)`, border:`1px solid ${c === 'var(--text-primary)' ? 'rgba(255,255,255,0.08)' : c}18`, borderRadius:8, padding:'8px 4px', textAlign:'center', overflow:'hidden' }}>
+              <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.08em', fontFamily:'DM Mono, monospace', marginBottom:3 }}>{l}</div>
+              <div style={{ fontSize:14, fontWeight:900, color:c, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{v}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
