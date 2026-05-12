@@ -442,49 +442,73 @@ export default function FuelRecoveryHub({ onSync }) {
           <div style={{ width:3, height:14, background:energyColor, borderRadius:2, boxShadow:`0 0 8px ${energyColor}` }}/>
           <div style={{ fontSize:9, fontWeight:700, color:energyColor, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Énergie & Macros</div>
         </div>
-        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${energyColor}25`, background:`linear-gradient(135deg, ${energyColor}06 0%, transparent 60%)`, padding:'20px' }}>
-          {/* Analyse IA */}
-          <div style={{ marginBottom: 16, background: 'rgba(255,255,255,0.02)', borderRadius: 12, padding: '12px 14px', border:`1px solid ${energyColor}20` }}>
-            <div style={{ fontSize: 8, color: energyColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 6, display:'flex', alignItems:'center', gap:6 }}>
-              <div style={{ width:4, height:4, borderRadius:'50%', background:energyColor, boxShadow:`0 0 4px ${energyColor}` }}/>
-              ANALYSE IA
+        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${energyColor}20`, background:`linear-gradient(135deg, ${energyColor}05 0%, transparent 60%)` }}>
+          {/* Scan sweep */}
+          <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:`linear-gradient(90deg, transparent, ${energyColor}04, transparent)`, animation:'scanLine 12s ease-in-out infinite 2s', zIndex:1, pointerEvents:'none', left:0 }}/>
+          {/* Terminal header */}
+          <div style={{ padding:'10px 16px', borderBottom:`1px solid ${energyColor}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:`${energyColor}60` }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7, minHeight: 40 }}>
-              {status === 'loading' ? 'Analyse en cours...' : typedAI}
-              {status === 'done' && typedAI.length < aiText.length && <span style={{ opacity: 0.5 }}>|</span>}
-            </div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${energyColor}70`, letterSpacing:'0.15em' }}>ENERGY.SYS · METABOLIC ANALYSIS</div>
+            <div style={{ marginLeft:'auto', fontSize:8, fontFamily:'DM Mono, monospace', color:energyColor }}>{kcal} kcal/j</div>
           </div>
-
-          {/* Expand/collapse activité */}
-          {activity && (
-            <button onClick={() => setExpanded(!expanded)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 12, padding: '10px 14px', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: expanded ? 12 : 0, transition: 'all 0.3s' }}>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>Détails de l'analyse</span>
-              <span style={{ fontSize: 12, color: energyColor, transition: 'transform 0.3s', display: 'inline-block', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
-            </button>
-          )}
-          {expanded && activity && (
-            <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: '12px', marginBottom: 12, animation: 'fadeSlideUp 0.25s ease both' }}>
+          <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
+            {/* KPI row */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:16 }}>
               {[
-                ['Activité', activity.name],
-                ['Distance', `${distKm.toFixed(1)} km`],
-                ['Dénivelé +', `${Math.round(elevation)} m`],
-                ['Durée', `${Math.round(activity.moving_time/60)} min`],
-                ['FC moy.', activity.average_heartrate ? `${Math.round(activity.average_heartrate)} bpm` : '—'],
-                ['Calories', activity.calories ? `${activity.calories} kcal` : '—'],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase' }}>{k}</span>
-                  <span style={{ fontSize: 11, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace', fontWeight: 600 }}>{v}</span>
+                { label:'Glucides', value:carbs, unit:'g', color:energyColor, max:700 },
+                { label:'Protéines', value:protein, unit:'g', color:'#FF0040', max:300 },
+                { label:'Lipides', value:fat, unit:'g', color:'#a78bfa', max:150 },
+              ].map(({ label, value, unit, color, max }) => (
+                <div key={label} style={{ position:'relative', borderRadius:12, border:`1px solid ${color}20`, background:`${color}06`, padding:'10px 8px', textAlign:'center', overflow:'hidden' }}>
+                  <div style={{ position:'absolute', bottom:-6, right:-6, width:30, height:30, borderRadius:'50%', background:`radial-gradient(circle, ${color}20, transparent)`, pointerEvents:'none' }}/>
+                  <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{label}</div>
+                  <div style={{ fontSize:20, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+                  <div style={{ fontSize:7, color:`${color}80`, fontFamily:'DM Mono, monospace', marginBottom:6 }}>{unit}</div>
+                  <div style={{ height:2, background:`${color}15`, borderRadius:99, overflow:'hidden' }}>
+                    <div style={{ height:'100%', width:`${Math.min(value/max*100,100)}%`, background:color, borderRadius:99, boxShadow:`0 0 6px ${color}60` }}/>
+                  </div>
                 </div>
               ))}
             </div>
-          )}
-
-          {/* Macros */}
-          <div style={{ marginTop: 8 }}>
-            <MacroBar label="Glucides" value={carbs} max={700} color={energyColor} />
-            <MacroBar label="Protéines" value={protein} max={300} color="#FF0040" />
-            <MacroBar label="Lipides" value={fat} max={150} color="#a78bfa" />
+            {/* Analyse IA */}
+            <div style={{ marginBottom:activity?12:0, background:'rgba(255,255,255,0.02)', borderRadius:12, padding:'10px 14px', border:`1px solid ${energyColor}15` }}>
+              <div style={{ fontSize:8, color:energyColor, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
+                <div style={{ width:4, height:4, borderRadius:'50%', background:energyColor, boxShadow:`0 0 4px ${energyColor}` }}/>
+                ANALYSE IA
+              </div>
+              <div style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.7, minHeight:32, fontFamily:'DM Mono, monospace' }}>
+                {status === 'loading' ? '> Analyse en cours...' : typedAI}
+                {status === 'done' && typedAI.length < aiText.length && <span style={{ opacity:0.5 }}>_</span>}
+              </div>
+            </div>
+            {/* Expand activité */}
+            {activity && (
+              <button onClick={() => setExpanded(!expanded)} style={{ width:'100%', background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:10, padding:'8px 14px', cursor:'pointer', fontFamily:'DM Mono, monospace', display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:expanded?10:0, transition:'all 0.3s' }}>
+                <span style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.1em' }}>Détails activité</span>
+                <span style={{ fontSize:11, color:energyColor, transition:'transform 0.3s', display:'inline-block', transform:expanded?'rotate(180deg)':'rotate(0deg)' }}>▾</span>
+              </button>
+            )}
+            {expanded && activity && (
+              <div style={{ background:'rgba(255,255,255,0.02)', borderRadius:10, padding:'10px 12px', marginBottom:0, border:`1px solid ${energyColor}10` }}>
+                {[
+                  ['Activité', activity.name],
+                  ['Distance', `${distKm.toFixed(1)} km`],
+                  ['Dénivelé +', `${Math.round(elevation)} m`],
+                  ['Durée', `${Math.round(activity.moving_time/60)} min`],
+                  ['FC moy.', activity.average_heartrate ? `${Math.round(activity.average_heartrate)} bpm` : '—'],
+                  ['Calories', activity.calories ? `${activity.calories} kcal` : '—'],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'4px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                    <span style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>{k}</span>
+                    <span style={{ fontSize:10, color:'var(--text-primary)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
