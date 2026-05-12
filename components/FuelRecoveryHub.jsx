@@ -367,29 +367,74 @@ export default function FuelRecoveryHub({ onSync }) {
           <div style={{ width:3, height:14, background:waterColor, borderRadius:2, boxShadow:`0 0 8px ${waterColor}` }}/>
           <div style={{ fontSize:9, fontWeight:700, color:waterColor, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Hydratation</div>
         </div>
-        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${waterColor}25`, background:`linear-gradient(135deg, ${waterColor}06 0%, transparent 60%)`, padding:'20px' }}>
-          <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 16 }}>
-            {/* Wave circle */}
-            <div style={{ width: 100, height: 100, flexShrink: 0 }}>
-              <WaveHydration pct={waterPct} color={waterColor} />
+        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${waterColor}20`, background:`linear-gradient(135deg, ${waterColor}05 0%, transparent 60%)` }}>
+          {/* Scan sweep */}
+          <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:`linear-gradient(90deg, transparent, ${waterColor}05, transparent)`, animation:'scanLine 10s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
+          {/* Terminal header */}
+          <div style={{ padding:'10px 16px', borderBottom:`1px solid ${waterColor}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:`${waterColor}60` }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 28, fontWeight: 900, fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)', lineHeight: 1 }}>{(water/1000).toFixed(1)}<span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text-muted)' }}>L</span></div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontFamily: 'DM Mono, monospace' }}>/ {(waterGoalMl/1000).toFixed(1)}L objectif</div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                {[[250,'+ 25cl'],[500,'+ 50cl']].map(([ml, label]) => (
-                  <button key={ml} onClick={() => addWater(ml)} style={{ flex: 1, background: `${waterColor}20`, border: `1px solid ${waterColor}30`, borderRadius: 10, padding: '8px', fontSize: 11, fontWeight: 700, color: waterColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s' }}>{label}</button>
-                ))}
-                <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 10, padding: '8px 10px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'inherit' }}>↺</button>
-              </div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${waterColor}70`, letterSpacing:'0.15em' }}>HYDRATION.SYS · MONITORING</div>
+            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5 }}>
+              <div style={{ width:4, height:4, borderRadius:'50%', background: waterPct >= 100 ? '#22c55e' : waterPct > 50 ? waterColor : '#f59e0b', boxShadow:`0 0 5px ${waterPct >= 100 ? '#22c55e' : waterPct > 50 ? waterColor : '#f59e0b'}` }}/>
+              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:waterColor, letterSpacing:'0.1em' }}>{Math.round(waterPct)}%</span>
             </div>
           </div>
-          {isIntense && (
-            <div style={{ background: `${waterColor}10`, border: `1px solid ${waterColor}25`, borderRadius: 12, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 16 }}>⚡</span>
-              <span style={{ fontSize: 11, color: `${waterColor}`, lineHeight: 1.5 }}>Ajoute des électrolytes suite à ta sortie running pour optimiser la récupération.</span>
+          <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
+            {/* Progress arc + value */}
+            <div style={{ display:'flex', gap:16, alignItems:'center', marginBottom:16 }}>
+              <div style={{ width:90, height:90, flexShrink:0, position:'relative' }}>
+                {/* Arc SVG */}
+                <svg viewBox="0 0 90 90" style={{ width:'100%', height:'100%', transform:'rotate(-90deg)' }}>
+                  <circle cx="45" cy="45" r="38" fill="none" stroke={`${waterColor}15`} strokeWidth="6"/>
+                  <circle cx="45" cy="45" r="38" fill="none" stroke={waterColor} strokeWidth="6"
+                    strokeDasharray={`${2 * Math.PI * 38}`}
+                    strokeDashoffset={`${2 * Math.PI * 38 * (1 - waterPct/100)}`}
+                    strokeLinecap="round"
+                    style={{ transition:'stroke-dashoffset 1s cubic-bezier(0.22,1,0.36,1)', filter:`drop-shadow(0 0 6px ${waterColor})` }}/>
+                </svg>
+                <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
+                  <div style={{ fontSize:18, fontWeight:900, color:waterColor, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{(water/1000).toFixed(1)}</div>
+                  <div style={{ fontSize:7, color:`${waterColor}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>litres</div>
+                </div>
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>Objectif journalier</div>
+                <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', fontFamily:'DM Mono, monospace', lineHeight:1, marginBottom:4 }}>{(waterGoalMl/1000).toFixed(1)}<span style={{ fontSize:11, color:'var(--text-muted)', fontWeight:400 }}>L</span></div>
+                <div style={{ height:3, background:`${waterColor}15`, borderRadius:99, overflow:'hidden', marginBottom:12 }}>
+                  <div style={{ height:'100%', width:`${waterPct}%`, background:`linear-gradient(90deg, ${waterColor}80, ${waterColor})`, borderRadius:99, transition:'width 1s cubic-bezier(0.22,1,0.36,1)', boxShadow:`0 0 8px ${waterColor}60` }}/>
+                </div>
+                <div style={{ display:'flex', gap:6 }}>
+                  {[[250,'+ 25cl'],[500,'+ 50cl']].map(([ml, label]) => (
+                    <button key={ml} onClick={() => addWater(ml)} style={{ flex:1, background:`${waterColor}12`, border:`1px solid ${waterColor}30`, borderRadius:8, padding:'9px 6px', fontSize:10, fontWeight:700, color:waterColor, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.05em', transition:'all 0.15s' }}>{label}</button>
+                  ))}
+                  <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:8, padding:'9px 10px', fontSize:11, color:'var(--text-muted)', cursor:'pointer', fontFamily:'inherit' }}>↺</button>
+                </div>
+              </div>
             </div>
-          )}
+            {/* Stats row */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+              {[
+                { label:'Bu aujourd'hui', value:`${water}ml`, color:waterColor },
+                { label:'Restant', value:`${Math.max(0,waterGoalMl-water)}ml`, color: water >= waterGoalMl ? '#22c55e' : '#f59e0b' },
+                { label:'Statut', value: waterPct >= 100 ? 'Hydraté' : waterPct > 60 ? 'Bon' : 'À boire', color: waterPct >= 100 ? '#22c55e' : waterPct > 60 ? waterColor : '#f59e0b' },
+              ].map(({ label, value, color }) => (
+                <div key={label} style={{ background:`rgba(255,255,255,0.02)`, border:`1px solid ${color}15`, borderRadius:10, padding:'8px', textAlign:'center' }}>
+                  <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{label}</div>
+                  <div style={{ fontSize:11, fontWeight:800, color, fontFamily:'DM Mono, monospace' }}>{value}</div>
+                </div>
+              ))}
+            </div>
+            {isIntense && (
+              <div style={{ marginTop:10, background:`${waterColor}08`, border:`1px solid ${waterColor}20`, borderRadius:10, padding:'8px 12px', display:'flex', alignItems:'center', gap:8 }}>
+                <div style={{ width:5, height:5, borderRadius:'50%', background:waterColor, boxShadow:`0 0 5px ${waterColor}`, flexShrink:0 }}/>
+                <span style={{ fontSize:10, color:waterColor, lineHeight:1.5, fontFamily:'DM Mono, monospace' }}>Ajoute des électrolytes post-effort pour optimiser la récupération.</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── ÉNERGIE & MACROS ── */}
