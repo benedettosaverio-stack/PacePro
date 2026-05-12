@@ -418,7 +418,7 @@ export default function FuelRecoveryHub({ onSync }) {
             {/* Stats row */}
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
               {[
-                { label:'Bu aujourd'hui', value:`${water}ml`, color:waterColor },
+                { label:"Bu aujourd'hui", value:`${water}ml`, color:waterColor },
                 { label:'Restant', value:`${Math.max(0,waterGoalMl-water)}ml`, color: water >= waterGoalMl ? '#22c55e' : '#f59e0b' },
                 { label:'Statut', value: waterPct >= 100 ? 'Hydraté' : waterPct > 60 ? 'Bon' : 'À boire', color: waterPct >= 100 ? '#22c55e' : waterPct > 60 ? waterColor : '#f59e0b' },
               ].map(({ label, value, color }) => (
