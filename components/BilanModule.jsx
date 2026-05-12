@@ -148,38 +148,54 @@ export default function BilanModule({ onBack }) {
   }, []);
 
   async function getAIBilan() {
-    if (!stats) return;
     setAiLoading(true);
     setAiText('');
-    const stravaContext = `Données Strava (20 dernières activités) :
-- Courses : ${stats.runs.length} séances, ${stats.totalRunKm.toFixed(1)} km total
-- Allure moyenne : ${mpsToMinKm(stats.avgPace)} min/km
-- FC moyenne : ${stats.avgHR ? Math.round(stats.avgHR) + ' bpm' : 'non disponible'}
-- Sortie la plus longue : ${stats.longestRun.toFixed(1)} km
-- Séances muscu/sport : ${stats.muscus.length}
-- Score volume : ${stats.scoreVolume}/100 | régularité : ${stats.scoreRegularite}/100`;
+
+    // Charger les données profil
+    const settings = (() => { try { return JSON.parse(localStorage.getItem('pp_user_settings') || '{}'); } catch { return {}; } })();
+    const plans = (() => { try { return JSON.parse(localStorage.getItem('pp_plans') || '[]'); } catch { return []; } })();
+    const workouts = (() => { try { return JSON.parse(localStorage.getItem('pp_workouts_pro') || '[]'); } catch { return []; } })();
+    const activePlan = plans[plans.length - 1];
+    const completed = activePlan?.completed || {};
+    const totalSessions = activePlan?.plan?.reduce((a, w) => a + w.sessions.length, 0) || 0;
+    const doneSessions = Object.values(completed).filter(Boolean).length;
+
+    const profileContext = `Profil athlète :
+- Poids : ${settings.weight || '?'} kg | Taille : ${settings.height || '?'} cm | Âge : ${settings.age || '?'} ans
+- VMA : ${settings.vma || '?'} km/h | Niveau : ${settings.level || '?'}
+- Discipline principale : ${settings.discipline || 'running'}
+- Programme actif : ${activePlan ? `${activePlan.profile?.raceName || 'oui'} — ${doneSessions}/${totalSessions} séances complétées` : 'aucun'}
+- Séances muscu : ${workouts.length} enregistrées`;
+
+    const stravaContext = stats ? `
+Données sportives (Strava) :
+- Courses : ${stats.runs.length} séances, ${stats.totalRunKm.toFixed(1)} km
+- Allure moy : ${mpsToMinKm(stats.avgPace)} min/km
+- FC moy : ${stats.avgHR ? Math.round(stats.avgHR) + ' bpm' : 'N/A'}` : '';
 
     let prompt;
     if (pdfData) {
-      prompt = `Tu es un coach sportif et nutritionniste expert en composition corporelle. 
-${stravaContext}
+      prompt = `Tu es un médecin du sport et coach expert en composition corporelle.
+${profileContext}${stravaContext}
 
-Le rapport d'impédancemètre ci-joint contient la composition corporelle détaillée de l'athlète.
-Analyse ce rapport et les données Strava pour faire :
-1. Un bilan physique complet (masse grasse, masse musculaire, hydratation, métabolisme de base) en 3-4 lignes
-2. 3 recommandations concrètes numérotées basées sur la composition corporelle ET les performances sportives
-3. Un objectif prioritaire à atteindre dans les 4 prochaines semaines
+Le rapport d'impédancemètre joint contient la composition corporelle détaillée.
+Analyse ce rapport et le profil pour produire :
 
-Sois direct, précis, sans intro ni outro. Langue : français.`;
+1. BILAN COMPOSITION CORPORELLE (3-4 lignes) : masse grasse %, masse musculaire, hydratation, métabolisme de base — compare aux normes pour cet athlète
+2. BILAN PERFORMANCE SPORTIVE (2-3 lignes) : lien entre composition et performances actuelles
+3. RECOMMANDATIONS (3 points numérotés) : actions concrètes sur nutrition, entraînement et récupération
+4. OBJECTIF 4 SEMAINES : 1 objectif prioritaire mesurable
+
+Sois précis, chiffré, sans intro ni outro. Langue : français.`;
     } else {
-      prompt = `Tu es un coach sportif expert. ${stravaContext}
-Fais un bilan physique court et percutant (3-4 lignes max), puis donne 3 recommandations concrètes numérotées. Sois direct, sans intro ni outro. Langue : français.`;
+      prompt = `Tu es un coach sportif et médecin du sport expert.
+${profileContext}${stravaContext}
+
+Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrètes numérotées adaptées au profil. Sans intro ni outro. Langue : français.`;
     }
 
     try {
-      const body = pdfData
-        ? { prompt, pdf: pdfData }
-        : { prompt };
+      const body = pdfData ? { prompt, pdf: pdfData } : { prompt };
       const res = await fetch('/api/gemini', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const d = await res.json();
       setAiText(d.text || 'Erreur IA.');
