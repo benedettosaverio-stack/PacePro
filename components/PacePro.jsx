@@ -796,15 +796,24 @@ function FeedbackModal({ session, onClose, onSubmit }) {
   const effortColors = ['','#22c55e','#22c55e','#22c55e','#4ade80','#f59e0b','#f59e0b','#f59e0b','#FF0040','#FF0040','#FF0040'];
   const effortLabels = ['','Très facile','Facile','Facile','Plutôt facile','Modéré','Modéré','Modéré','Difficile','Très difficile','Extrême'];
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.9)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div className='modal-enter' style={{width:'100%',maxWidth:480,background:'var(--bg-modal)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'24px 24px 0 0',padding:'12px 20px 36px',maxHeight:'90vh',overflowY:'auto'}}>
-        <div style={{width:36,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
-        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
-          <div style={{flex:1}}>
-            <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:4}}>Feedback séance</div>
-            <div style={{fontSize:18,fontWeight:800,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>{session.title}</div>
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:200,display:'flex',flexDirection:'column',justifyContent:'flex-end'}} onClick={onClose}>
+      <div className='sheet-enter' onClick={e=>e.stopPropagation()} style={{width:'100%',background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 20px calc(env(safe-area-inset-bottom,16px) + 24px)',maxHeight:'88vh',overflowY:'auto',backdropFilter:'blur(20px)'}}>
+        <div style={{width:40,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
+        {/* Terminal header */}
+        <div style={{position:'relative',borderRadius:14,overflow:'hidden',marginBottom:16,border:'1px solid rgba(255,0,64,0.15)',background:'linear-gradient(135deg,rgba(255,0,64,0.06),transparent)'}}>
+          <div style={{padding:'10px 14px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
+            <div style={{display:'flex',gap:4}}>
+              <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(255,0,64,0.5)'}}/>
+              <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(245,158,11,0.4)'}}/>
+              <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(34,197,94,0.4)'}}/>
+            </div>
+            <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.6)',letterSpacing:'0.15em'}}>FEEDBACK · SÉANCE</div>
+            <button onClick={onClose} style={{marginLeft:'auto',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.3)',fontSize:18,lineHeight:1}}>×</button>
           </div>
-          <button onClick={onClose} style={{width:32,height:32,borderRadius:10,background:'var(--btn-ghost-bg)',border:'1px solid var(--border)',cursor:'pointer',color:'var(--text-muted)',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+          <div style={{padding:'12px 14px'}}>
+            <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:3}}>{session.tag}</div>
+            <div style={{fontSize:18,fontWeight:900,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>{session.title}</div>
+          </div>
         </div>
         <div style={{marginBottom:20}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
