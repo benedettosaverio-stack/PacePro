@@ -735,6 +735,44 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 
 function SessionCard({ session, onComplete, onDetail }) {
   const IconComp = SessionIcons[session.type] || SessionIcons.ef;
+  const [timerActive, setTimerActive] = React.useState(false);
+  const [elapsed, setElapsed] = React.useState(0);
+  const [timerStarted, setTimerStarted] = React.useState(false);
+  const intervalRef = React.useRef(null);
+
+  const startTimer = (e) => {
+    e.stopPropagation();
+    if (timerActive) {
+      clearInterval(intervalRef.current);
+      setTimerActive(false);
+    } else {
+      setTimerStarted(true);
+      setTimerActive(true);
+      const start = Date.now() - elapsed * 1000;
+      intervalRef.current = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - start) / 1000));
+      }, 1000);
+    }
+  };
+
+  const resetTimer = (e) => {
+    e.stopPropagation();
+    clearInterval(intervalRef.current);
+    setTimerActive(false);
+    setTimerStarted(false);
+    setElapsed(0);
+  };
+
+  React.useEffect(() => () => clearInterval(intervalRef.current), []);
+
+  const fmtTime = (s) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+  };
+
   return (
     <div onClick={onDetail} className='card-hover' style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',position:'relative',overflow:'hidden',cursor:'pointer'}}>
       {session.completed && <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#22c55e',borderRadius:'20px 20px 0 0'}}/>}
@@ -764,6 +802,32 @@ function SessionCard({ session, onComplete, onDetail }) {
           </div>
         ))}
       </div>
+      {/* Chronomètre */}
+      {!session.completed && (
+        <div style={{marginBottom:10,background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:12,padding:'10px 12px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:3}}>Chronomètre</div>
+              <div style={{fontSize:22,fontWeight:900,fontFamily:'DM Mono, monospace',color:timerActive?'#FF0040':timerStarted?'#f59e0b':'var(--text-primary)',lineHeight:1,letterSpacing:'0.05em'}}>
+                {fmtTime(elapsed)}
+              </div>
+            </div>
+            <div style={{display:'flex',gap:6}}>
+              {timerStarted && (
+                <button onClick={resetTimer} style={{width:34,height:34,borderRadius:8,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--text-muted)',cursor:'pointer',fontSize:14,display:'flex',alignItems:'center',justifyContent:'center'}}>↺</button>
+              )}
+              <button onClick={startTimer} style={{width:timerStarted?44:80,height:34,borderRadius:8,background:timerActive?'rgba(245,158,11,0.15)':'rgba(255,0,64,0.15)',border:`1px solid ${timerActive?'rgba(245,158,11,0.3)':'rgba(255,0,64,0.3)'}`,color:timerActive?'#f59e0b':'#FF0040',cursor:'pointer',fontSize:timerStarted?18:11,fontWeight:700,fontFamily:'DM Mono, monospace',letterSpacing:timerStarted?0:'0.05em',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                {timerStarted ? (timerActive ? '⏸' : '▶') : 'DÉMARRER'}
+              </button>
+            </div>
+          </div>
+          {timerActive && (
+            <div style={{marginTop:8,height:2,background:'rgba(255,0,64,0.1)',borderRadius:99,overflow:'hidden'}}>
+              <div style={{height:'100%',background:'linear-gradient(90deg,#FF0040,#f59e0b)',borderRadius:99,width:`${(elapsed%60)/60*100}%`,transition:'width 1s linear'}}/>
+            </div>
+          )}
+        </div>
+      )}
       {/* Actions */}
       {!session.completed && onComplete && (
         <button onClick={e=>{e.stopPropagation();onComplete(session.id);}} style={{width:'100%',background:'linear-gradient(135deg,rgba(255,0,64,0.12),rgba(255,0,64,0.06))',border:'1px solid rgba(255,0,64,0.25)',borderRadius:12,padding:'11px 16px',color:'#FF0040',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',letterSpacing:'0.02em'}}>
