@@ -642,26 +642,49 @@ export default function FuelRecoveryHub({ onSync }) {
         </div>
 
         {/* Générateur IA personnalisé */}
-        <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 20, padding: '18px' }}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10 }}>✦ Créer mes propres recettes</div>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.5 }}>Ces repas ne te conviennent pas ? Dis à l'IA ce dont tu as envie et elle crée 3 recettes adaptées à tes macros.</div>
-          <textarea
-            value={aiRequest}
-            onChange={e => setAiRequest(e.target.value)}
-            placeholder="Ex: j'ai envie de quelque chose d'asiatique avec du riz, léger et rapide à faire..."
-            style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 12, padding: '12px 14px', color: 'var(--text-primary)', fontSize: 12, fontFamily: 'Syne, sans-serif', outline: 'none', resize: 'none', minHeight: 72, lineHeight: 1.6, boxSizing: 'border-box' }}
-          />
-          <button onClick={generateAiMeals} disabled={aiLoading || !aiRequest.trim()} style={{ width: '100%', marginTop: 10, background: aiLoading ? 'rgba(99,102,241,0.3)' : 'linear-gradient(135deg, #6366f1, #4f46e5)', border: 'none', borderRadius: 12, padding: '13px', fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', cursor: aiLoading ? 'not-allowed' : 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {aiLoading ? '⏳ Génération en cours...' : '✨ Générer 3 recettes personnalisées'}
-          </button>
+        <div style={{ marginTop: 16, position:'relative', borderRadius: 20, overflow:'hidden', border: '1px solid rgba(99,102,241,0.2)', background:'linear-gradient(135deg, rgba(99,102,241,0.05) 0%, transparent 60%)' }}>
+          <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.04), transparent)', animation:'scanLine 18s ease-in-out infinite 4s', zIndex:1, pointerEvents:'none', left:0 }}/>
+          {/* Terminal header */}
+          <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(99,102,241,0.15)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+            <div style={{ display:'flex', gap:4 }}>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(99,102,241,0.6)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
+              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+            </div>
+            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(99,102,241,0.7)', letterSpacing:'0.15em' }}>AI.CHEF · RECIPE GENERATOR</div>
+            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5 }}>
+              <div style={{ width:4, height:4, borderRadius:'50%', background:'#6366f1', boxShadow:'0 0 5px #6366f1' }}/>
+              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'#6366f1', letterSpacing:'0.1em' }}>IA ACTIVE</span>
+            </div>
+          </div>
+          <div style={{ padding:'14px 16px', position:'relative', zIndex:2 }}>
+            <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:12, lineHeight:1.6, fontFamily:'DM Mono, monospace' }}>
+              {'>'} Ces repas ne te conviennent pas ? Décris ce dont tu as envie.
+            </div>
+            <textarea
+              value={aiRequest}
+              onChange={e => setAiRequest(e.target.value)}
+              placeholder="Ex: quelque chose d'asiatique avec du riz, léger et rapide..."
+              style={{ width:'100%', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(99,102,241,0.25)', borderRadius:10, padding:'10px 14px', color:'var(--text-primary)', fontSize:12, fontFamily:'DM Mono, monospace', outline:'none', resize:'none', minHeight:60, lineHeight:1.6, boxSizing:'border-box' }}
+            />
+            <button onClick={generateAiMeals} disabled={aiLoading || !aiRequest.trim()} style={{ width:'100%', marginTop:10, background: aiLoading ? 'rgba(99,102,241,0.2)' : 'linear-gradient(135deg, #6366f1, #4f46e5)', border:'none', borderRadius:10, padding:'12px', fontSize:12, fontWeight:800, color:'#fff', cursor: aiLoading ? 'not-allowed' : 'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em', display:'flex', alignItems:'center', justifyContent:'center', gap:8, boxShadow: aiLoading ? 'none' : '0 4px 16px rgba(99,102,241,0.3)', opacity: !aiRequest.trim() ? 0.5 : 1 }}>
+              {aiLoading ? '> GÉNÉRATION EN COURS...' : '✦ GÉNÉRER 3 RECETTES IA'}
+            </button>
+          </div>
         </div>
 
         {/* Recettes IA générées */}
         {showAiMeals && (
           <div style={{ marginTop: 12 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 12 }}>Recettes générées pour toi</div>
+            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+              <div style={{ width:3, height:14, background:'#6366f1', borderRadius:2, boxShadow:'0 0 8px #6366f1' }}/>
+              <div style={{ fontSize:9, fontWeight:700, color:'#6366f1', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Recettes générées pour toi</div>
+            </div>
             {aiLoading ? (
-              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: 13 }}>L'IA cuisine pour toi...</div>
+              <div style={{ textAlign:'center', padding:'24px', color:'#6366f1', fontSize:11, fontFamily:'DM Mono, monospace', letterSpacing:'0.1em' }}>
+                <div style={{ marginBottom:8 }}>{'>'} ANALYSE DE TES MACROS...</div>
+                <div style={{ opacity:0.5 }}>L'IA cuisine pour toi</div>
+              </div>
             ) : (
               aiMeals.map((meal, i) => (
                 <div key={i} style={{ marginBottom: 10 }}>
