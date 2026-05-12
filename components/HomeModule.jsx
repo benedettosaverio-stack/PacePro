@@ -46,7 +46,9 @@ export default function HomeModule({ onNavigate }) {
   useEffect(() => {
     try {
       const a = localStorage.getItem('strava_athlete');
+      const ppUser = localStorage.getItem('pp_user');
       if (a) setAthlete(JSON.parse(a));
+      else if (ppUser) setAthlete(JSON.parse(ppUser));
       const p = localStorage.getItem('pp_plans');
       if (p) setPlans(JSON.parse(p));
       const w = localStorage.getItem('pp_workouts_pro');
