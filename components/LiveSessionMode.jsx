@@ -42,57 +42,86 @@ function coordsToSVG(points, W=300, H=180) {
   }));
 }
 
-// Composant carte SVG
+// Composant carte Leaflet
 function RouteMap({ points }) {
-  if (points.length < 2) return null;
-  const W = 300, H = 180;
-  const svg = coordsToSVG(points, W, H);
-  
-  // Gradient couleur par allure
-  const maxPace = Math.max(...points.map(p => p.pace || 0));
-  const minPace = Math.min(...points.filter(p => p.pace > 0).map(p => p.pace) || [0]);
-  
-  const paceColor = (pace) => {
-    if (!pace || pace <= 0) return '#60a5fa';
-    const ratio = Math.max(0, Math.min(1, (pace - minPace) / (maxPace - minPace || 1)));
-    const r = Math.round(34 + ratio * (255 - 34));
-    const g = Math.round(197 - ratio * 197);
-    const b = Math.round(94 - ratio * 94);
-    return `rgb(${r},${g},${b})`;
-  };
+  const mapRef = useRef(null);
+  const leafletRef = useRef(null);
+  const mapInstanceRef = useRef(null);
 
-  const pathD = svg.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  useEffect(() => {
+    if (!mapRef.current || points.length < 2) return;
+    if (typeof window === 'undefined') return;
+
+    const initMap = async () => {
+      const L = await import('leaflet');
+      await import('leaflet/dist/leaflet.css');
+
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+      }
+
+      const map = L.map(mapRef.current, {
+        zoomControl: false,
+        attributionControl: false,
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      // Tracé coloré par allure
+      const minPace = Math.min(...points.filter(p => p.pace > 0).map(p => p.pace));
+      const maxPace = Math.max(...points.map(p => p.pace || 0));
+
+      const paceColor = (pace) => {
+        if (!pace || pace <= 0) return '#60a5fa';
+        const ratio = Math.max(0, Math.min(1, (pace - minPace) / (maxPace - minPace || 1)));
+        const r = Math.round(34 + ratio * 221);
+        const g = Math.round(197 - ratio * 197);
+        const b = Math.round(94 - ratio * 94);
+        return `rgb(${r},${g},${b})`;
+      };
+
+      // Dessiner segments colorés
+      for (let i = 1; i < points.length; i++) {
+        const color = paceColor(points[i].pace);
+        L.polyline([
+          [points[i-1].lat, points[i-1].lon],
+          [points[i].lat, points[i].lon],
+        ], { color, weight: 4, opacity: 0.9 }).addTo(map);
+      }
+
+      // Marqueurs départ/arrivée
+      const startIcon = L.divIcon({ html: '<div style="width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid #07080b;box-shadow:0 0 6px #22c55e"></div>', className: '', iconSize: [12,12], iconAnchor: [6,6] });
+      const endIcon = L.divIcon({ html: '<div style="width:12px;height:12px;border-radius:50%;background:#FF0040;border:2px solid #07080b;box-shadow:0 0 6px #FF0040"></div>', className: '', iconSize: [12,12], iconAnchor: [6,6] });
+
+      L.marker([points[0].lat, points[0].lon], { icon: startIcon }).addTo(map);
+      L.marker([points[points.length-1].lat, points[points.length-1].lon], { icon: endIcon }).addTo(map);
+
+      // Fit bounds
+      const bounds = L.latLngBounds(points.map(p => [p.lat, p.lon]));
+      map.fitBounds(bounds, { padding: [30, 30] });
+
+      mapInstanceRef.current = map;
+    };
+
+    initMap();
+    return () => { if (mapInstanceRef.current) { mapInstanceRef.current.remove(); mapInstanceRef.current = null; } };
+  }, [points]);
+
+  if (points.length < 2) return null;
 
   return (
-    <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
-        {/* Grid lines */}
-        {[0.25,0.5,0.75].map(r => (
-          <line key={r} x1={0} y1={H*r} x2={W} y2={H*r} stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>
-        ))}
-        {/* Route shadow */}
-        <path d={pathD} fill="none" stroke="rgba(0,0,0,0.4)" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round"/>
-        {/* Route colorée par allure */}
-        {svg.slice(1).map((p, i) => (
-          <line key={i}
-            x1={svg[i].x.toFixed(1)} y1={svg[i].y.toFixed(1)}
-            x2={p.x.toFixed(1)} y2={p.y.toFixed(1)}
-            stroke={paceColor(p.pace)} strokeWidth={3} strokeLinecap="round"/>
-        ))}
-        {/* Start */}
-        <circle cx={svg[0].x} cy={svg[0].y} r={5} fill="#22c55e" stroke="#07080b" strokeWidth={2}/>
-        {/* End */}
-        <circle cx={svg[svg.length-1].x} cy={svg[svg.length-1].y} r={5} fill="#FF0040" stroke="#07080b" strokeWidth={2}/>
-      </svg>
-      <div style={{ position: 'absolute', bottom: 8, left: 10, display: 'flex', gap: 10, fontSize: 9, fontFamily: 'DM Mono, monospace', color: 'rgba(255,255,255,0.4)' }}>
+    <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+      <div ref={mapRef} style={{ width: '100%', height: 280 }}/>
+      <div style={{ padding: '8px 12px', background: 'rgba(0,0,0,0.4)', display: 'flex', gap: 16, fontSize: 9, fontFamily: 'DM Mono, monospace' }}>
         <span style={{ color: '#22c55e' }}>● Départ</span>
         <span style={{ color: '#FF0040' }}>● Arrivée</span>
-      </div>
-      {/* Légende allure */}
-      <div style={{ position: 'absolute', bottom: 8, right: 10, display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: 'DM Mono, monospace', color: 'rgba(255,255,255,0.4)' }}>
-        <span style={{ color: '#22c55e' }}>rapide</span>
-        <div style={{ width: 30, height: 3, borderRadius: 99, background: 'linear-gradient(90deg, #22c55e, #FF0040)' }}/>
-        <span style={{ color: '#FF0040' }}>lent</span>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ color: '#22c55e' }}>rapide</span>
+          <div style={{ width: 30, height: 3, borderRadius: 99, background: 'linear-gradient(90deg, #22c55e, #FF0040)' }}/>
+          <span style={{ color: '#FF0040' }}>lent</span>
+        </div>
       </div>
     </div>
   );
