@@ -138,9 +138,12 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
       <div style={{ position: 'relative', zIndex: 1 }}>
 
         {/* Greeting */}
-        <div style={{ marginBottom: 24, paddingTop: 8, paddingRight: 120 }}>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>{greeting}</div>
-          <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.1 }}>{firstName} 👋</div>
+        <div style={{ marginBottom: 24, paddingTop: 8 }}>
+          <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
+            <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040' }}/>
+            {greeting}
+          </div>
+          <div style={{ fontSize:32, fontWeight:900, letterSpacing:'-0.04em', lineHeight:1.1, background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.5))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{firstName} 👋</div>
         </div>
 
         {/* Message de motivation — typewriter inline */}
@@ -241,7 +244,8 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
 
           {/* Running */}
-          <button onClick={() => onNavigate('running')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+          <button onClick={() => onNavigate('running')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(255,0,64,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, transparent 70%)' }}>
+            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.04), transparent)', animation:'scanLine 12s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
             <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
               <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(255,0,64,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -261,7 +265,8 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
           </button>
 
           {/* Muscu */}
-          <button onClick={() => onNavigate('muscu')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+          <button onClick={() => onNavigate('muscu')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(99,102,241,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 70%)' }}>
+            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.04), transparent)', animation:'scanLine 15s ease-in-out infinite 1s', zIndex:1, pointerEvents:'none', left:0 }}/>
             <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
               <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -281,7 +286,8 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
           </button>
 
           {/* Strava */}
-          <button onClick={() => onNavigate('strava')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+          <button onClick={() => onNavigate('strava')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(245,158,11,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 70%)' }}>
+            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(245,158,11,0.04), transparent)', animation:'scanLine 13s ease-in-out infinite 2s', zIndex:1, pointerEvents:'none', left:0 }}/>
             <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
               <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -297,8 +303,9 @@ Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mo
           </button>
 
           {/* Nutrition */}
-          <button onClick={() => onNavigate('nutrition')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '16px', cursor: 'pointer', fontFamily: 'Syne, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <button onClick={() => onNavigate('nutrition')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(56,189,248,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(56,189,248,0.06) 0%, transparent 70%)' }}>
+            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(56,189,248,0.04), transparent)', animation:'scanLine 16s ease-in-out infinite 3s', zIndex:1, pointerEvents:'none', left:0 }}/>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
             <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon name="nutrition" size={18} color="#6366f1" />
             </div>
