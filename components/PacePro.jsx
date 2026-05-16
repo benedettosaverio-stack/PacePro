@@ -126,40 +126,7 @@ function ThemeStyles() {
         --svg-text-val: rgba(255,255,255,0.4);
         --plans-bg: #07080b;
       }
-      @media (prefers-color-scheme: light) {
-        :root {
-          --bg-primary: #eef0f4;
-          --bg-card: rgba(255,255,255,0.98);
-          --bg-surface: rgba(255,255,255,1);
-          --bg-input: rgba(10,11,15,0.07);
-          --bg-nav: rgba(238,240,244,0.95);
-          --bg-modal: #ffffff;
-          --text-primary: #05060a;
-          --text-secondary: #23262f;
-          --text-muted: #4a4e5a;
-          --text-ultra-muted: #6b6f7a;
-          --border: rgba(10,11,15,0.16);
-          --border-input: rgba(10,11,15,0.22);
-          --border-nav: rgba(10,11,15,0.13);
-          --btn-ghost-bg: rgba(10,11,15,0.07);
-          --btn-ghost-border: rgba(10,11,15,0.16);
-          --btn-ghost-color: #33363f;
-          --onboarding-bg: #f5f5f7;
-          --session-bg: rgba(255,255,255,0.96);
-          --session-border: rgba(10,11,15,0.10);
-          --week-tabs-inactive: rgba(10,11,15,0.06);
-          --week-tabs-border: rgba(10,11,15,0.10);
-          --week-tabs-color: #6b6f7a;
-          --next-session-bg: rgba(255,0,64,0.04);
-          --next-session-border: rgba(255,0,64,0.18);
-          --chip-bg: rgba(10,11,15,0.06);
-          --chip-border: rgba(10,11,15,0.12);
-          --progress-track: rgba(10,11,15,0.18);
-          --svg-text: #9296a0;
-          --svg-text-val: #6b6f7a;
-          --plans-bg: #f0f2f5;
-        }
-      }
+
       * { box-sizing: border-box; }
       body { background: var(--bg-primary); }
 
