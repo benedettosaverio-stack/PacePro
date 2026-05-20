@@ -2048,15 +2048,24 @@ useEffect(() => {
 
   // Bottom nav
   const BottomNav = () => (
-    <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'var(--bg-nav)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border-nav)',display:'flex',alignItems:'flex-start',paddingTop:8}}>
-      {[['home','home','Accueil'],['running','running','Cardio'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['nutrition','nutrition','Nutrition']].map(([t,icon,label])=>(
-        <button key={t} onClick={()=>setTab(t)}
-          className={tab===t ? 'nav-btn-active' : ''} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,background:'none',border:'none',cursor:'pointer',fontFamily:'Syne,sans-serif',color:tab===t?'#FF0040':'var(--text-muted)',transition:'color 0.2s'}}>
-          <Icon name={icon} size={22} color={tab===t?'#FF0040':'var(--text-muted)'}/>
-          <span style={{fontSize:9,fontWeight:tab===t?700:400,letterSpacing:'0.04em',color:tab===t?'#FF0040':'var(--text-muted)'}}>{label}</span>
-          <div style={{width:16,height:2,borderRadius:99,background:'#FF0040',opacity:tab===t?1:0,transition:'opacity 0.25s, transform 0.25s',transform:tab===t?'scaleX(1)':'scaleX(0)',transformOrigin:'center'}}/>
-        </button>
-      ))}
+    <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'rgba(7,8,11,0.92)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.05)',display:'flex',alignItems:'stretch',paddingBottom:'env(safe-area-inset-bottom,0px)'}}>
+      {[['home','home','Accueil'],['running','running','Cardio'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['nutrition','nutrition','Nutrition']].map(([t,icon,label])=>{
+        const active = tab===t;
+        return (
+          <button key={t} onClick={()=>setTab(t)} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:3,background:'none',border:'none',cursor:'pointer',fontFamily:'DM Mono, monospace',padding:'8px 0',position:'relative',transition:'all 0.2s'}}>
+            {/* Glow bg quand actif */}
+            {active && <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 100%, rgba(255,0,64,0.12), transparent 70%)',pointerEvents:'none'}}/>}
+            {/* Ligne top */}
+            <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',width:active?28:0,height:2,borderRadius:99,background:'#FF0040',boxShadow:active?'0 0 8px #FF0040':'none',transition:'width 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s'}}/>
+            {/* Icône avec glow */}
+            <div style={{position:'relative',width:28,height:28,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {active && <div style={{position:'absolute',inset:-4,borderRadius:'50%',background:'rgba(255,0,64,0.1)',filter:'blur(4px)'}}/>}
+              <Icon name={icon} size={20} color={active?'#FF0040':'rgba(255,255,255,0.25)'}/>
+            </div>
+            <span style={{fontSize:8,fontWeight:active?700:400,letterSpacing:'0.08em',color:active?'#FF0040':'rgba(255,255,255,0.2)',textTransform:'uppercase',lineHeight:1}}>{label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 
