@@ -726,7 +726,7 @@ export default function MusculationModule({ onSync }) {
 
   return (
     <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:70 }}>
-      <div style={{ maxWidth:700, margin:'0 auto', padding:'calc(env(safe-area-inset-top, 44px) + 56px) 16px 0' }}>
+      <div style={{ maxWidth:700, margin:'0 auto', padding:'16px 16px 0' }}>
 
         {/* Header */}
         <div style={{ marginBottom:20 }}>
