@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import BarcodeScanner from './BarcodeScanner';
 import { createPortal } from 'react-dom';
 import Icon from './Icons';
 
@@ -201,7 +200,7 @@ function RecipeSheet({ meal, tag, accent, onClose }) {
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
-export default function FuelRecoveryHub({ onSync }) {
+export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
   const [status, setStatus] = useState('loading');
   const [activity, setActivity] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -215,7 +214,6 @@ export default function FuelRecoveryHub({ onSync }) {
   const [aiMeals, setAiMeals] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAiMeals, setShowAiMeals] = useState(false);
-  const [showScanner, setShowScanner] = useState(false);
   const [scannedItems, setScannedItems] = useState(() => { try { return JSON.parse(localStorage.getItem('pp_scanned_items') || '[]'); } catch { return []; } });
   const [water, setWater] = useState(() => { try { return parseInt(localStorage.getItem('pp_water') || '0'); } catch { return 0; } });
   const [profile, setProfile] = useState(() => {
@@ -381,12 +379,9 @@ export default function FuelRecoveryHub({ onSync }) {
           </div>
         </div>
 
-        {/* Scanner overlay */}
-        {showScanner && <BarcodeScanner onAdd={addScannedItem} onClose={() => setShowScanner(false)} />}
-
         {/* ── SCANNER PRODUITS ── */}
         <div style={{ marginBottom:14 }}>
-          <button onClick={() => setShowScanner(true)} style={{ width:'100%', position:'relative', overflow:'hidden', borderRadius:14, border:'1px solid rgba(255,0,64,0.25)', background:'linear-gradient(135deg,rgba(255,0,64,0.1),rgba(255,0,64,0.04))', padding:'14px 18px', cursor:'pointer', display:'flex', alignItems:'center', gap:12, fontFamily:'Syne, sans-serif' }}>
+          <button onClick={() => onOpenScanner && onOpenScanner()} style={{ width:'100%', position:'relative', overflow:'hidden', borderRadius:14, border:'1px solid rgba(255,0,64,0.25)', background:'linear-gradient(135deg,rgba(255,0,64,0.1),rgba(255,0,64,0.04))', padding:'14px 18px', cursor:'pointer', display:'flex', alignItems:'center', gap:12, fontFamily:'Syne, sans-serif' }}>
             <div style={{ width:38, height:38, borderRadius:10, background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
               <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#FF0040" strokeWidth={2} strokeLinecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="21" y2="19"/><line x1="16" y1="16" x2="16" y2="21"/></svg>
             </div>
