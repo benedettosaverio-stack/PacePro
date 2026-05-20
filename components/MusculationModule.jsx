@@ -504,36 +504,53 @@ function WorkoutCard({ workout, onOpen, onDelete, onDuplicate }) {
   const muscles = Object.keys(vol).filter(m => vol[m] >= 1);
   const topMuscle = MUSCLES.find(x=>x.id===muscles[0]);
   const accentColor = topMuscle?.color || '#FF0040';
+  const totalSets = (workout.entries||[]).reduce((s,e)=>s+(e.sets||0),0);
+
   return (
-    <div onClick={onOpen} style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:20, padding:'18px 16px', cursor:'pointer', transition:'all 0.15s', position:'relative', overflow:'hidden' }}>
-      <div style={{ position:'absolute', top:0, left:0, right:0, height:3, background:accentColor, borderRadius:'20px 20px 0 0' }}/>
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
-        <div style={{ flex:1 }}>
-          <div style={{ fontSize:16, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text-primary)', marginBottom:6 }}>{workout.name}</div>
-          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:6, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>{(workout.entries||[]).length} EX</span>
-            <span style={{ fontSize:10, padding:'3px 10px', borderRadius:6, background:'var(--bg-input)', color:'var(--text-muted)', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>{workout.duration} MIN</span>
-            {workout.aiGenerated && <span style={{ fontSize:10, padding:'3px 10px', borderRadius:6, background:'rgba(96,165,250,0.1)', color:'#60a5fa', border:'1px solid rgba(96,165,250,0.2)', fontWeight:700, fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>IA</span>}
-          </div>
+    <div onClick={onOpen} style={{ position:'relative', borderRadius:20, overflow:'hidden', cursor:'pointer', border:`1px solid ${accentColor}20`, background:`linear-gradient(135deg, ${accentColor}06 0%, rgba(10,12,18,0.9) 60%)`, marginBottom:0 }}>
+      {/* Scan sweep */}
+      <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:`linear-gradient(90deg, transparent, ${accentColor}04, transparent)`, animation:'scanLine 14s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
+      {/* Terminal header */}
+      <div style={{ padding:'10px 14px', borderBottom:`1px solid ${accentColor}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
+        <div style={{ display:'flex', gap:3 }}>
+          <div style={{ width:5, height:5, borderRadius:'50%', background:accentColor, opacity:0.7 }}/>
+          <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.5)' }}/>
+          <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.5)' }}/>
         </div>
-        <div style={{ display:'flex', gap:6 }} onClick={e=>e.stopPropagation()}>
-          <button onClick={onDuplicate} style={{ width:32, height:32, borderRadius:10, background:'var(--bg-input)', border:'1px solid var(--border)', color:'var(--text-muted)', fontSize:11, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'DM Mono, monospace' }} title="Dupliquer +surcharge">S+1</button>
-          <button onClick={onDelete} style={{ width:32, height:32, borderRadius:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', color:'rgba(239,68,68,0.6)', fontSize:14, fontWeight:300, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>×</button>
+        <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${accentColor}70`, letterSpacing:'0.15em' }}>MUSCU · {workout.aiGenerated ? 'IA GENERATED' : 'PROGRAMME'}</div>
+        <div style={{ marginLeft:'auto', display:'flex', gap:6 }} onClick={e=>e.stopPropagation()}>
+          <button onClick={onDuplicate} style={{ height:24, padding:'0 8px', borderRadius:6, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', color:'rgba(255,255,255,0.4)', fontSize:9, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>S+1</button>
+          <button onClick={onDelete} style={{ width:24, height:24, borderRadius:6, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', color:'rgba(239,68,68,0.5)', fontSize:12, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>×</button>
         </div>
       </div>
-      {muscles.length > 0 && (
-        <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
-          {muscles.slice(0,5).map(m => {
-            const info = MUSCLES.find(x=>x.id===m);
-            return info ? (
-              <span key={m} style={{ fontSize:9, fontWeight:700, color:info.color, background:`${info.color}12`, border:`1px solid ${info.color}25`, borderRadius:6, padding:'3px 8px', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em' }}>
-                {info.label}
-              </span>
-            ) : null;
-          })}
+      {/* Content */}
+      <div style={{ padding:'14px 16px', position:'relative', zIndex:2 }}>
+        {/* Titre */}
+        <div style={{ fontSize:22, fontWeight:900, letterSpacing:'-0.03em', color:'var(--text-primary)', marginBottom:10, lineHeight:1 }}>{workout.name}</div>
+        {/* Stats chips */}
+        <div style={{ display:'flex', gap:6, marginBottom:12 }}>
+          <span style={{ fontSize:9, padding:'3px 10px', borderRadius:6, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)', color:'rgba(255,255,255,0.5)', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>{(workout.entries||[]).length} EX</span>
+          <span style={{ fontSize:9, padding:'3px 10px', borderRadius:6, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)', color:'rgba(255,255,255,0.5)', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>{workout.duration} MIN</span>
+          {totalSets > 0 && <span style={{ fontSize:9, padding:'3px 10px', borderRadius:6, background:`${accentColor}10`, border:`1px solid ${accentColor}20`, color:accentColor, fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>{totalSets} SÉRIES</span>}
         </div>
-      )}
-      <div style={{ position:'absolute', bottom:16, right:16, color:'var(--text-muted)', fontSize:16 }}>›</div>
+        {/* Muscles */}
+        {muscles.length > 0 && (
+          <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+            {muscles.slice(0,5).map(m => {
+              const info = MUSCLES.find(x=>x.id===m);
+              return info ? (
+                <span key={m} style={{ fontSize:9, fontWeight:700, color:info.color, background:`${info.color}12`, border:`1px solid ${info.color}25`, borderRadius:6, padding:'3px 8px', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em' }}>
+                  {info.label}
+                </span>
+              ) : null;
+            })}
+          </div>
+        )}
+      </div>
+      {/* Progress bar bottom */}
+      <div style={{ height:1, background:`${accentColor}10` }}>
+        <div style={{ height:'100%', width:'100%', background:`linear-gradient(90deg, ${accentColor}60, transparent)` }}/>
+      </div>
     </div>
   );
 }
