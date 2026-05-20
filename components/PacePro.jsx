@@ -2048,7 +2048,8 @@ useEffect(() => {
 
   // Bottom nav
   const BottomNav = () => (
-    <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'rgba(7,8,11,0.96)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'flex-start',paddingTop:6,paddingBottom:'env(safe-area-inset-bottom, 8px)'}}>
+    <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'rgba(7,8,11,0.96)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column'}}>
+      <div style={{display:'flex',alignItems:'flex-start',paddingTop:6,paddingBottom:4}}>
       {[['home','home','Accueil'],['running','running','Cardio'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['nutrition','nutrition','Nutrition']].map(([t,icon,label])=>{
         const active = tab===t;
         return (
@@ -2063,6 +2064,8 @@ useEffect(() => {
           </button>
         );
       })}
+      </div>
+      <div style={{height:'env(safe-area-inset-bottom, 0px)',background:'transparent'}}/>
     </div>
   );
 
