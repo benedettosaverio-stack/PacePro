@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import BarcodeScanner from './BarcodeScanner';
 import { createPortal } from 'react-dom';
 import Icon from './Icons';
 
@@ -214,6 +215,8 @@ export default function FuelRecoveryHub({ onSync }) {
   const [aiMeals, setAiMeals] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAiMeals, setShowAiMeals] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
+  const [scannedItems, setScannedItems] = useState(() => { try { return JSON.parse(localStorage.getItem('pp_scanned_items') || '[]'); } catch { return []; } });
   const [water, setWater] = useState(() => { try { return parseInt(localStorage.getItem('pp_water') || '0'); } catch { return 0; } });
   const [profile, setProfile] = useState(() => {
     try {
@@ -236,6 +239,12 @@ export default function FuelRecoveryHub({ onSync }) {
       })
       .catch(() => setStatus('done'));
   }, []);
+
+  const addScannedItem = (item) => {
+    const updated = [...scannedItems, { ...item, ts: Date.now(), date: new Date().toLocaleDateString('fr-FR') }];
+    setScannedItems(updated);
+    try { localStorage.setItem('pp_scanned_items', JSON.stringify(updated.slice(-50))); } catch {}
+  };
 
   const addWater = (ml) => {
     const next = water + ml;
@@ -371,6 +380,59 @@ export default function FuelRecoveryHub({ onSync }) {
             </div>
           </div>
         </div>
+
+        {/* Scanner overlay */}
+        {showScanner && <BarcodeScanner onAdd={addScannedItem} onClose={() => setShowScanner(false)} />}
+
+        {/* ── SCANNER PRODUITS ── */}
+        <div style={{ marginBottom:14 }}>
+          <button onClick={() => setShowScanner(true)} style={{ width:'100%', position:'relative', overflow:'hidden', borderRadius:14, border:'1px solid rgba(255,0,64,0.25)', background:'linear-gradient(135deg,rgba(255,0,64,0.1),rgba(255,0,64,0.04))', padding:'14px 18px', cursor:'pointer', display:'flex', alignItems:'center', gap:12, fontFamily:'Syne, sans-serif' }}>
+            <div style={{ width:38, height:38, borderRadius:10, background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#FF0040" strokeWidth={2} strokeLinecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="21" y2="19"/><line x1="16" y1="16" x2="16" y2="21"/></svg>
+            </div>
+            <div style={{ flex:1, textAlign:'left' }}>
+              <div style={{ fontSize:14, fontWeight:800, color:'#fff', marginBottom:2 }}>Scanner un produit</div>
+              <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>Code barre → Macros automatiques</div>
+            </div>
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="rgba(255,0,64,0.5)" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        {/* Produits scannés aujourd'hui */}
+        {scannedItems.filter(i => i.date === new Date().toLocaleDateString('fr-FR')).length > 0 && (
+          <div style={{ marginBottom:14, position:'relative', borderRadius:16, overflow:'hidden', border:'1px solid rgba(255,255,255,0.06)', background:'rgba(255,255,255,0.02)' }}>
+            <div style={{ padding:'10px 14px', borderBottom:'1px solid rgba(255,255,255,0.05)', display:'flex', alignItems:'center', gap:8 }}>
+              <div style={{ width:3, height:14, background:'#FF0040', borderRadius:2, boxShadow:'0 0 6px #FF0040' }}/>
+              <div style={{ fontSize:9, fontWeight:700, color:'rgba(255,255,255,0.5)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.12em' }}>Scannés aujourd'hui</div>
+              <div style={{ marginLeft:'auto', fontSize:9, color:'#FF0040', fontFamily:'DM Mono, monospace' }}>
+                {scannedItems.filter(i => i.date === new Date().toLocaleDateString('fr-FR')).reduce((s,i) => s+i.kcal, 0)} kcal
+              </div>
+            </div>
+            <div style={{ padding:'8px' }}>
+              {scannedItems.filter(i => i.date === new Date().toLocaleDateString('fr-FR')).map((item, idx) => (
+                <div key={idx} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 8px', borderRadius:10, marginBottom:4, background:'rgba(255,255,255,0.02)' }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:11, fontWeight:700, color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.name}</div>
+                    <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace' }}>{item.desc}</div>
+                  </div>
+                  <div style={{ display:'flex', gap:8, flexShrink:0 }}>
+                    {[['Kcal',item.kcal,'#fff'],['P',`${item.prot}g`,'#FF0040'],['C',`${item.carbs}g`,'#60a5fa'],['L',`${item.fat}g`,'#a78bfa']].map(([l,v,c]) => (
+                      <div key={l} style={{ textAlign:'center' }}>
+                        <div style={{ fontSize:7, color:'rgba(255,255,255,0.25)', fontFamily:'DM Mono, monospace', textTransform:'uppercase' }}>{l}</div>
+                        <div style={{ fontSize:11, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => {
+                    const updated = scannedItems.filter((_,i) => i !== scannedItems.indexOf(item));
+                    setScannedItems(updated);
+                    try { localStorage.setItem('pp_scanned_items', JSON.stringify(updated)); } catch {}
+                  }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.2)', cursor:'pointer', fontSize:14, padding:'2px 4px' }}>×</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── HYDRATATION ── */}
         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
