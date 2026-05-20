@@ -84,6 +84,7 @@ import StravaModule from './StravaModule';
 import HomeModule from './HomeModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
+import dynamic from 'next/dynamic';
 import LiveSessionMode from './LiveSessionMode';
 import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
