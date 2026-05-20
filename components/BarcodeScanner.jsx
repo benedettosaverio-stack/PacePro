@@ -72,7 +72,7 @@ export default function BarcodeScanner({ onAdd, onClose }) {
     }
   }, [stopCamera]);
 
-  useEffect(() => { startScanner(); return () => stopCamera(); }, []);
+  useEffect(() => { return () => stopCamera(); }, []);
 
   const computed = product ? {
     kcal: Math.round(product.kcalPer100 * parseFloat(quantity || 0) / 100),
@@ -106,8 +106,13 @@ export default function BarcodeScanner({ onAdd, onClose }) {
             {loading && <div style={{ position:'absolute', inset:0, background:'rgba(7,8,11,0.85)', display:'flex', alignItems:'center', justifyContent:'center' }}><div style={{ fontSize:10, color:'#FF0040', fontFamily:'DM Mono, monospace', letterSpacing:'0.15em' }}>RECHERCHE...</div></div>}
           </div>
           <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontFamily:'DM Mono, monospace', textAlign:'center', marginBottom:16 }}>
-            {scanning ? 'Pointe vers le code barre' : 'Initialisation...'}
+            {scanning ? 'Pointe vers le code barre' : 'Appuie sur Démarrer pour activer la caméra'}
           </div>
+          {!scanning && !loading && (
+            <button onClick={startScanner} style={{ width:'100%', maxWidth:340, height:48, borderRadius:14, background:'linear-gradient(135deg,#FF0040,#cc0033)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', marginBottom:16 }}>
+              ACTIVER LA CAMÉRA
+            </button>
+          )}
           {error && <div style={{ background:'rgba(255,0,64,0.08)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:12, padding:'10px 14px', marginBottom:16, textAlign:'center' }}><div style={{ fontSize:11, color:'#FF0040', fontFamily:'DM Mono, monospace' }}>{error}</div></div>}
           <div style={{ width:'100%', maxWidth:340 }}>
             <div style={{ fontSize:9, color:'rgba(255,255,255,0.2)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:'center', marginBottom:8 }}>ou saisir manuellement</div>
