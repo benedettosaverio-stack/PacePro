@@ -85,6 +85,7 @@ import HomeModule from './HomeModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
 import dynamic from 'next/dynamic';
+const BarcodeScanner = dynamic(() => import('./BarcodeScanner'), { ssr: false });
 import LiveSessionMode from './LiveSessionMode';
 import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
