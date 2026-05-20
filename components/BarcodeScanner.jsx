@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 export default function BarcodeScanner({ onAdd, onClose }) {
   const [phase, setPhase] = useState('scan');
@@ -11,21 +11,24 @@ export default function BarcodeScanner({ onAdd, onClose }) {
   const [manualBarcode, setManualBarcode] = useState('');
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-  const controlsRef = useRef(null);
+  const animFrameRef = useRef(null);
+  const canvasRef = useRef(null);
 
   const stopCamera = useCallback(() => {
-    if (controlsRef.current) { try { controlsRef.current.stop(); } catch {} }
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
   }, []);
 
   const fetchProduct = async (barcode) => {
     setLoading(true);
     setError(null);
+    stopCamera();
+    setScanning(false);
     try {
       const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
       const data = await res.json();
       if (data.status !== 1 || !data.product) {
-        setError('Produit non trouvé dans OpenFoodFacts');
+        setError('Produit non trouve dans OpenFoodFacts');
         setLoading(false);
         return;
       }
@@ -42,37 +45,48 @@ export default function BarcodeScanner({ onAdd, onClose }) {
       });
       setPhase('confirm');
     } catch {
-      setError('Erreur réseau');
+      setError('Erreur reseau');
     }
     setLoading(false);
   };
 
   const startScanner = useCallback(async () => {
-    setScanning(true);
     setError(null);
+    setScanning(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        video: { facingMode: { ideal: 'environment' } }
       });
       streamRef.current = stream;
-      if (videoRef.current) videoRef.current.srcObject = stream;
-      const { BrowserMultiFormatReader } = await import('@zxing/browser');
-      const reader = new BrowserMultiFormatReader();
-      const controls = await reader.decodeFromStream(stream, videoRef.current, (result) => {
-        if (result) {
-          stopCamera();
-          setScanning(false);
-          fetchProduct(result.getText());
-        }
-      });
-      controlsRef.current = controls;
-    } catch {
-      setError("Impossible d'acceder a la camera");
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+
+      // Essayer BarcodeDetector natif (Chrome Android, Safari 17+)
+      if ('BarcodeDetector' in window) {
+        const detector = new window.BarcodeDetector({ formats: ['ean_13','ean_8','code_128','upc_a','upc_e'] });
+        const scan = async () => {
+          if (!videoRef.current || !streamRef.current) return;
+          try {
+            const barcodes = await detector.detect(videoRef.current);
+            if (barcodes.length > 0) {
+              fetchProduct(barcodes[0].rawValue);
+              return;
+            }
+          } catch {}
+          animFrameRef.current = requestAnimationFrame(scan);
+        };
+        animFrameRef.current = requestAnimationFrame(scan);
+      } else {
+        // Fallback: afficher juste la caméra, saisie manuelle requise
+        setError('Scan auto non disponible sur ce navigateur — saisis le code manuellement');
+      }
+    } catch (e) {
+      setError("Impossible d'acceder a la camera — autorise l'acces dans les reglages");
       setScanning(false);
     }
-  }, [stopCamera]);
-
-  useEffect(() => { return () => stopCamera(); }, []);
+  }, []);
 
   const computed = product ? {
     kcal: Math.round(product.kcalPer100 * parseFloat(quantity || 0) / 100),
@@ -88,44 +102,66 @@ export default function BarcodeScanner({ onAdd, onClose }) {
   };
 
   return (
-    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'#07080b', display:'flex', flexDirection:'column', fontFamily:'Syne, sans-serif' }}>
+    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'#07080b', display:'flex', flexDirection:'column', fontFamily:'Syne, sans-serif', overflowY:'auto' }}>
       <div style={{ padding:'calc(env(safe-area-inset-top,16px) + 12px) 16px 0', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
-        <button onClick={() => { stopCamera(); onClose(); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:13, cursor:'pointer', fontFamily:'DM Mono, monospace' }}>FERMER</button>
+        <button onClick={() => { stopCamera(); onClose(); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:13, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>FERMER</button>
         <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', letterSpacing:'0.15em' }}>SCANNER PRODUIT</div>
         <div style={{ width:60 }}/>
       </div>
 
       {phase === 'scan' && (
-        <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'16px' }}>
-          <div style={{ position:'relative', width:'100%', maxWidth:340, aspectRatio:'1/1', borderRadius:20, overflow:'hidden', marginBottom:20 }}>
-            <video ref={videoRef} autoPlay playsInline muted style={{ width:'100%', height:'100%', objectFit:'cover', background:'#000' }}/>
-            <div style={{ position:'absolute', top:20, left:20, width:32, height:32, borderTop:'2px solid #FF0040', borderLeft:'2px solid #FF0040', borderRadius:'4px 0 0 0' }}/>
-            <div style={{ position:'absolute', top:20, right:20, width:32, height:32, borderTop:'2px solid #FF0040', borderRight:'2px solid #FF0040', borderRadius:'0 4px 0 0' }}/>
-            <div style={{ position:'absolute', bottom:20, left:20, width:32, height:32, borderBottom:'2px solid #FF0040', borderLeft:'2px solid #FF0040', borderRadius:'0 0 0 4px' }}/>
-            <div style={{ position:'absolute', bottom:20, right:20, width:32, height:32, borderBottom:'2px solid #FF0040', borderRight:'2px solid #FF0040', borderRadius:'0 0 4px 0' }}/>
-            {loading && <div style={{ position:'absolute', inset:0, background:'rgba(7,8,11,0.85)', display:'flex', alignItems:'center', justifyContent:'center' }}><div style={{ fontSize:10, color:'#FF0040', fontFamily:'DM Mono, monospace', letterSpacing:'0.15em' }}>RECHERCHE...</div></div>}
-          </div>
-          <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontFamily:'DM Mono, monospace', textAlign:'center', marginBottom:16 }}>
-            {scanning ? 'Pointe vers le code barre' : 'Appuie sur Démarrer pour activer la caméra'}
-          </div>
-          {!scanning && !loading && (
-            <button onClick={startScanner} style={{ width:'100%', maxWidth:340, height:48, borderRadius:14, background:'linear-gradient(135deg,#FF0040,#cc0033)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', marginBottom:16 }}>
-              ACTIVER LA CAMÉRA
-            </button>
+        <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', padding:'20px 16px' }}>
+          {!scanning ? (
+            <div style={{ width:'100%', maxWidth:340, textAlign:'center' }}>
+              <div style={{ width:80, height:80, borderRadius:20, background:'rgba(255,0,64,0.12)', border:'1px solid rgba(255,0,64,0.25)', display:'flex', alignItems:'center', justifyContent:'center', margin:'40px auto 24px' }}>
+                <svg width={36} height={36} viewBox="0 0 24 24" fill="none" stroke="#FF0040" strokeWidth={1.5} strokeLinecap="round">
+                  <rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/>
+                  <line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="21" y2="19"/><line x1="16" y1="16" x2="16" y2="21"/>
+                </svg>
+              </div>
+              <div style={{ fontSize:18, fontWeight:800, color:'#fff', marginBottom:8 }}>Scanner un produit</div>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontFamily:'DM Mono, monospace', marginBottom:32, lineHeight:1.6 }}>
+                Pointe la camera vers le code barre du produit pour obtenir ses informations nutritionnelles
+              </div>
+              <button onClick={startScanner} style={{ width:'100%', height:52, borderRadius:14, background:'linear-gradient(135deg,#FF0040,#cc0033)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', boxShadow:'0 4px 20px rgba(255,0,64,0.3)', marginBottom:12 }}>
+                ACTIVER LA CAMERA
+              </button>
+            </div>
+          ) : (
+            <div style={{ width:'100%', maxWidth:340 }}>
+              <div style={{ position:'relative', width:'100%', aspectRatio:'1/1', borderRadius:20, overflow:'hidden', marginBottom:16, background:'#000' }}>
+                <video ref={videoRef} autoPlay playsInline muted style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+                <canvas ref={canvasRef} style={{ display:'none' }}/>
+                <div style={{ position:'absolute', top:16, left:16, width:28, height:28, borderTop:'2px solid #FF0040', borderLeft:'2px solid #FF0040', borderRadius:'3px 0 0 0' }}/>
+                <div style={{ position:'absolute', top:16, right:16, width:28, height:28, borderTop:'2px solid #FF0040', borderRight:'2px solid #FF0040', borderRadius:'0 3px 0 0' }}/>
+                <div style={{ position:'absolute', bottom:16, left:16, width:28, height:28, borderBottom:'2px solid #FF0040', borderLeft:'2px solid #FF0040', borderRadius:'0 0 0 3px' }}/>
+                <div style={{ position:'absolute', bottom:16, right:16, width:28, height:28, borderBottom:'2px solid #FF0040', borderRight:'2px solid #FF0040', borderRadius:'0 0 3px 0' }}/>
+                <div style={{ position:'absolute', left:16, right:16, top:'50%', height:1.5, background:'rgba(255,0,64,0.6)', boxShadow:'0 0 6px rgba(255,0,64,0.4)', animation:'scanLine 2s ease-in-out infinite' }}/>
+              </div>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,0.35)', fontFamily:'DM Mono, monospace', textAlign:'center', marginBottom:16 }}>Pointe vers le code barre du produit</div>
+            </div>
           )}
-          {error && <div style={{ background:'rgba(255,0,64,0.08)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:12, padding:'10px 14px', marginBottom:16, textAlign:'center' }}><div style={{ fontSize:11, color:'#FF0040', fontFamily:'DM Mono, monospace' }}>{error}</div></div>}
+
+          {error && (
+            <div style={{ width:'100%', maxWidth:340, background:'rgba(255,0,64,0.08)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:12, padding:'10px 14px', marginBottom:16, textAlign:'center' }}>
+              <div style={{ fontSize:11, color:'#FF0040', fontFamily:'DM Mono, monospace', lineHeight:1.5 }}>{error}</div>
+            </div>
+          )}
+
           <div style={{ width:'100%', maxWidth:340 }}>
-            <div style={{ fontSize:9, color:'rgba(255,255,255,0.2)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:'center', marginBottom:8 }}>ou saisir manuellement</div>
+            <div style={{ fontSize:9, color:'rgba(255,255,255,0.2)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:'center', marginBottom:10 }}>ou saisir le code manuellement</div>
             <div style={{ display:'flex', gap:8 }}>
-              <input value={manualBarcode} onChange={e => setManualBarcode(e.target.value)} placeholder="Code barre..." inputMode="numeric" style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, padding:'10px 12px', color:'#fff', fontSize:13, fontFamily:'DM Mono, monospace', outline:'none' }}/>
-              <button onClick={() => manualBarcode.trim() && fetchProduct(manualBarcode.trim())} style={{ background:'rgba(255,0,64,0.15)', border:'1px solid rgba(255,0,64,0.3)', borderRadius:10, padding:'10px 14px', color:'#FF0040', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace' }}>OK</button>
+              <input value={manualBarcode} onChange={e => setManualBarcode(e.target.value)} placeholder="Ex: 3017620422003" inputMode="numeric" style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, padding:'10px 12px', color:'#fff', fontSize:13, fontFamily:'DM Mono, monospace', outline:'none' }}/>
+              <button onClick={() => manualBarcode.trim() && fetchProduct(manualBarcode.trim())} disabled={loading} style={{ background:'rgba(255,0,64,0.15)', border:'1px solid rgba(255,0,64,0.3)', borderRadius:10, padding:'10px 14px', color:'#FF0040', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace' }}>
+                {loading ? '...' : 'OK'}
+              </button>
             </div>
           </div>
         </div>
       )}
 
       {phase === 'confirm' && product && (
-        <div style={{ flex:1, overflowY:'auto', padding:'16px' }}>
+        <div style={{ flex:1, padding:'16px', overflowY:'auto' }}>
           <div style={{ borderRadius:14, border:'1px solid rgba(34,197,94,0.2)', background:'rgba(34,197,94,0.05)', padding:'14px', marginBottom:14, display:'flex', gap:12, alignItems:'center' }}>
             {product.imageUrl && <img src={product.imageUrl} alt="" style={{ width:52, height:52, borderRadius:10, objectFit:'cover' }}/>}
             <div style={{ flex:1, minWidth:0 }}>
@@ -142,7 +178,7 @@ export default function BarcodeScanner({ onAdd, onClose }) {
             ))}
           </div>
           <div style={{ background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:14, padding:'14px', marginBottom:14 }}>
-            <div style={{ fontSize:9, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Quantite (g)</div>
+            <div style={{ fontSize:9, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Quantite</div>
             <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:10 }}>
               <input type="number" inputMode="decimal" value={quantity} onChange={e => setQuantity(e.target.value)} style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, padding:'12px', color:'#fff', fontSize:22, fontFamily:'DM Mono, monospace', fontWeight:900, outline:'none', textAlign:'center' }}/>
               <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>g / ml</span>
@@ -155,7 +191,7 @@ export default function BarcodeScanner({ onAdd, onClose }) {
           </div>
           {computed && (
             <div style={{ background:'rgba(255,0,64,0.06)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:14, padding:'14px', marginBottom:16 }}>
-              <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Pour {quantity}g</div>
+              <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', marginBottom:10 }}>Pour {quantity}g</div>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8 }}>
                 {[['Kcal',computed.kcal,'#fff'],['Prot',`${computed.prot}g`,'#FF0040'],['Carbs',`${computed.carbs}g`,'#60a5fa'],['Lip',`${computed.fat}g`,'#a78bfa']].map(([l,v,c]) => (
                   <div key={l} style={{ textAlign:'center' }}>
@@ -167,7 +203,7 @@ export default function BarcodeScanner({ onAdd, onClose }) {
             </div>
           )}
           <button onClick={handleAdd} style={{ width:'100%', height:52, borderRadius:14, background:'linear-gradient(135deg,#FF0040,#cc0033)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 20px rgba(255,0,64,0.3)', marginBottom:10 }}>+ Ajouter a mes macros</button>
-          <button onClick={() => { setPhase('scan'); setProduct(null); startScanner(); }} style={{ width:'100%', height:42, borderRadius:12, background:'none', border:'1px solid rgba(255,255,255,0.08)', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>SCANNER UN AUTRE</button>
+          <button onClick={() => { setPhase('scan'); setProduct(null); }} style={{ width:'100%', height:42, borderRadius:12, background:'none', border:'1px solid rgba(255,255,255,0.08)', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', marginBottom:20 }}>SCANNER UN AUTRE</button>
         </div>
       )}
     </div>
