@@ -2070,23 +2070,41 @@ useEffect(() => {
   );
 
   const AppHeader = ({ actions }) => (
-    <div style={{ position:'sticky', top:0, zIndex:100, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)' }}>
+    <div style={{ position:'sticky', top:0, zIndex:100, background:'rgba(7,8,11,0.88)', backdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
       <div style={{ height:'env(safe-area-inset-top, 0px)', background:'transparent' }}/>
-      <div style={{ height:52, display:'flex', alignItems:'center', padding:'0 12px', gap:8 }}>
+      {/* Scan line subtile */}
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:1, background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.3), transparent)', pointerEvents:'none' }}/>
+      <div style={{ height:52, display:'flex', alignItems:'center', padding:'0 12px', gap:8, position:'relative' }}>
+        {/* Avatar avec ring glow */}
         <div style={{ width:36, flexShrink:0 }}>
           <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', background:'none', border:'none', cursor:'pointer', padding:0 }}>
-            {user?.photo
-              ? <img src={user.photo} alt="" style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', border:'2px solid rgba(255,0,64,0.3)' }} />
-              : <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
-            }
+            <div style={{ position:'relative' }}>
+              {user?.photo
+                ? <img src={user.photo} alt="" style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', border:'1.5px solid rgba(255,0,64,0.5)', boxShadow:'0 0 10px rgba(255,0,64,0.2)' }} />
+                : <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(255,0,64,0.12)', border:'1.5px solid rgba(255,0,64,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, boxShadow:'0 0 8px rgba(255,0,64,0.15)' }}>👤</div>
+              }
+              <div style={{ position:'absolute', bottom:0, right:0, width:7, height:7, borderRadius:'50%', background:'#22c55e', border:'1.5px solid #07080b', boxShadow:'0 0 4px #22c55e' }}/>
+            </div>
           </button>
         </div>
-        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:6, pointerEvents:'none' }}>
-          <img src="/logo.svg" alt="PacePro" style={{ width:20, height:20, objectFit:'contain' }}/>
-          <span style={{ fontSize:13, fontWeight:800, letterSpacing:'-0.02em', color:'var(--text-primary)' }}>PacePro</span>
+        {/* Logo centre */}
+        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:7, pointerEvents:'none' }}>
+          <div style={{ position:'relative', display:'flex', alignItems:'center', gap:7 }}>
+            <img src="/logo.svg" alt="PacePro" style={{ width:18, height:18, objectFit:'contain', filter:'drop-shadow(0 0 4px rgba(255,0,64,0.4))' }}/>
+            <span style={{ fontSize:13, fontWeight:900, letterSpacing:'-0.02em', color:'#fff', fontFamily:'Syne, sans-serif' }}>PacePro</span>
+            {/* Dot status */}
+            <div style={{ width:4, height:4, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 5px #FF0040', animation:'dotBlink 2s step-start infinite' }}/>
+          </div>
         </div>
+        {/* Actions */}
         <div style={{ display:'flex', gap:6, alignItems:'center', justifyContent:'flex-end', minWidth:36 }}>{actions}</div>
       </div>
+      {/* Barre de progression globale ultra-fine */}
+      {activePlan && (
+        <div style={{ height:1, background:'rgba(255,255,255,0.04)' }}>
+          <div style={{ height:'100%', width:`${progress}%`, background:'linear-gradient(90deg,#FF0040,#f59e0b)', transition:'width 1s', boxShadow:'0 0 6px rgba(255,0,64,0.4)' }}/>
+        </div>
+      )}
     </div>
   );
 
