@@ -2163,7 +2163,7 @@ useEffect(() => {
       <ThemeStyles/>
       {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
       <AppHeader />
-      <div className='app-content tab-enter' style={{paddingBottom:80}}><FuelRecoveryHub onSync={syncKey} /></div>
+      <div className='app-content tab-enter' style={{paddingBottom:80}}><FuelRecoveryHub onSync={syncKey} onOpenScanner={() => setTab('scanner')} /></div>
       <BottomNav/>
     </div>
   );
