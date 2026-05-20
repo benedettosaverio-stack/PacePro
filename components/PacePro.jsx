@@ -2149,6 +2149,23 @@ useEffect(() => {
       </div>
     );
   }
+  if (tab === 'scanner') return (
+    <div className='app-shell'>
+      <ThemeStyles/>
+      <BarcodeScanner
+        onAdd={(item) => {
+          try {
+            const existing = JSON.parse(localStorage.getItem('pp_scanned_items') || '[]');
+            const updated = [...existing, { ...item, ts: Date.now(), date: new Date().toLocaleDateString('fr-FR') }];
+            localStorage.setItem('pp_scanned_items', JSON.stringify(updated.slice(-50)));
+          } catch {}
+          setTab('nutrition');
+        }}
+        onClose={() => setTab('nutrition')}
+      />
+    </div>
+  );
+
   if (tab === 'settings') return (
     <div className='app-shell'>
       <ThemeStyles/>
