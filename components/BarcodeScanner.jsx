@@ -13,9 +13,11 @@ export default function BarcodeScanner({ onAdd, onClose }) {
   const streamRef = useRef(null);
   const animFrameRef = useRef(null);
   const canvasRef = useRef(null);
+  const controlsRef = useRef(null);
 
   const stopCamera = useCallback(() => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    if (controlsRef.current) { try { controlsRef.current.stop(); } catch {} controlsRef.current = null; }
     if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
   }, []);
 
@@ -63,24 +65,33 @@ export default function BarcodeScanner({ onAdd, onClose }) {
         await videoRef.current.play();
       }
 
-      // Essayer BarcodeDetector natif (Chrome Android, Safari 17+)
+      // BarcodeDetector natif si dispo (Chrome Android)
       if ('BarcodeDetector' in window) {
         const detector = new window.BarcodeDetector({ formats: ['ean_13','ean_8','code_128','upc_a','upc_e'] });
         const scan = async () => {
           if (!videoRef.current || !streamRef.current) return;
           try {
             const barcodes = await detector.detect(videoRef.current);
-            if (barcodes.length > 0) {
-              fetchProduct(barcodes[0].rawValue);
-              return;
-            }
+            if (barcodes.length > 0) { fetchProduct(barcodes[0].rawValue); return; }
           } catch {}
           animFrameRef.current = requestAnimationFrame(scan);
         };
         animFrameRef.current = requestAnimationFrame(scan);
       } else {
-        // Fallback: afficher juste la caméra, saisie manuelle requise
-        setError('Scan auto non disponible sur ce navigateur — saisis le code manuellement');
+        // Fallback ZXing (Safari iOS + autres)
+        try {
+          const { BrowserMultiFormatReader } = await import('@zxing/browser');
+          const reader = new BrowserMultiFormatReader();
+          const controls = await reader.decodeFromStream(streamRef.current, videoRef.current, (result) => {
+            if (result) {
+              if (controls) try { controls.stop(); } catch {}
+              fetchProduct(result.getText());
+            }
+          });
+          controlsRef.current = controls;
+        } catch (zxingErr) {
+          setError('Scan auto non disponible — saisis le code manuellement');
+        }
       }
     } catch (e) {
       setError("Impossible d'acceder a la camera — autorise l'acces dans les reglages");
