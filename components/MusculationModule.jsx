@@ -624,9 +624,10 @@ JSON requis: {"name":"Nom","duration":60,"entries":[{"exercise":{"id":"custom","
 Groupes musculaires valides: pecs, dos, epaules, biceps, triceps, quadris, ischio, fessiers, mollets, abdos, lombaires`;
       const res = await fetch('/api/gemini', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:fullPrompt}) });
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
       const raw = data.text || '';
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Format JSON invalide');
+      if (!jsonMatch) throw new Error('Format JSON invalide (réponse: ' + raw.slice(0,80) + ')');
       const workout = JSON.parse(jsonMatch[0]);
       if (!workout.entries?.length) throw new Error('Aucun exercice généré');
       setPreview({ ...workout, aiGenerated:true, id:Date.now() });
@@ -819,19 +820,20 @@ export default function MusculationModule({ onSync }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// MODE SÉANCE EN DIRECT
+// MODE SÉANCE EN DIRECT — style Hevy (tableau de séries par exercice)
 // ═══════════════════════════════════════════════════════════════════════════════
 function LiveSession({ workout, onEnd }) {
   const entries = workout.entries || [];
-  const [exIdx, setExIdx] = useState(0);
-  const [setIdx, setSetIdx] = useState(0);
-  const [phase, setPhase] = useState('active'); // 'active' | 'rest' | 'done'
-  const [restLeft, setRestLeft] = useState(0);
-  const [completed, setCompleted] = useState({}); // {exIdx_setIdx: {reps, weight}}
+  const [setsCount, setSetsCount] = useState(() => entries.map(e => e.sets || 3));
+  const [values, setValues] = useState({}); // { "exIdx_setIdx": {reps, weight, done} }
+  const [expanded, setExpanded] = useState(0); // index de l'exercice ouvert (-1 = tous fermés)
   const [elapsed, setElapsed] = useState(0);
-  const [notes, setNotes] = useState('');
-  const timerRef = useRef(null);
+  const [phase, setPhase] = useState('active'); // 'active' | 'done'
+  const [rest, setRest] = useState(null); // {left, total} | null
+  const [stravaStatus, setStravaStatus] = useState('idle');
+  const restTimerRef = useRef(null);
   const startRef = useRef(Date.now());
+  const startTimeRef = useRef(new Date().toISOString());
 
   // Chrono global
   useEffect(() => {
@@ -839,76 +841,91 @@ function LiveSession({ workout, onEnd }) {
     return () => clearInterval(t);
   }, []);
 
-  // Countdown repos
+  // Countdown repos (timer flottant, ne bloque pas l'UI)
   useEffect(() => {
-    if (phase !== 'rest') return;
-    if (restLeft <= 0) { setPhase('active'); return; }
-    timerRef.current = setTimeout(() => setRestLeft(r => r - 1), 1000);
-    return () => clearTimeout(timerRef.current);
-  }, [phase, restLeft]);
-
-  const currentEntry = entries[exIdx];
-  const currentEx = currentEntry?.exercise;
-  const totalSets = currentEntry?.sets || 3;
-  const totalExercises = entries.length;
-  const mInfo = currentEx ? MUSCLES.find(m => m.id === currentEx.primary) : null;
+    if (!rest) return;
+    if (rest.left <= 0) { setRest(null); return; }
+    restTimerRef.current = setTimeout(() => setRest(r => r ? { ...r, left: r.left - 1 } : null), 1000);
+    return () => clearTimeout(restTimerRef.current);
+  }, [rest]);
 
   const formatTime = (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
 
-  const completedSetsForEx = (ei) => Object.keys(completed).filter(k => k.startsWith(`${ei}_`)).length;
-  const totalCompletedSets = entries.reduce((sum, _, ei) => sum + completedSetsForEx(ei), 0);
-  const totalSetsAll = entries.reduce((sum, e) => sum + (e.sets || 3), 0);
-  const progress = totalSetsAll > 0 ? totalCompletedSets / totalSetsAll : 0;
+  // ─── Historique — dernière perf enregistrée pour un exercice ───────────────
+  const getLastPerf = useCallback((exId) => {
+    if (!exId) return null;
+    try {
+      const logs = JSON.parse(localStorage.getItem('pp_session_logs') || '[]');
+      for (const log of logs) {
+        const idx = (log.entries || []).findIndex(e => e.exercise?.id === exId);
+        if (idx === -1) continue;
+        const rows = Object.entries(log.completedSets || {})
+          .filter(([k]) => k.startsWith(`${idx}_`))
+          .sort((a,b) => (+a[0].split('_')[1]) - (+b[0].split('_')[1]))
+          .map(([,v]) => v);
+        if (rows.length) return { date: log.date, rows };
+      }
+    } catch {}
+    return null;
+  }, []);
 
-  const key = `${exIdx}_${setIdx}`;
-  const [curReps, setCurReps] = useState('');
-  const [curWeight, setCurWeight] = useState('');
+  const keyOf = (ei, si) => `${ei}_${si}`;
 
-  // Reset inputs when set changes
-  useEffect(() => {
-    const prev = completed[key];
-    setCurReps(prev?.reps || currentEntry?.reps || '');
-    setCurWeight(prev?.weight !== undefined ? String(prev.weight) : String(currentEntry?.weight || 0));
-  }, [exIdx, setIdx]);
+  const getRow = useCallback((ei, si) => {
+    const k = keyOf(ei, si);
+    if (values[k]) return values[k];
+    // Pré-remplissage progressif : reprend la valeur de la série précédente de cet exercice
+    const prevKey = keyOf(ei, si - 1);
+    if (si > 0 && values[prevKey]) {
+      return { reps: values[prevKey].reps, weight: values[prevKey].weight, done: false };
+    }
+    // Sinon, valeur de la dernière séance sur cet exercice
+    const last = getLastPerf(entries[ei]?.exercise?.id);
+    if (last?.rows?.[si]) return { reps: last.rows[si].reps, weight: last.rows[si].weight, done: false };
+    // Sinon, valeurs par défaut du programme
+    return { reps: entries[ei]?.reps || '', weight: entries[ei]?.weight || 0, done: false };
+  }, [values, entries, getLastPerf]);
 
-  const validateSet = () => {
-    const newCompleted = { ...completed, [key]: { reps: curReps, weight: +curWeight } };
-    setCompleted(newCompleted);
-    const rest = currentEntry?.rest || 90;
+  const updateRow = (ei, si, field, val) => {
+    const k = keyOf(ei, si);
+    setValues(v => ({ ...v, [k]: { ...getRow(ei, si), [field]: val } }));
+  };
 
-    // Avance
-    if (setIdx + 1 < totalSets) {
-      setSetIdx(s => s + 1);
-      setPhase('rest');
-      setRestLeft(rest);
-    } else if (exIdx + 1 < totalExercises) {
-      setExIdx(e => e + 1);
-      setSetIdx(0);
-      setPhase('rest');
-      setRestLeft(rest);
-    } else {
-      setPhase('done');
+  const toggleDone = (ei, si) => {
+    const k = keyOf(ei, si);
+    const row = getRow(ei, si);
+    const nowDone = !row.done;
+    setValues(v => ({ ...v, [k]: { ...row, done: nowDone } }));
+    if (nowDone) {
+      const restS = entries[ei]?.rest || 90;
+      setRest({ left: restS, total: restS });
     }
   };
 
-  const skipRest = () => {
-    clearTimeout(timerRef.current);
-    setRestLeft(0);
-    setPhase('active');
+  const addSet = (ei) => setSetsCount(c => c.map((n,i) => i===ei ? n+1 : n));
+  const removeSet = (ei) => setSetsCount(c => c.map((n,i) => i===ei && n>1 ? n-1 : n));
+
+  const completedCountForEx = (ei) => Array.from({length: setsCount[ei]}).filter((_,si) => getRow(ei,si).done).length;
+  const totalCompletedSets = entries.reduce((sum,_,ei) => sum + completedCountForEx(ei), 0);
+  const totalSetsAll = setsCount.reduce((a,b) => a+b, 0);
+  const progress = totalSetsAll > 0 ? totalCompletedSets / totalSetsAll : 0;
+
+  const buildCompleted = () => {
+    const out = {};
+    entries.forEach((_,ei) => {
+      Array.from({length: setsCount[ei]}).forEach((_,si) => {
+        const row = getRow(ei,si);
+        if (row.done) out[keyOf(ei,si)] = { reps: row.reps, weight: +row.weight || 0 };
+      });
+    });
+    return out;
   };
-
-  const addRest = (s) => setRestLeft(r => r + s);
-
-
-  const [stravaStatus, setStravaStatus] = useState('idle');
-  const startTimeRef = useRef(new Date().toISOString());
 
   useEffect(() => {
     if (phase !== 'done') return;
-    // Sauvegarde dans localStorage ET Supabase
+    const completed = buildCompleted();
     const log = { id: Date.now(), workoutId: workout.id, workoutName: workout.name, date: new Date().toISOString(), duration: elapsed, totalVolume: Object.entries(completed).reduce((s,[,v])=>s+(v.weight||0)*(parseInt(v.reps)||0),0), completedSets: completed, entries: workout.entries||[] };
     try { const logs = JSON.parse(localStorage.getItem('pp_session_logs') || '[]'); localStorage.setItem('pp_session_logs', JSON.stringify([log, ...logs].slice(0, 50))); } catch {}
-    // Sync directe vers Supabase si user connecté
     try {
       const userId = localStorage.getItem('pp_user_id');
       if (userId) {
@@ -919,7 +936,6 @@ function LiveSession({ workout, onEnd }) {
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
           body: JSON.stringify({ user_id: userId, workout_name: workout.name, duration: elapsed, total_volume: log.totalVolume, completed_sets: completed, entries: workout.entries||[], date: new Date().toISOString() })
         });
-        // Vide le localStorage pour éviter les doublons lors de la sync
         localStorage.setItem('pp_session_logs', '[]');
       }
     } catch {}
@@ -944,10 +960,8 @@ function LiveSession({ workout, onEnd }) {
   }, [phase]);
 
   if (phase === 'done') {
-    const totalVol = Object.entries(completed).reduce((sum, [k, v]) => {
-      const [ei] = k.split('_').map(Number);
-      return sum + (v.weight || 0) * (parseInt(v.reps) || 0);
-    }, 0);
+    const completed = buildCompleted();
+    const totalVol = Object.values(completed).reduce((sum, v) => sum + (v.weight || 0) * (parseInt(v.reps) || 0), 0);
     return (
       <div style={{ minHeight:'100%', background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24, fontFamily:'Syne, sans-serif' }}>
         <div style={{ width:64, height:64, borderRadius:20, background:'rgba(255,0,64,0.1)', border:'1px solid rgba(255,0,64,0.2)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:28, color:'#FF0040' }}>✓</div>
@@ -958,7 +972,7 @@ function LiveSession({ workout, onEnd }) {
             ['Durée', formatTime(elapsed)],
             ['Séries', `${totalCompletedSets}/${totalSetsAll}`],
             ['Volume', `${Math.round(totalVol)} kg`],
-            ['Exercices', `${totalExercises}`],
+            ['Exercices', `${entries.length}`],
           ].map(([label, value]) => (
             <div key={label} style={{ ...card, textAlign:'center' }}>
               <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:4, fontFamily:'monospace' }}>{label}</div>
@@ -980,13 +994,13 @@ function LiveSession({ workout, onEnd }) {
   }
 
   return (
-    <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom:80 }}>
+    <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', paddingBottom: rest ? 140 : 100 }}>
 
       {/* Header sticky */}
       <div style={{ position:'sticky', top:0, zIndex:50, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderBottom:'1px solid var(--border-nav)', padding:'0 16px', height:52, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <button onClick={onEnd} style={{ ...btnGhost, padding:'5px 10px', fontSize:12 }}>Arrêter</button>
         <div style={{ fontSize:13, fontFamily:'DM Mono, monospace', color:'var(--text-primary)', fontWeight:700 }}>{formatTime(elapsed)}</div>
-        <div style={{ fontSize:12, color:'var(--text-muted)', fontFamily:'monospace' }}>{exIdx+1}/{totalExercises}</div>
+        <div style={{ fontSize:12, color:'var(--text-muted)', fontFamily:'monospace' }}>{totalCompletedSets}/{totalSetsAll} séries</div>
       </div>
 
       {/* Barre de progression globale */}
@@ -994,126 +1008,85 @@ function LiveSession({ workout, onEnd }) {
         <div style={{ height:'100%', background:'#FF0040', width:`${progress*100}%`, transition:'width 0.4s' }} />
       </div>
 
-      <div style={{ maxWidth:480, margin:'0 auto', padding:'20px 16px' }}>
+      <div style={{ maxWidth:480, margin:'0 auto', padding:'16px' }}>
+        {entries.map((e, ei) => {
+          const ex = e.exercise;
+          const m = ex ? MUSCLES.find(x => x.id === ex.primary) : null;
+          const isOpen = expanded === ei;
+          const doneCount = completedCountForEx(ei);
+          const nSets = setsCount[ei];
+          const isDone = doneCount >= nSets;
+          const last = getLastPerf(ex?.id);
 
-        {/* PHASE REPOS */}
-        {phase === 'rest' && (
-          <div style={{ ...card, textAlign:'center', padding:'32px 20px', marginBottom:16, borderColor:'rgba(96,165,250,0.3)' }}>
-            <div style={{ fontSize:11, color:'#60a5fa', fontFamily:'monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Temps de repos</div>
-            <div style={{ fontSize:64, fontWeight:900, fontFamily:'monospace', color: restLeft <= 10 ? '#FF0040' : '#60a5fa', marginBottom:16, lineHeight:1 }}>
-              {formatTime(restLeft)}
-            </div>
-            {/* Arc progress */}
-            <div style={{ fontSize:12, color:'var(--text-muted)', marginBottom:16 }}>
-              Prochain : {exIdx + (setIdx + 1 < totalSets ? 0 : 1) < totalExercises
-                ? `${setIdx + 1 < totalSets ? `Série ${setIdx+2}` : `${entries[exIdx+1]?.exercise?.name}`}`
-                : 'Dernier exercice !'}
-            </div>
-            <div style={{ display:'flex', gap:8, justifyContent:'center' }}>
-              <button onClick={() => addRest(15)} style={{ ...btnGhost, padding:'6px 12px', fontSize:12 }}>+15s</button>
-              <button onClick={skipRest} style={{ ...btnRed, padding:'8px 20px', fontSize:13 }}>Passer</button>
-              <button onClick={() => addRest(-15)} style={{ ...btnGhost, padding:'6px 12px', fontSize:12 }}>-15s</button>
-            </div>
-          </div>
-        )}
-
-        {/* EXERCICE EN COURS */}
-        {phase === 'active' && currentEntry && (
-          <div>
-            {/* Nom + muscle */}
-            <div style={{ marginBottom:16 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:6 }}>
-                {mInfo && <span style={{ width:10, height:10, borderRadius:'50%', background:mInfo.color, display:'inline-block', flexShrink:0 }}/>}
-                <div>
-                  <div style={{ fontSize:18, fontWeight:800, color:'var(--text-primary)', letterSpacing:'-0.02em' }}>{currentEx?.name}</div>
-                  {mInfo && <div style={{ fontSize:11, color:mInfo.color, fontFamily:'monospace', fontWeight:600 }}>{mInfo.label}</div>}
+          return (
+            <div key={ei} style={{ ...card, marginBottom:10, padding:0, overflow:'hidden' }}>
+              {/* En-tête exercice — cliquable */}
+              <div onClick={() => setExpanded(isOpen ? -1 : ei)}
+                style={{ display:'flex', alignItems:'center', gap:10, padding:'14px 16px', cursor:'pointer', background: isDone ? 'rgba(34,197,94,0.06)' : 'transparent' }}>
+                <span style={{ fontSize:18 }}>{isDone ? '✅' : m?.emoji || '⬜'}</span>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color: isDone ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: isDone ? 'line-through' : 'none' }}>{ex?.name}</div>
+                  <div style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'monospace', marginTop:2 }}>
+                    {doneCount}/{nSets} séries{last ? ` · dernière fois: ${last.rows[last.rows.length-1]?.weight||0}kg×${last.rows[last.rows.length-1]?.reps||'—'}` : ''}
+                  </div>
                 </div>
+                <span style={{ fontSize:12, color:'var(--text-muted)', transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform 0.2s' }}>▾</span>
               </div>
-              {currentEntry.modifier && currentEntry.modifier !== 'normal' && (
-                <div style={{ display:'inline-block', background:'rgba(96,165,250,0.12)', border:'1px solid rgba(96,165,250,0.25)', borderRadius:8, padding:'3px 10px', fontSize:11, color:'#60a5fa', fontFamily:'monospace' }}>
-                  {INTENSITY_MODS.find(m=>m.id===currentEntry.modifier)?.label} — {INTENSITY_MODS.find(m=>m.id===currentEntry.modifier)?.desc}
+
+              {isOpen && (
+                <div style={{ padding:'0 16px 14px' }}>
+                  {/* En-têtes colonnes */}
+                  <div style={{ display:'grid', gridTemplateColumns:'28px 1fr 1fr 1fr 32px', gap:8, padding:'6px 0', fontSize:10, color:'var(--text-muted)', fontFamily:'monospace', textTransform:'uppercase', letterSpacing:'0.05em' }}>
+                    <span>#</span><span>Avant</span><span>Kg</span><span>Reps</span><span></span>
+                  </div>
+                  {Array.from({ length: nSets }).map((_, si) => {
+                    const row = getRow(ei, si);
+                    const lastRow = last?.rows?.[si];
+                    return (
+                      <div key={si} style={{ display:'grid', gridTemplateColumns:'28px 1fr 1fr 1fr 32px', gap:8, alignItems:'center', padding:'6px 0', background: row.done ? 'rgba(34,197,94,0.06)' : 'transparent', borderRadius:8 }}>
+                        <span style={{ fontSize:12, fontWeight:700, color:'var(--text-secondary)', textAlign:'center' }}>{si+1}</span>
+                        <span style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'monospace' }}>{lastRow ? `${lastRow.weight}×${lastRow.reps}` : '—'}</span>
+                        <input type="number" inputMode="decimal" step="0.5" disabled={row.done}
+                          style={{ ...inp(), padding:'6px 8px', fontSize:13, textAlign:'center', fontFamily:'monospace', opacity: row.done ? 0.6 : 1 }}
+                          value={row.weight} onChange={ev => updateRow(ei, si, 'weight', ev.target.value)} />
+                        <input type="number" inputMode="numeric" disabled={row.done}
+                          style={{ ...inp(), padding:'6px 8px', fontSize:13, textAlign:'center', fontFamily:'monospace', opacity: row.done ? 0.6 : 1 }}
+                          value={row.reps} onChange={ev => updateRow(ei, si, 'reps', ev.target.value)} />
+                        <button onClick={() => toggleDone(ei, si)}
+                          style={{ width:32, height:32, borderRadius:8, border: row.done ? 'none' : '1.5px solid var(--border-input)', background: row.done ? '#22c55e' : 'transparent', color: row.done ? '#fff' : 'var(--text-muted)', fontSize:14, cursor:'pointer' }}>
+                          {row.done ? '✓' : ''}
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <div style={{ display:'flex', gap:8, marginTop:10 }}>
+                    <button onClick={() => addSet(ei)} style={{ ...btnGhost, flex:1, padding:'8px', fontSize:11 }}>+ Ajouter une série</button>
+                    {nSets > 1 && <button onClick={() => removeSet(ei)} style={{ ...btnGhost, padding:'8px 12px', fontSize:11 }}>− Retirer</button>}
+                  </div>
                 </div>
               )}
             </div>
+          );
+        })}
 
-            {/* Indicateur de série */}
-            <div style={{ display:'flex', gap:6, marginBottom:20 }}>
-              {Array.from({length:totalSets}).map((_,i) => {
-                const done = completed[`${exIdx}_${i}`];
-                const current = i === setIdx;
-                return (
-                  <div key={i} style={{ flex:1, height:6, borderRadius:4, background: done ? '#22c55e' : current ? '#FF0040' : 'var(--bg-input)', transition:'all 0.3s' }} />
-                );
-              })}
-            </div>
-            <div style={{ fontSize:12, color:'var(--text-muted)', marginBottom:16, fontFamily:'monospace' }}>
-              Série <span style={{ color:'#FF0040', fontWeight:700 }}>{setIdx+1}</span> / {totalSets}
-            </div>
-
-            {/* Inputs reps + poids */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:20 }}>
-              <div style={{ ...card, textAlign:'center', padding:'16px 12px' }}>
-                <div style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'monospace', textTransform:'uppercase', marginBottom:8 }}>Répétitions</div>
-                <input type="number" inputMode="numeric"
-                  style={{ ...inp(), width:'100%', fontSize:28, fontWeight:800, textAlign:'center', fontFamily:'monospace', padding:'8px 4px', background:'transparent', border:'none', outline:'none' }}
-                  value={curReps} onChange={e=>setCurReps(e.target.value)} placeholder="—" />
-                <div style={{ fontSize:10, color:'var(--text-muted)', marginTop:4 }}>Cible: {currentEntry.reps}</div>
-              </div>
-              <div style={{ ...card, textAlign:'center', padding:'16px 12px' }}>
-                <div style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'monospace', textTransform:'uppercase', marginBottom:8 }}>Poids (kg)</div>
-                <input type="number" inputMode="decimal" step="0.5"
-                  style={{ ...inp(), width:'100%', fontSize:28, fontWeight:800, textAlign:'center', fontFamily:'monospace', padding:'8px 4px', background:'transparent', border:'none', outline:'none' }}
-                  value={curWeight} onChange={e=>setCurWeight(e.target.value)} placeholder="0" />
-                <div style={{ fontSize:10, color:'var(--text-muted)', marginTop:4 }}>Prévu: {currentEntry.weight||0} kg</div>
-              </div>
-            </div>
-
-            {/* Bouton valider */}
-            <button onClick={validateSet}
-              style={{ ...btnRed, width:'100%', padding:16, fontSize:16, fontWeight:800, marginBottom:12, borderRadius:14 }}>
-              ✅ Série validée
-            </button>
-
-            {/* Séries passées */}
-            {setIdx > 0 && (
-              <div style={{ ...card, padding:'10px 14px' }}>
-                <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:8, fontFamily:'monospace', textTransform:'uppercase' }}>Séries précédentes</div>
-                {Array.from({length:setIdx}).map((_,i) => {
-                  const s = completed[`${exIdx}_${i}`];
-                  return s ? (
-                    <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'var(--text-secondary)', marginBottom:4 }}>
-                      <span style={{ color:'var(--text-muted)' }}>Série {i+1}</span>
-                      <span style={{ fontFamily:'monospace' }}>{s.reps} reps × {s.weight} kg</span>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Liste exercices restants */}
-        <div style={{ marginTop:20 }}>
-          <div style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:10 }}>Programme</div>
-          {entries.map((e, ei) => {
-            const ex = e.exercise;
-            const m = ex ? MUSCLES.find(x=>x.id===ex.primary) : null;
-            const doneCount = completedSetsForEx(ei);
-            const isDone = doneCount >= (e.sets||3);
-            const isCurrent = ei === exIdx;
-            return (
-              <div key={ei} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 12px', borderRadius:10, marginBottom:6, background: isCurrent ? `${m?.color||'#FF0040'}15` : isDone ? 'rgba(34,197,94,0.06)' : 'var(--bg-input)', border:`1px solid ${isCurrent ? `${m?.color||'#FF0040'}40` : isDone ? 'rgba(34,197,94,0.2)' : 'transparent'}` }}>
-                <span style={{ fontSize:16 }}>{isDone ? '✅' : isCurrent ? '▶️' : m?.emoji || '⬜'}</span>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:12, fontWeight: isCurrent ? 700 : 500, color: isDone ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: isDone ? 'line-through' : 'none' }}>{ex?.name}</div>
-                  <div style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'monospace' }}>{doneCount}/{e.sets||3} séries</div>
-                </div>
-                {isCurrent && <div style={{ width:6, height:6, borderRadius:'50%', background:'#FF0040' }} />}
-              </div>
-            );
-          })}
-        </div>
+        <button onClick={() => setPhase('done')} style={{ ...btnRed, width:'100%', padding:16, fontSize:15, fontWeight:800, borderRadius:14, marginTop:8 }}>
+          Terminer la séance
+        </button>
       </div>
+
+      {/* Timer de repos flottant */}
+      {rest && (
+        <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:60, background:'var(--bg-nav)', backdropFilter:'blur(20px)', borderTop:'1px solid var(--border-nav)', padding:'12px 16px' }}>
+          <div style={{ maxWidth:480, margin:'0 auto', display:'flex', alignItems:'center', gap:14 }}>
+            <div style={{ fontSize:26, fontWeight:900, fontFamily:'monospace', color: rest.left <= 10 ? '#FF0040' : '#60a5fa', minWidth:64 }}>{formatTime(rest.left)}</div>
+            <div style={{ flex:1, height:4, borderRadius:4, background:'var(--bg-input)', overflow:'hidden' }}>
+              <div style={{ height:'100%', background: rest.left <= 10 ? '#FF0040' : '#60a5fa', width:`${(rest.left/rest.total)*100}%`, transition:'width 1s linear' }} />
+            </div>
+            <button onClick={() => setRest(r => r ? { ...r, left: r.left + 15 } : null)} style={{ ...btnGhost, padding:'6px 10px', fontSize:11 }}>+15s</button>
+            <button onClick={() => setRest(null)} style={{ ...btnRed, padding:'8px 16px', fontSize:12 }}>Passer</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

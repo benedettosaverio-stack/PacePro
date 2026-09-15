@@ -16,13 +16,21 @@ export async function POST(req: NextRequest) {
       'HTTP-Referer': 'https://pacepro-virid.vercel.app',
     },
     body: JSON.stringify({
-      model: 'anthropic/claude-3-5-haiku',
+      model: 'anthropic/claude-3.5-haiku',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 12000,
     })
   });
 
   const data = await res.json();
+
+  if (!res.ok || data.error) {
+    return NextResponse.json({ text: '', error: data.error?.message || `OpenRouter error (${res.status})` });
+  }
+
   const text = data.choices?.[0]?.message?.content || '';
+  if (!text) {
+    return NextResponse.json({ text: '', error: 'Réponse vide du modèle' });
+  }
   return NextResponse.json({ text });
 }
