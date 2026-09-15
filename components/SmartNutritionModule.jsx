@@ -2,14 +2,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Icon from './Icons';
 
-function getToken() {
-  try {
-    const exp = parseInt(localStorage.getItem('strava_expires_at') || '0');
-    if (Date.now() / 1000 < exp) return localStorage.getItem('strava_token');
-  } catch {}
-  return null;
-}
-
 function useTypewriter(text, speed = 18) {
   const [displayed, setDisplayed] = useState('');
   const [done, setDone] = useState(false);
@@ -89,27 +81,7 @@ export default function SmartNutritionModule({ onBack }) {
   const [goal, setGoal] = useState(profile?.goal || 'performance');
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) { setStatus('no_token'); return; }
-    fetch(`/api/strava?action=activities&token=${token}`)
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) { setStatus('done'); return; }
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
-        const recent = data.find(a => {
-          const d = new Date(a.start_date);
-          const diff = (today - d) / 3600000;
-          return diff < 24;
-        });
-        if (recent) {
-          setActivity(recent);
-          const intense = recent.average_heartrate > 140 || recent.distance > 5000 || recent.total_elevation_gain > 50;
-          setMode(intense ? 'recharge' : 'recovery');
-        }
-        setStatus('done');
-      })
-      .catch(() => setStatus('done'));
+    setStatus('done');
   }, []);
 
   const isRecharge = mode === 'recharge';

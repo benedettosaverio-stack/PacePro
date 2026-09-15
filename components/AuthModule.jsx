@@ -60,14 +60,6 @@ export default function AuthModule({ onAuth }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const STRAVA_CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID;
-
-  const connectStrava = () => {
-    const scope = 'read,activity:read_all,activity:write';
-    const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://pacepro-virid.vercel.app/api/strava?action=callback')}&response_type=code&scope=${scope}`;
-    window.location.href = url;
-  };
-
   const connectGoogle = async () => {
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -114,10 +106,6 @@ export default function AuthModule({ onAuth }) {
         </p>
 
         <div style={{ width:'100%', maxWidth:380, display:'flex', flexDirection:'column', gap:12 }}>
-          <button onClick={connectStrava} style={{ ...btnGhost, display:'flex', alignItems:'center', justifyContent:'center', gap:10, borderColor:'rgba(252,76,2,0.3)', color:'#FC4C02' }}>
-            <span style={{ fontSize:20 }}>🟠</span> Continuer avec Strava
-          </button>
-
           <button onClick={connectGoogle} style={{ ...btnGhost, display:'flex', alignItems:'center', justifyContent:'center', gap:10 }}>
             <svg width="18" height="18" viewBox="0 0 48 48">
               <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.7 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/>

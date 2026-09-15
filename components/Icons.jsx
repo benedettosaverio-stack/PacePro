@@ -34,11 +34,6 @@ const icons = {
       </g>
     </svg>
   ),
-  strava: (s, c) => (
-    <svg width={s} height={s} viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" fill={c}>
-      <path d="M 8.6935,9.972 7.649,7.914 l -1.5325,0 2.577,5.086 2.575,-5.086 -1.533,0 m -3.504,-2.7995 1.418,2.799 2.086,0 L 6.2315,1 l -3.5,6.914 2.0845,0"/>
-    </svg>
-  ),
   history: (s, c) => (
     <svg width={s} height={s} viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill={c}>
       <g transform="translate(0,512) scale(0.1,-0.1)">

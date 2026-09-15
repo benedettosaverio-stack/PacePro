@@ -25,18 +25,6 @@ async function supaFetch(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-async function upsertUser(stravaId, name, photo) {
-  // D'abord cherche si l'user existe
-  const existing = await supaFetch(`users?strava_id=eq.${stravaId}&limit=1`);
-  if (existing && existing.length > 0) return existing[0];
-  // Sinon crée-le
-  const data = await supaFetch('users', {
-    method: 'POST',
-    body: JSON.stringify({ strava_id: stravaId, name, photo }),
-  });
-  return Array.isArray(data) ? data[0] : data;
-}
-
 async function saveSessionDB(userId, session) {
   const data = await supaFetch('sessions', {
     method: 'POST',
@@ -75,9 +63,6 @@ function SessionCard({ session, onOpen, onDelete }) {
           <div style={{ fontSize:11, color:'var(--text-muted)' }}>{formatDate(session.date)}</div>
         </div>
         <div style={{ display:'flex', gap:6, alignItems:'center' }}>
-          {session.strava_activity_id && (
-            <span style={{ fontSize:10, background:'rgba(252,76,2,0.1)', color:'#FC4C02', borderRadius:6, padding:'2px 8px', fontWeight:600, fontFamily:'monospace' }}>🟠 Strava</span>
-          )}
           <button onClick={e => { e.stopPropagation(); onDelete(); }}
             style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:8, padding:'4px 8px', color:'rgba(239,68,68,0.6)', fontSize:11, cursor:'pointer', fontFamily:'inherit' }}>
             ✕
@@ -113,12 +98,6 @@ function SessionDetail({ session, onBack }) {
           <div style={{ fontSize:16, fontWeight:800, color:'var(--text-primary)' }}>{session.workout_name}</div>
           <div style={{ fontSize:11, color:'var(--text-muted)' }}>{formatDate(session.date)}</div>
         </div>
-        {session.strava_activity_id && (
-          <a href={`https://www.strava.com/activities/${session.strava_activity_id}`} target="_blank"
-            style={{ fontSize:11, background:'rgba(252,76,2,0.1)', color:'#FC4C02', borderRadius:8, padding:'5px 10px', fontWeight:600, textDecoration:'none' }}>
-            🟠 Voir sur Strava
-          </a>
-        )}
       </div>
 
       {/* Stats globales */}
@@ -170,7 +149,6 @@ function GlobalStats({ sessions }) {
   const totalVol = sessions.reduce((s, x) => s + (x.total_volume || 0), 0);
   const totalTime = sessions.reduce((s, x) => s + (x.duration || 0), 0);
   const totalSets = sessions.reduce((s, x) => s + Object.keys(x.completed_sets || {}).length, 0);
-  const stravaSync = sessions.filter(x => x.strava_activity_id).length;
 
   return (
     <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10, marginBottom:20 }}>
@@ -178,7 +156,7 @@ function GlobalStats({ sessions }) {
         ['📅 Séances', sessions.length, '#FF0040'],
         ['🔥 Volume total', `${Math.round(totalVol / 1000)}t`, '#f59e0b'],
         ['⏱ Temps total', formatTime(totalTime), '#22c55e'],
-        ['🟠 Strava sync', stravaSync, '#FC4C02'],
+        ['💪 Séries totales', totalSets, '#6366f1'],
       ].map(([label, value, color]) => (
         <div key={label} style={{ ...card, textAlign:'center' }}>
           <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:4, fontFamily:'monospace', textTransform:'uppercase' }}>{label}</div>
@@ -204,26 +182,14 @@ export default function HistoriqueModule() {
   const initUser = async () => {
     setLoading(true);
     try {
-      // Récupère l'athlete Strava depuis localStorage
-      const athleteStr = localStorage.getItem('strava_athlete');
-      if (!athleteStr) { setLoading(false); return; }
+      const userId = localStorage.getItem('pp_user_id');
+      const ppUserStr = localStorage.getItem('pp_user');
+      if (!userId || !ppUserStr) { setLoading(false); return; }
 
-      let athlete;
-      try { athlete = JSON.parse(athleteStr); } catch { setLoading(false); return; }
+      let ppUser;
+      try { ppUser = JSON.parse(ppUserStr); } catch { setLoading(false); return; }
 
-      // Essaie les différents formats possibles
-      const stravaId = athlete?.id || athlete?.strava_id;
-      const name = athlete?.name || athlete?.firstname + ' ' + athlete?.lastname || 'Athlete';
-      const photo = athlete?.photo || athlete?.profile_medium || '';
-
-      if (!stravaId) { setLoading(false); return; }
-
-      // Crée ou récupère le compte utilisateur
-      const dbUser = await upsertUser(Number(stravaId), name, photo);
-      if (!dbUser) { setLoading(false); return; }
-
-      // Sauvegarde localement
-      localStorage.setItem('pp_user_id', dbUser.id);
+      const dbUser = { id: userId, name: ppUser.name || 'Athlete', photo: ppUser.photo || '' };
       setUser(dbUser);
 
       // Charge les séances
@@ -249,7 +215,6 @@ export default function HistoriqueModule() {
           total_volume: s.totalVolume || 0,
           completed_sets: s.completedSets || {},
           entries: s.entries || [],
-          strava_activity_id: s.stravaActivityId || null,
           date: s.date || new Date().toISOString(),
         });
         s.synced = true;
@@ -282,16 +247,13 @@ export default function HistoriqueModule() {
           <div style={{ fontSize:56, marginBottom:16 }}>📊</div>
           <h2 style={{ fontSize:22, fontWeight:800, marginBottom:8, letterSpacing:'-0.03em' }}>Historique des séances</h2>
           <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:32, lineHeight:1.6 }}>
-            Connecte-toi avec Strava pour synchroniser tes séances sur tous tes appareils et accéder à ton historique complet.
+            Connecte-toi pour synchroniser tes séances sur tous tes appareils et accéder à ton historique complet.
           </p>
           <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
-            {['📱 Sync multi-appareils', '📈 Stats et progression', '🟠 Lien avec Strava', '☁️ Sauvegarde cloud'].map(f => (
+            {['📱 Sync multi-appareils', '📈 Stats et progression', '☁️ Sauvegarde cloud'].map(f => (
               <div key={f} style={{ ...card, textAlign:'left', fontSize:13, color:'var(--text-secondary)' }}>{f}</div>
             ))}
           </div>
-          <p style={{ fontSize:12, color:'var(--text-muted)' }}>
-            👉 Va dans l'onglet <strong>🟠 Strava</strong> pour te connecter, puis reviens ici.
-          </p>
         </div>
       </div>
     );
@@ -309,7 +271,7 @@ export default function HistoriqueModule() {
                 {user.photo && <img src={user.photo} alt="" style={{ width:40, height:40, borderRadius:'50%', objectFit:'cover' }} />}
                 <div>
                   <div style={{ fontSize:16, fontWeight:800, color:'var(--text-primary)' }}>{user.name}</div>
-                  <div style={{ fontSize:11, color:'#FC4C02', fontWeight:600, fontFamily:'monospace' }}>● Connecté via Strava</div>
+                  <div style={{ fontSize:11, color:'#22c55e', fontWeight:600, fontFamily:'monospace' }}>● Connecté</div>
                 </div>
               </div>
               <button onClick={syncLocalSessions} disabled={syncing}

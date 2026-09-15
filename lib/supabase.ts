@@ -8,7 +8,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 // Types
 export type User = {
   id: string;
-  strava_id: number;
+  email: string;
   name: string;
   photo: string;
   created_at: string;
@@ -22,20 +22,8 @@ export type Session = {
   total_volume: number;
   completed_sets: any;
   entries: any[];
-  strava_activity_id?: number;
   date: string;
 };
-
-// Crée ou récupère un utilisateur depuis son ID Strava
-export async function upsertUser(stravaId: number, name: string, photo: string): Promise<User | null> {
-  const { data, error } = await supabase
-    .from('users')
-    .upsert({ strava_id: stravaId, name, photo }, { onConflict: 'strava_id' })
-    .select()
-    .single();
-  if (error) { console.error('upsertUser error:', error); return null; }
-  return data;
-}
 
 // Sauvegarde une séance terminée
 export async function saveSession(userId: string, session: Omit<Session, 'id' | 'user_id' | 'date'>): Promise<Session | null> {
