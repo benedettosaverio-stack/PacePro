@@ -115,10 +115,7 @@ export default function BilanModule({ onBack }) {
   const [status, setStatus] = useState('idle');
   const [activities, setActivities] = useState([]);
   const [stats, setStats] = useState(null);
-  const [aiText, setAiText] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
-  const [pdfData, setPdfData] = useState(null);
-  const [pdfName, setPdfName] = useState('');
+
   const didFetch = useRef(false);
 
   useEffect(() => {
@@ -146,100 +143,6 @@ export default function BilanModule({ onBack }) {
       })
       .catch(() => setStatus('error'));
   }, []);
-
-  async function getAIBilan() {
-    setAiLoading(true);
-    setAiText('');
-
-    // Charger les données profil
-    const settings = (() => { try { return JSON.parse(localStorage.getItem('pp_user_settings') || '{}'); } catch { return {}; } })();
-    const plans = (() => { try { return JSON.parse(localStorage.getItem('pp_plans') || '[]'); } catch { return []; } })();
-    const workouts = (() => { try { return JSON.parse(localStorage.getItem('pp_workouts_pro') || '[]'); } catch { return []; } })();
-    const activePlan = plans[plans.length - 1];
-    const completed = activePlan?.completed || {};
-    const totalSessions = activePlan?.plan?.reduce((a, w) => a + w.sessions.length, 0) || 0;
-    const doneSessions = Object.values(completed).filter(Boolean).length;
-
-    const profileContext = `Profil athlète :
-- Poids : ${settings.weight || '?'} kg | Taille : ${settings.height || '?'} cm | Âge : ${settings.age || '?'} ans
-- VMA : ${settings.vma || '?'} km/h | Niveau : ${settings.level || '?'}
-- Discipline principale : ${settings.discipline || 'running'}
-- Programme actif : ${activePlan ? `${activePlan.profile?.raceName || 'oui'} — ${doneSessions}/${totalSessions} séances complétées` : 'aucun'}
-- Séances muscu : ${workouts.length} enregistrées`;
-
-    const stravaContext = stats ? `
-Données sportives (Strava) :
-- Courses : ${stats.runs.length} séances, ${stats.totalRunKm.toFixed(1)} km
-- Allure moy : ${mpsToMinKm(stats.avgPace)} min/km
-- FC moy : ${stats.avgHR ? Math.round(stats.avgHR) + ' bpm' : 'N/A'}` : '';
-
-    let prompt;
-    if (pdfData) {
-      prompt = `Tu es un médecin du sport et coach expert en composition corporelle.
-${profileContext}${stravaContext}
-
-RAPPORT IMPÉDANCEMÈTRE (extrait) :
-${pdfData.substring(0, 3000)}
-
-Extrait les données clés du rapport (masse grasse %, masse musculaire, eau corporelle, métabolisme de base, masse osseuse si disponible) et produis :
-
-1. BILAN COMPOSITION CORPORELLE : analyse des valeurs vs normes pour cet athlète
-2. BILAN PERFORMANCE : lien composition corporelle et performances sportives
-3. RECOMMANDATIONS (3 points numérotés) : nutrition, entraînement, récupération
-4. OBJECTIF 4 SEMAINES : 1 objectif prioritaire mesurable
-
-Sois précis, chiffré, sans intro ni outro. Langue : français.`;
-    } else {
-      prompt = `Tu es un coach sportif et médecin du sport expert.
-${profileContext}${stravaContext}
-
-Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrètes numérotées adaptées au profil. Sans intro ni outro. Langue : français.`;
-    }
-
-    try {
-      const body = { prompt };
-      const res = await fetch('/api/gemini', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      const d = await res.json();
-      setAiText(d.text || 'Erreur IA.');
-    } catch { setAiText('Erreur lors de la génération.'); }
-    setAiLoading(false);
-  }
-
-  async function handlePdfUpload(e) {
-    const file = e.target.files[0];
-    if (!file || file.type !== 'application/pdf') return;
-    setPdfName(file.name);
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfjsLib = await import('pdfjs-dist');
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '';
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, useWorkerFetch: false, isEvalSupported: false, useSystemFonts: true }).promise;
-      let fullText = '';
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => ('str' in item ? item.str : '')).join(' ');
-        fullText += pageText + '\n';
-      }
-      setPdfData(fullText.substring(0, 6000));
-    } catch(err) {
-      console.error('PDF parse error:', err);
-      // Fallback: lire bytes pour extraction basique
-      const reader = new FileReader();
-      reader.onload = () => {
-        const bytes = new Uint8Array(reader.result);
-        let text = '';
-        for (let i = 0; i < bytes.length; i++) {
-          const c = bytes[i];
-          if (c >= 32 && c < 127) text += String.fromCharCode(c);
-          else if (c === 10 || c === 13) text += '\n';
-        }
-        const cleaned = text.replace(/\s{3,}/g, ' ').replace(/[^\w\s.,:%\-\/\(\)]/g, '').substring(0, 6000);
-        setPdfData(cleaned);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  }
 
   if (!stats) return (
     <div style={{ padding: '24px 16px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', textAlign: 'center', paddingTop: 80 }}>
@@ -332,91 +235,6 @@ Fais un bilan santé et performance (4-5 lignes), puis 3 recommandations concrè
           </div>
         </div>
       )}
-
-      {/* Bilan IA */}
-      <div style={{ position:'relative', borderRadius:18, overflow:'hidden', marginBottom:14, border:'1px solid rgba(99,102,241,0.25)', background:'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, transparent 60%)' }}>
-        <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.05), transparent)', animation:'scanLine 14s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
-        <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(99,102,241,0.15)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
-          <div style={{ display:'flex', gap:4 }}>
-            <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(99,102,241,0.6)' }}/>
-            <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-            <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
-          </div>
-          <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(99,102,241,0.7)', letterSpacing:'0.15em' }}>HEALTH.AI · ANALYSE PERSONNALISÉE</div>
-          {pdfData && (
-            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4 }}>
-              <div style={{ width:4, height:4, borderRadius:'50%', background:'#22c55e', boxShadow:'0 0 4px #22c55e' }}/>
-              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'#22c55e' }}>PDF CHARGÉ</span>
-            </div>
-          )}
-        </div>
-        <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
-          {/* Upload PDF */}
-          <div style={{ marginBottom:14 }}>
-            {!pdfData ? (
-              <label style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:12, border:'1px dashed rgba(99,102,241,0.3)', background:'rgba(99,102,241,0.04)', cursor:'pointer' }}>
-                <input type="file" accept="application/pdf" onChange={handlePdfUpload} style={{ display:'none' }} />
-                <div style={{ width:32, height:32, borderRadius:8, background:'rgba(99,102,241,0.12)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth={2} strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                </div>
-                <div>
-                  <div style={{ fontSize:11, fontWeight:700, color:'#6366f1', fontFamily:'DM Mono, monospace' }}>Ajouter rapport impédancemètre</div>
-                  <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', marginTop:2 }}>PDF · Optionnel · Améliore l'analyse IA</div>
-                </div>
-              </label>
-            ) : (
-              <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:12, border:'1px solid rgba(34,197,94,0.25)', background:'rgba(34,197,94,0.05)' }}>
-                <div style={{ width:32, height:32, borderRadius:8, background:'rgba(34,197,94,0.12)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth={2} strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:10, fontWeight:700, color:'#22c55e', fontFamily:'DM Mono, monospace', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{pdfName}</div>
-                  <div style={{ fontSize:9, color:'rgba(34,197,94,0.6)', fontFamily:'DM Mono, monospace', marginTop:1 }}>Rapport inclus dans l'analyse</div>
-                </div>
-                <button onClick={() => { setPdfData(null); setPdfName(''); }} style={{ background:'none', border:'none', cursor:'pointer', color:'rgba(255,255,255,0.3)', fontSize:16, padding:'2px 6px' }}>✕</button>
-              </div>
-            )}
-          </div>
-
-          {/* Bouton générer */}
-          {!aiText && !aiLoading && (
-            <button onClick={getAIBilan} style={{ width:'100%', padding:'14px', borderRadius:12, border:'1px solid rgba(99,102,241,0.4)', background:'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(99,102,241,0.05))', color:'#6366f1', fontFamily:'DM Mono, monospace', fontWeight:800, fontSize:12, cursor:'pointer', letterSpacing:'0.1em', textTransform:'uppercase' }}>
-              {pdfData ? '✦ ANALYSER MON BILAN SANTÉ + PDF' : '✦ GÉNÉRER MON BILAN SANTÉ IA'}
-            </button>
-          )}
-
-          {/* Loading */}
-          {aiLoading && (
-            <div style={{ textAlign:'center', padding:'20px 0' }}>
-              <div style={{ fontSize:9, color:'#6366f1', fontFamily:'DM Mono, monospace', letterSpacing:'0.15em', marginBottom:8 }}>{'>'} ANALYSE EN COURS...</div>
-              <div style={{ height:2, background:'rgba(99,102,241,0.1)', borderRadius:99, overflow:'hidden' }}>
-                <div style={{ height:'100%', background:'linear-gradient(90deg, #6366f1, #a78bfa)', borderRadius:99, animation:'scanLine 2s ease-in-out infinite', width:'40%' }}/>
-              </div>
-            </div>
-          )}
-
-          {/* Résultat */}
-          {aiText && (
-            <div>
-              <div style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.8, fontFamily:'DM Mono, monospace' }}>
-                {aiText.split('\n').map((line, i) => {
-                  const trimmed = line.trim();
-                  if (!trimmed) return <div key={i} style={{ height:8 }}/>;
-                  const isTitle = /^[A-Z0-9À-ÿ\s&·:]{4,}$/.test(trimmed) && trimmed.length < 40;
-                  if (isTitle) return <div key={i} style={{ fontSize:9, color:'#6366f1', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', marginTop:14, marginBottom:6 }}>{trimmed}</div>;
-                  const isNum = /^[1-9][\.\)]/.test(trimmed);
-                  if (isNum) return <div key={i} style={{ display:'flex', gap:10, marginBottom:8, alignItems:'flex-start' }}>
-                    <span style={{ fontSize:9, color:'#6366f1', fontWeight:800, fontFamily:'DM Mono, monospace', minWidth:16 }}>{trimmed[0]}.</span>
-                    <span style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.6 }}>{trimmed.slice(2).trim()}</span>
-                  </div>;
-                  return <p key={i} style={{ fontSize:11, marginBottom:6, lineHeight:1.7 }}>{trimmed}</p>;
-                })}
-              </div>
-              <button onClick={getAIBilan} style={{ marginTop:14, background:'none', border:'1px solid rgba(255,255,255,0.08)', borderRadius:8, padding:'7px 14px', fontSize:9, color:'var(--text-muted)', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>↻ RÉGÉNÉRER</button>
-            </div>
-          )}
-        </div>
-      </div>
 
     </div>
   );

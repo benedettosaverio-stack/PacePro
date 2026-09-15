@@ -968,28 +968,6 @@ function KpiCharts({ plan, feedbacks, completed }) {
   );
 }
 
-function buildTriathlonPrompt(profile, aiWeeks) {
-  const fmt = profile.triFormat || 'olympic';
-  const fmtDist = {'sprint':{swim:750,bike:20,run:5},'olympic':{swim:1500,bike:40,run:10},'half':{swim:1900,bike:90,run:21},'ironman':{swim:3800,bike:180,run:42}}[fmt];
-  const vmaRun = parseFloat(profile.triRunVMA) || 12;
-  const ftp = parseFloat(profile.triCyclingFTP) || 200;
-  const t400 = profile.triSwimTime || '8:00';
-  const [tm,ts] = t400.split(':').map(Number);
-  const sec400 = (tm||8)*60+(ts||0);
-  const css = Math.round(sec400/4*0.95);
-  const cssStr = Math.floor(css/60)+':'+(css%60).toString().padStart(2,'0');
-  const mPerKm = 60/vmaRun*1.35;
-  const paceEF = Math.floor(mPerKm)+':'+(Math.round((mPerKm%1)*60)).toString().padStart(2,'0');
-  const paceZ2bike = Math.round(ftp*0.68)+'-'+Math.round(ftp*0.78)+'W';
-  const transitionRule = profile.triTransition === 'slow' ? 'inclure 1 seance transition T1/T2 par semaine' : 'transitions integrees aux briques';
-  return 'Genere ' + aiWeeks + ' semaines plan triathlon ' + fmt + ' en JSON. ' + profile.triSessions + ' seances/semaine.'
-    + ' Nage CSS ' + cssStr + '/100m. Velo FTP ' + ftp + 'W Z2=' + paceZ2bike + '. Course VMA ' + vmaRun + 'km/h EF=' + paceEF + '/km.'
-    + ' Couleurs: natation=#38bdf8 velo=#f59e0b course=#22c55e brique=#FF0040.'
-    + ' 1 brique velo+course par semaine. Descriptions max 50 chars. Progressif.'
-    + ' UNIQUEMENT JSON valide sans markdown ni texte:'
-    + ' [{"week":1,"phase":"base","label":"Base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":0,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Natation","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"1500m technique","detail":"Crawl technique.","allures":[{"dot":"#38bdf8","label":"CSS","val":"' + cssStr + '/100m"}]},{"id":"w1_s1","day":"Mercredi","type":"ef","tag":"Velo Z2","tagColor":"#f59e0b","tagBg":"rgba(245,158,11,0.12)","title":"60 min Z2","detail":"Endurance velo.","allures":[{"dot":"#f59e0b","label":"Z2","val":"' + paceZ2bike + '"}]},{"id":"w1_s2","day":"Samedi","type":"key","tag":"Brique","tagColor":"#FF0040","tagBg":"rgba(255,0,64,0.12)","title":"30km velo + 5km course","detail":"Enchainement cle.","allures":[{"dot":"#FF0040","label":"Zone","val":"Z2-Z3"}]}]}]';
-}
-
 function Onboarding({ onComplete }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(() => {
@@ -1899,152 +1877,15 @@ useEffect(() => {
     syncData(key, value);
   };
   const [workouts, setWorkouts] = useState(() => { try { const s = localStorage.getItem('pp_workouts_pro'); return s ? JSON.parse(s) : []; } catch { return []; } });
-  const [generatingPlan, setGeneratingPlan] = useState(false);
-  const [generatingDiscipline, setGeneratingDiscipline] = useState('vélo');
 
-  const handleOnboarding = async (profile) => {
-    if (profile.discipline === 'cycling' || profile.discipline === 'swimming' || profile.discipline === 'triathlon') {
-      const disciplineLabels = {'cycling':'vélo','swimming':'natation','triathlon':'triathlon'};
-      setGeneratingDiscipline(disciplineLabels[profile.discipline] || 'sport');
-      setGeneratingPlan(true);
-      const isCycling = profile.discipline === 'cycling';
-      try {
-        const aiWeeks = Math.min(profile.weeks || 12, profile.discipline === 'triathlon' ? 6 : 8); // Max tokens par appel IA
-        const raceKm = parseFloat(profile.raceDistanceKm) || 100;
-        const weeklyHours = profile.cyclingWeeklyHours || 8;
-        const avgSpeed = profile.cyclingBackground === 'beginner' ? 22 : profile.cyclingBackground === 'intermediate' ? 27 : profile.cyclingBackground === 'advanced' ? 32 : 36;
-        const maxWeeklyKm = Math.round(weeklyHours * avgSpeed * 0.8);
-        const longRideTarget = Math.round(raceKm * 0.85);
-        const z2 = profile.cyclingHasPower ? Math.round(parseFloat(profile.vma)*0.68)+'-'+Math.round(parseFloat(profile.vma)*0.78)+'W' : Math.round(parseFloat(profile.cyclingFCmax)*0.65)+'-'+Math.round(parseFloat(profile.cyclingFCmax)*0.75)+' bpm';
-        const seuilW = profile.cyclingHasPower ? Math.round(parseFloat(profile.vma)*0.91)+'-'+Math.round(parseFloat(profile.vma)*1.05)+'W' : Math.round(parseFloat(profile.cyclingFCmax)*0.82)+'-'+Math.round(parseFloat(profile.cyclingFCmax)*0.89)+' bpm';
-        const prompt = isCycling ? 'Genere ' + aiWeeks + ' semaines plan cyclisme en JSON. ' + profile.sessionsPerWeek + ' seances/sem. FTP=' + profile.vma + 'W niveau=' + profile.cyclingBackground + ' objectif=' + raceKm + 'km. Volume S1=' + Math.round(maxWeeklyKm*0.5) + 'km->S' + aiWeeks + '=' + maxWeeklyKm + 'km. Decharge sem4. Couleurs: Z2=#f59e0b seuil=#FF0040 long=#22c55e. Descriptions max 50 chars. UNIQUEMENT JSON: [{"week":1,"phase":"base","label":"Base","color":"#22c55e","bg":"rgba(34,197,94,0.12)","dateRange":"","weeklyKm":' + Math.round(maxWeeklyKm*0.5) + ',"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"ef","tag":"Velo Z2","tagColor":"#f59e0b","tagBg":"rgba(245,158,11,0.12)","title":"60 min Z2","detail":"Endurance fondamentale.","allures":[{"dot":"#f59e0b","label":"Z2","val":"' + z2 + '"}]},{"id":"w1_s1","day":"Mercredi","type":"frac","tag":"Intervalles","tagColor":"#FF0040","tagBg":"rgba(255,0,64,0.12)","title":"5x5 min / 3 min","detail":"Effort seuil.","allures":[{"dot":"#FF0040","label":"Seuil","val":"' + seuilW + '"}]},{"id":"w1_s2","day":"Samedi","type":"long","tag":"Sortie longue","tagColor":"#22c55e","tagBg":"rgba(34,197,94,0.12)","title":"' + Math.round(maxWeeklyKm*0.4) + ' km","detail":"Endurance Z2.","allures":[{"dot":"#22c55e","label":"Z2","val":"' + z2 + '"}]}]}'
-        : profile.discipline === 'triathlon' ? buildTriathlonPrompt(profile, aiWeeks)
-        : (() => {
-          const [sm,ss]=(profile.swimTime100||'2:00').split(':').map(Number);
-          const sec100=(sm||2)*60+(ss||0);
-          const css=Math.round(sec100*0.95);
-          const cssStr=Math.floor(css/60)+':'+(css%60).toString().padStart(2,'0');
-          return 'Genere ' + aiWeeks + ' semaines plan natation en JSON. ' + profile.sessionsPerWeek + ' seances/sem. Niveau=' + profile.swimLevel + ' CSS=' + cssStr + '/100m objectif=' + profile.raceDistanceKm + 'm. Couleur=#38bdf8. Descriptions max 50 chars. Progressif. UNIQUEMENT JSON: [{"week":1,"phase":"base","label":"Base technique","color":"#38bdf8","bg":"rgba(56,189,248,0.12)","dateRange":"","weeklyKm":2,"isKey":false,"isDeload":false,"sessions":[{"id":"w1_s0","day":"Lundi","type":"swim","tag":"Technique","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"2000m technique","detail":"Crawl, respiration bilaterale.","allures":[{"dot":"#38bdf8","label":"CSS","val":"' + cssStr + '/100m"}]},{"id":"w1_s1","day":"Mercredi","type":"frac","tag":"Series","tagColor":"#38bdf8","tagBg":"rgba(56,189,248,0.12)","title":"10x100m","detail":"Recup 20s entre chaque.","allures":[{"dot":"#38bdf8","label":"CSS","val":"' + cssStr + '/100m"}]}]}]';
-        })();
-
-        const res = await fetch('/api/gemini', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-        const d = await res.json();
-        let text = (d.text || '').replace(/\`\`\`json|\`\`\`/g, '').trim();
-        // Extraire uniquement le JSON entre [ et ]
-        const jsonStart = text.indexOf('[');
-        const jsonEnd = text.lastIndexOf(']');
-        if (jsonStart >= 0 && jsonEnd > jsonStart) {
-          text = text.slice(jsonStart, jsonEnd + 1);
-        }
-        console.log('Parsing JSON, length:', text.length);
-        const aiPlan = JSON.parse(text);
-        console.log('AI Plan week count:', aiPlan.length);
-        console.log('Week 1 sessions:', aiPlan[0]?.sessions?.length, JSON.stringify(aiPlan[0]?.sessions?.[0]).slice(0,200));
-        // Ajouter dateRange si manquant + normaliser sessions
-        const startDate = new Date();
-        const disciplineColors = {swim:'#38bdf8', bike:'#f59e0b', run:'#22c55e', brique:'#FF0040', transition:'#a78bfa'};
-        const disciplineLabels = {swim:'Natation', bike:'Vélo', run:'Course', brique:'Brique', transition:'Transition', technique:'Technique', ef:'Endurance', frac:'Fractionné', long:'Sortie longue', key:'Séance clé'};
-        const enrichedPlan = aiPlan.map((week, idx) => {
-          const wStart = new Date(startDate);
-          wStart.setDate(startDate.getDate() + idx * 7);
-          const wEnd = new Date(wStart);
-          wEnd.setDate(wStart.getDate() + 6);
-          const fmt = dt => dt.toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
-          return {
-            ...week,
-            dateRange: week.dateRange || `${fmt(wStart)} – ${fmt(wEnd)}`,
-            sessions: Array.isArray(week.sessions) ? week.sessions.map((s, si) => {
-              const discipline = s.discipline || s.type || 'run';
-              const color = disciplineColors[discipline] || '#22c55e';
-              const label = disciplineLabels[discipline] || discipline;
-              return {
-                day: s.day || 'Lundi',
-                type: s.type || discipline,
-                tag: s.tag || label,
-                tagColor: s.tagColor || color,
-                tagBg: s.tagBg || `${color}18`,
-                title: s.title || s.name || 'Entraînement',
-                detail: s.detail || s.description || '',
-                allures: s.allures || (() => {
-                  const vmaRun = parseFloat(profile.triRunVMA || profile.vma || 12);
-                  const ftp = parseFloat(profile.triCyclingFTP || 200);
-                  const t400 = profile.triSwimTime || '8:00';
-                  const [tm2,ts2] = t400.split(':').map(Number);
-                  const sec400 = (tm2||8)*60+(ts2||0);
-                  const css = Math.round(sec400/4*0.95);
-                  const cssStr = Math.floor(css/60)+':'+(css%60).toString().padStart(2,'0');
-                  const pRun = calcPaces(vmaRun);
-                  const intensityMap = {
-                    low: discipline==='swim' ? [{dot:color,label:'CSS',val:cssStr+'/100m'}] : discipline==='bike' ? [{dot:color,label:'Z1-Z2',val:Math.round(ftp*0.56)+'-'+Math.round(ftp*0.75)+'W'}] : [{dot:color,label:'EF',val:pRun.ef}],
-                    moderate: discipline==='swim' ? [{dot:color,label:'CSS',val:cssStr+'/100m'}] : discipline==='bike' ? [{dot:color,label:'Tempo',val:Math.round(ftp*0.76)+'-'+Math.round(ftp*0.90)+'W'}] : [{dot:color,label:'Tempo',val:pRun.tempo}],
-                    high: discipline==='swim' ? [{dot:color,label:'Vitesse',val:cssStr+'/100m'}] : discipline==='bike' ? [{dot:color,label:'Seuil',val:Math.round(ftp*0.91)+'-'+Math.round(ftp*1.05)+'W'}] : [{dot:color,label:'Seuil',val:pRun.threshold}],
-                  };
-                  return intensityMap[s.intensity] || intensityMap[s.intensity?.toLowerCase()] || [{dot:color,label:'Zone',val:'Z2'}];
-                })(),
-                completed: false,
-                ...s,
-                id: s.id || `w${idx+1}_s${si}`,
-              };
-            }) : []
-          };
-        });
-        const newPlans = [...plans, { profile, plan: enrichedPlan }];
-        console.log('Saving plan, weeks:', enrichedPlan.length, 'first week sessions:', enrichedPlan[0]?.sessions?.length);
-        savePlans(newPlans);
-        setActivePlan(newPlans.length - 1);
-        setView('dashboard');
-      } catch(e) {
-        console.error('AI plan error:', e);
-        // Fallback — plan minimaliste de 4 semaines
-        const fallbackVma = parseFloat(profile.vma || profile.triRunVMA || 14);
-        const fallbackPaces = calcPaces(fallbackVma);
-        const fallbackDiscipline = profile.discipline || 'running';
-        const fallbackSessions = {
-          triathlon: (idx) => [
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'swim',tag:'Natation',tagColor:'#38bdf8',tagBg:'rgba(56,189,248,0.12)',title:`${1500+idx*200}m technique`,detail:'Crawl, respiration bilatérale.',allures:[{dot:'#38bdf8',label:'CSS',val:'2:00/100m'}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Vélo Z2',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${60+idx*10} min Z2`,detail:'Endurance fondamentale vélo.',allures:[{dot:'#f59e0b',label:'Z2',val:'150-180W'}]},
-            {id:`w${idx+1}_s2`,day:'Vendredi',type:'ef',tag:'Course EF',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${5+idx} km EF`,detail:'Allure conversation.',allures:[{dot:'#22c55e',label:'EF',val:fallbackPaces.ef}]},
-            {id:`w${idx+1}_s3`,day:'Samedi',type:'key',tag:'Brique',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:`${20+idx*5}km vélo + ${3+idx}km course`,detail:'Enchaînement clé. Transition rapide.',allures:[{dot:'#f59e0b',label:'Vélo',val:'Z2'},{dot:'#22c55e',label:'Course',val:fallbackPaces.ef}]},
-          ],
-          cycling: (idx) => [
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'ef',tag:'Vélo Z2',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${60+idx*15} min Z2`,detail:'Endurance fondamentale.',allures:[{dot:'#f59e0b',label:'Z2',val:'150-180W'}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'frac',tag:'Intervalles',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:`5 × 5 min / 3 min`,detail:'Effort seuil, récup active.',allures:[{dot:'#FF0040',label:'Effort',val:'200-220W'},{dot:'#22c55e',label:'Récup',val:'<130W'}]},
-            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${80+idx*10} km`,detail:'Allure Z2 constante.',allures:[{dot:'#f59e0b',label:'Z2',val:'150-175W'}]},
-          ],
-          swimming: (idx) => [
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Séries',tagColor:'#38bdf8',tagBg:'rgba(56,189,248,0.12)',title:`10 × 100m`,detail:'Récup 20s entre chaque.',allures:[{dot:'#38bdf8',label:'CSS',val:'2:00/100m'}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${1500+idx*300}m continu`,detail:'Allure confortable.',allures:[{dot:'#22c55e',label:'Allure',val:'2:10/100m'}]},
-          ],
-          running: (idx) => [
-            {id:`w${idx+1}_s0`,day:'Lundi',type:'frac',tag:'Fractionné',tagColor:'#FF0040',tagBg:'rgba(255,0,64,0.12)',title:'6 × 1 min / 1 min',detail:'Échauffement 15 min. 6 répétitions vif/trot.',allures:[{dot:'#ef4444',label:'Effort',val:fallbackPaces.vma90},{dot:'#22c55e',label:'Récup',val:fallbackPaces.recov}]},
-            {id:`w${idx+1}_s1`,day:'Mercredi',type:'ef',tag:'Endurance',tagColor:'#22c55e',tagBg:'rgba(34,197,94,0.12)',title:`${8+idx} km EF`,detail:'Allure conversation.',allures:[{dot:'#22c55e',label:'Allure',val:fallbackPaces.ef}]},
-            {id:`w${idx+1}_s2`,day:'Samedi',type:'long',tag:'Sortie longue',tagColor:'#f59e0b',tagBg:'rgba(245,158,11,0.12)',title:`${12+idx*2} km`,detail:'Allure maîtrisée.',allures:[{dot:'#22c55e',label:'Début',val:fallbackPaces.ef},{dot:'#f59e0b',label:'Fin',val:fallbackPaces.tempo}]},
-          ],
-        };
-        const fallbackPlan = Array.from({length:4},(_,idx)=>({
-          week:idx+1, phase:'base', label:'Base', color:'#6366f1', bg:'rgba(99,102,241,0.12)',
-          dateRange:'', weeklyKm:0, isKey:false, isDeload:false,
-          sessions: (fallbackSessions[fallbackDiscipline] || fallbackSessions.running)(idx),
-        }));
-        const newPlans = [...plans, { profile, plan: fallbackPlan }];
-        savePlans(newPlans);
-        setActivePlan(newPlans.length - 1);
-        setView('dashboard');
-      }
-      setGeneratingPlan(false);
-      return;
-    }
-    if (profile.discipline === 'cycling_old') {
-      const plan = generatePlan(profile);
-      const newPlans = [...plans, { profile, plan }];
-      savePlans(newPlans);
-      setActivePlan(newPlans.length - 1);
-      setView('dashboard');
-    }
+  const handleOnboarding = (profile) => {
+    // Génération 100% algorithmique — running, vélo, natation et triathlon
+    // utilisent chacun leur générateur dédié (voir generatePlan ci-dessus), plus d'IA.
+    const plan = generatePlan(profile);
+    const newPlans = [...plans, { profile, plan }];
+    savePlans(newPlans);
+    setActivePlan(newPlans.length - 1);
+    setView('dashboard');
   };
   const handleDelete = (idx) => { savePlans(plans.filter((_,i)=>i!==idx)); setView('list'); };
 
@@ -2230,19 +2071,6 @@ useEffect(() => {
   }
 
   // Running tab
-  if (generatingPlan) return (
-    <div className='app-shell'><ThemeStyles/>
-      <div style={{position:'fixed',inset:0,background:'var(--bg-primary)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24,zIndex:9999}}>
-        <div style={{width:60,height:60,borderRadius:'50%',border:'3px solid rgba(245,158,11,0.2)',borderTopColor:'#f59e0b',animation:'spin 1s linear infinite'}}/>
-        <div style={{textAlign:'center'}}>
-          <div style={{fontSize:18,fontWeight:800,color:'var(--text-primary)',marginBottom:8}}>L'IA crée ton plan vélo</div>
-          <div style={{fontSize:13,color:'var(--text-muted)'}}>Analyse de ton profil en cours...</div>
-        </div>
-      </div>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-    </div>
-  );
-
   if (view==='onboarding') return <div className='app-shell'><ThemeStyles/>{showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}<AppHeader actions={plans.length>0?<button onClick={()=>setView('list')} style={{background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:10,padding:'6px 12px',color:'var(--btn-ghost-color)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>← Retour</button>:null} /><div className='app-content tab-enter' style={{paddingBottom:80}}><Onboarding onComplete={handleOnboarding}/></div><BottomNav/></div>;
   if (view==='dashboard' && activePlan!==null && plans[activePlan]) {
     return (

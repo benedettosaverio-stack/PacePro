@@ -62,51 +62,42 @@ export default function HomeModule({ onNavigate }) {
     generateMotivation();
   }, []);
 
-  const generateMotivation = async () => {
-    setMotivLoading(true);
+  // Pool de citations statiques — plus de génération IA.
+  // Une citation est tirée par jour, selon le ton choisi (goggins = dur, inspirant = bienveillant).
+  const QUOTES_GOGGINS = [
+    "{name}, personne ne va le faire à ta place. Lève-toi et bouge !",
+    "{name}, la douleur d'aujourd'hui est la force de demain. Aucune excuse.",
+    "{name}, ton esprit lâche bien avant ton corps. Repousse la limite.",
+    "{name}, les autres dorment. C'est exactement pour ça que tu vas gagner.",
+    "{name}, arrête de négocier avec toi-même. Enfile tes chaussures.",
+    "{name}, le confort est ton pire ennemi. Va le chercher.",
+    "{name}, tu ne dépasseras jamais tes limites en restant dans ta zone.",
+    "{name}, personne ne se souvient des excuses. Tout le monde se souvient des résultats.",
+  ];
+  const QUOTES_INSPIRANT = [
+    "{name}, chaque séance te rapproche un peu plus de ton objectif. Continue !",
+    "{name}, la régularité bat le talent. Tu es sur la bonne voie.",
+    "{name}, sois fier du chemin parcouru — et prêt pour la suite.",
+    "{name}, ton corps peut le faire, c'est ton mental qu'il faut convaincre.",
+    "{name}, un petit pas aujourd'hui, une grande victoire demain.",
+    "{name}, la progression n'est pas toujours visible, mais elle est bien là.",
+    "{name}, respire, avance, et fais-toi confiance.",
+    "{name}, tu construis quelque chose de solide, séance après séance.",
+  ];
+
+  const generateMotivation = () => {
     try {
       const settings = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
       const tone = settings.motivationTone || 'inspirant';
       const stravaAthlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
       const name = stravaAthlete.name?.split(' ')[0] || 'Athlete';
-      const plans = JSON.parse(localStorage.getItem('pp_plans') || '[]');
-      const activePlan = plans[plans.length - 1];
-      const completed = activePlan?.completed || {};
-      const totalSessions = activePlan?.plan?.reduce((a, w) => a + w.sessions.length, 0) || 0;
-      const doneSessions = Object.values(completed).filter(Boolean).length;
-      const progress = totalSessions > 0 ? Math.round((doneSessions / totalSessions) * 100) : 0;
-      const lastActivity = JSON.parse(localStorage.getItem('pp_last_activity') || 'null');
-      const daysSinceActivity = lastActivity ? Math.floor((Date.now() - new Date(lastActivity.date).getTime()) / 86400000) : null;
-
-      const context = [
-        activePlan ? `Programme running en cours : ${progress}% complété (${doneSessions}/${totalSessions} séances)` : 'Pas de programme running actif',
-        daysSinceActivity !== null ? `Dernière activité il y a ${daysSinceActivity} jour${daysSinceActivity > 1 ? 's' : ''}` : 'Aucune activité récente détectée',
-        `Date : ${new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}`,
-      ].join('\n');
-
-      const tonePrompt = tone === 'goggins'
-        ? `Tu es David Goggins. Parle directement à ${name} sans pitié, avec une intensité maximale. Pas d'excuses, pas de douceur. Mets-lui une claque mentale. 2-3 phrases courtes et percutantes.`
-        : `Tu es un coach bienveillant et inspirant. Adresse-toi directement à ${name} avec chaleur et encouragement. Personnalise le message selon ses performances récentes. 2-3 phrases motivantes et positives.`;
-
-      const prompt = `${tonePrompt}
-
-Contexte de l'athlète :
-${context}
-
-Génère UNIQUEMENT une seule phrase de motivation percutante (entre 10 et 20 mots). Pas d'introduction, pas d'explication. La phrase doit être complète et se terminer par ! ou . Commence par le prénom. Langue : français.`;
-
-      const res = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
-      const d = await res.json();
-      const text = d.text || '';
-      if (text) {
-        setMotivation(text);
-        const today = new Date().toISOString().split('T')[0];
-        localStorage.setItem('pp_motivation', JSON.stringify({ date: today, text }));
-      }
+      const pool = tone === 'goggins' ? QUOTES_GOGGINS : QUOTES_INSPIRANT;
+      // Index stable sur la journée, pour ne pas changer à chaque rendu
+      const dayIndex = Math.floor(Date.now() / 86400000);
+      const text = pool[dayIndex % pool.length].replace('{name}', name);
+      setMotivation(text);
+      const today = new Date().toISOString().split('T')[0];
+      localStorage.setItem('pp_motivation', JSON.stringify({ date: today, text }));
     } catch {}
     setMotivLoading(false);
   };
