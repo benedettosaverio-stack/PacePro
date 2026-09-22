@@ -5,7 +5,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const inp = (extra={}) => ({ background:'var(--bg-input)', border:'1px solid var(--border-input)', color:'var(--text-primary)', borderRadius:12, padding:'12px 16px', width:'100%', fontSize:14, fontFamily:'inherit', outline:'none', ...extra });
-const btnRed = { background:'#FF0040', color:'#000', border:'none', borderRadius:12, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit', width:'100%' };
+const btnRed = { background:'#FF0040', color:'#fff', border:'none', borderRadius:12, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit', width:'100%' };
 const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:12, padding:'14px', fontSize:14, fontWeight:600, cursor:'pointer', fontFamily:'inherit', width:'100%' };
 const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'24px' };
 
