@@ -55,16 +55,6 @@ async function syncData(key, value) {
   } catch(e) {}
 }
 
-async function loadData(key) {
-  const userId = localStorage.getItem('pp_user_id');
-  if (!userId) return null;
-  try {
-    const data = await supaFetch('user_data?user_id=eq.' + userId + '&data_key=eq.' + key);
-    if (data && data.length > 0) return data[0].data_value;
-    return null;
-  } catch(e) { return null; }
-}
-
 async function loadAllUserData() {
   const userId = localStorage.getItem('pp_user_id');
   if (!userId) return null;
@@ -77,7 +67,7 @@ async function loadAllUserData() {
   } catch(e) { return null; }
 }
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Muscu from './MusculationModule';
 import HomeModule from './HomeModule';
@@ -481,7 +471,6 @@ function applyFeedback(plan, sessionId, feedback) {
   }));
 }
 
-const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px 18px'};
 const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:10,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
 const lbl = {fontSize:9,fontWeight:700,color:'var(--text-muted)',display:'block',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.06em',fontFamily:'DM Mono, monospace'};
 const inp = () => ({background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--text-primary)',borderRadius:10,padding:'14px 16px',width:'100%',fontSize:15,fontFamily:'Syne, sans-serif',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'});
@@ -495,16 +484,6 @@ const SessionIcons = {
   key: () => (<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/><path d="M18 10 L20 16 L26 16 L21.5 20 L23.5 26 L18 22.5 L12.5 26 L14.5 20 L10 16 L16 16 Z" stroke="#FF0040" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(255,0,64,0.15)"/></svg>),
   taper: () => (<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(167,139,250,0.12)"/><path d="M12 14 Q18 10 24 14 Q28 18 24 22 Q18 26 12 22 Q8 18 12 14Z" stroke="#a78bfa" strokeWidth="1.5" fill="none"/><path d="M15 18 L17 20 L21 16" stroke="#a78bfa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
-
-function AllureChip({ dot, label, val }) {
-  return (
-    <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'var(--chip-bg)',border:'1px solid var(--chip-border)',borderRadius:99,padding:'3px 10px',fontFamily:'monospace',fontSize:11}}>
-      <span style={{width:7,height:7,borderRadius:'50%',background:dot,flexShrink:0,display:'inline-block'}}/>
-      <span style={{color:'var(--text-muted)'}}>{label}</span>
-      <span style={{color:'var(--text-primary)',fontWeight:500}}>{val}</span>
-    </div>
-  );
-}
 
 function SessionDetailModal({ session, feedback, vma, onClose }) {
   if (!session) return null;
@@ -1386,9 +1365,6 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     setFeedbackSession(null);
     onSave && onSave(newPlan, completed, newFeedbacks);
   };
-  const tabBtn = (v,l) => (
-    <button onClick={()=>setActiveTab(v)} style={{borderRadius:14,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
-  );
   return (
     <div style={{minHeight:'100%',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       {feedbackSession && <FeedbackModal session={feedbackSession} onClose={()=>setFeedbackSession(null)} onSubmit={handleFeedback}/>}
@@ -1559,7 +1535,6 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
             const done = Object.values(p.completed||{}).filter(Boolean).length;
             const total = p.plan?.reduce((a,w)=>a+w.sessions.length,0)||0;
             const pct = total>0?Math.round((done/total)*100):0;
-            const nextPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
             return (
               <div key={i} onClick={()=>onSelect(i)} className="card-hover stagger-item" style={{borderRadius:18,border:'1px solid var(--border)',background:'var(--bg-card)',cursor:'pointer',transition:'all 0.2s'}}>
                 <div style={{padding:'16px'}}>
@@ -1870,21 +1845,6 @@ useEffect(() => {
     </div>
   );
 
-
-  // Splash overlay pour utilisateurs connectés
-  const SplashOverlay = () => showSplash ? (
-    <div style={{ position:'fixed', inset:0, background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, opacity: splashOut ? 0 : 1, transition:'opacity 0.5s ease', pointerEvents: splashOut ? 'none' : 'all' }}>
-      <div style={{ position:'absolute', top:'40%', left:'50%', transform:'translate(-50%,-50%)', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.15) 0%, transparent 70%)', filter:'blur(40px)', pointerEvents:'none' }}/>
-      <img src="/logo.svg" alt="PacePro" className="splash-logo" style={{ width:100, height:100, objectFit:'contain', marginBottom:24 }}/>
-      <div className="splash-text" style={{ textAlign:'center', marginBottom:48 }}>
-        <div style={{ fontSize:36, fontWeight:900, letterSpacing:'-0.05em', color:'#fff', lineHeight:1, marginBottom:8 }}>PacePro</div>
-        <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.25em' }}>Your training companion</div>
-      </div>
-      <div style={{ width:120, height:2, background:'var(--progress-track)', borderRadius:99, overflow:'hidden' }}>
-        <div className="splash-bar" style={{ height:'100%', background:'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius:99 }}/>
-      </div>
-    </div>
-  ) : null;
 
   if (showSplash && user) return (
     <div style={{ position:'fixed', inset:0, background:'var(--bg-primary)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', zIndex:9999, transition:'opacity 0.5s ease', opacity: splashOut ? 0 : 1 }}>

@@ -26,26 +26,9 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// Convertir coords GPS en pixels SVG
-function coordsToSVG(points, W=300, H=180) {
-  if (points.length < 2) return [];
-  const lats = points.map(p => p.lat);
-  const lons = points.map(p => p.lon);
-  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-  const minLon = Math.min(...lons), maxLon = Math.max(...lons);
-  const pad = 20;
-  return points.map(p => ({
-    x: pad + (p.lon - minLon) / (maxLon - minLon || 1) * (W - 2*pad),
-    y: pad + (1 - (p.lat - minLat) / (maxLat - minLat || 1)) * (H - 2*pad),
-    pace: p.pace,
-    ele: p.ele,
-  }));
-}
-
 // Composant carte Leaflet
 function RouteMap({ points }) {
   const mapRef = useRef(null);
-  const leafletRef = useRef(null);
   const mapInstanceRef = useRef(null);
 
   useEffect(() => {

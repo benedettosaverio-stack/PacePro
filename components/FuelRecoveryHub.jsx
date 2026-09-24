@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icons';
 
@@ -16,56 +16,6 @@ function useTypewriter(text, speed = 22) {
   return () => clearInterval(t);
   }, [text]);
   return displayed;
-}
-
-// ── Wave SVG animée ─────────────────────────────────────────────────────────
-function WaveHydration({ pct, color }) {
-  const clipped = Math.min(Math.max(pct, 0), 100);
-  const yPos = 100 - clipped;
-  return (
-    <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
-      <defs>
-        <clipPath id="circle-clip">
-          <circle cx="50" cy="50" r="46"/>
-        </clipPath>
-        <linearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.9"/>
-          <stop offset="100%" stopColor={color} stopOpacity="0.4"/>
-        </linearGradient>
-      </defs>
-      {/* Background circle */}
-      <circle cx="50" cy="50" r="46" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      {/* Water fill with wave */}
-      <g clipPath="url(#circle-clip)">
-        <rect x="0" y={yPos} width="100" height={clipped + 5} fill="url(#waveGrad)"/>
-        <path style={{ animation: 'wave 2.5s linear infinite' }}
-          d={`M-20 ${yPos + 3} Q-5 ${yPos - 3} 10 ${yPos + 3} Q25 ${yPos + 9} 40 ${yPos + 3} Q55 ${yPos - 3} 70 ${yPos + 3} Q85 ${yPos + 9} 100 ${yPos + 3} Q115 ${yPos - 3} 130 ${yPos + 3} L130 120 L-20 120 Z`}
-          fill={color} opacity="0.6"/>
-      </g>
-      {/* Border glow */}
-      <circle cx="50" cy="50" r="46" fill="none" stroke={color} strokeWidth="1.5" opacity="0.4"/>
-      {/* Text */}
-      <text x="50" y="46" textAnchor="middle" fill="var(--text-primary)" fontSize="16" fontWeight="900" fontFamily="DM Mono, monospace">{Math.round(clipped)}%</text>
-      <text x="50" y="58" textAnchor="middle" fill="var(--text-muted)" fontSize="7" fontFamily="DM Mono, monospace">HYDRATATION</text>
-    </svg>
-  );
-}
-
-// ── Macro bar ────────────────────────────────────────────────────────────────
-function MacroBar({ label, value, max, color, unit = 'g' }) {
-  const [w, setW] = useState(0);
-  useEffect(() => { const t = setTimeout(() => setW(Math.min((value/max)*100,100)), 150); return () => clearTimeout(t); }, [value, max]);
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-        <span style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'DM Mono, monospace' }}>{label}</span>
-        <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
-      </div>
-      <div style={{ height: 6, background: 'var(--progress-track)', borderRadius: 999, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 999, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)' }}/>
-      </div>
-    </div>
-  );
 }
 
 // ── Meal card ────────────────────────────────────────────────────────────────

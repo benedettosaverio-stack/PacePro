@@ -4,8 +4,8 @@
   "description": "Préparation trail et running personnalisée",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#07080b",
-  "theme_color": "#f97316",
+  "background_color": "#0a0a0d",
+  "theme_color": "#FF0040",
   "orientation": "portrait",
   "icons": [
     {

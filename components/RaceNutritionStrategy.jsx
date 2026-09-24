@@ -2,16 +2,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
-function useTypewriter(text, speed = 15) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-  const ref = { current: null };
-  if (typeof window !== 'undefined' && text && !done) {
-    // handled via useEffect below
-  }
-  return displayed;
-}
-
 function Section({ title, color, children }) {
   return (
     <div style={{ marginBottom: 20 }}>
@@ -76,7 +66,6 @@ function buildStrategy(profile, userSettings) {
   const isTrail = profile.type === 'trail';
   const isCycling = discipline === 'cycling';
   const isSwimming = discipline === 'swimming';
-  const isTriathlon = discipline === 'triathlon';
 
   // Estimation temps selon discipline
   let estTimeMin;
