@@ -40,15 +40,15 @@ function MacroBar({ label, value, max, color, unit = 'g', animated = true }) {
 
 function MealCard({ meal, tag, color }) {
   return (
-    <div style={{ background: 'var(--bg-input)', border: `1px solid ${color}30`, borderRadius: 16, padding: '14px 16px', marginBottom: 10 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+    <div className="card" style={{ padding: '14px 16px', marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8, gap: 8 }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{meal.name}</div>
-        <span style={{ fontSize: 9, fontWeight: 700, padding: '3px 8px', borderRadius: 99, background: `${color}20`, color, border: `1px solid ${color}40`, fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap', marginLeft: 8 }}>{tag}</span>
+        <span style={{ fontSize: 9, fontWeight: 700, padding: '3px 8px', borderRadius: 999, background: `${color}16`, color, fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap', flexShrink: 0 }}>{tag}</span>
       </div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 10, lineHeight: 1.5 }}>{meal.desc}</div>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10, lineHeight: 1.5 }}>{meal.desc}</div>
       <div style={{ display: 'flex', gap: 8 }}>
         {[['Kcal', meal.kcal], ['Prot.', `${meal.prot}g`], ['Carbs', `${meal.carbs}g`], ['Lip.', `${meal.fat}g`]].map(([l, v]) => (
-          <div key={l} style={{ flex: 1, background: 'var(--bg-input)', borderRadius: 8, padding: '6px 4px', textAlign: 'center' }}>
+          <div key={l} style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 10, padding: '6px 4px', textAlign: 'center' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{v}</div>
             <div style={{ fontSize: 8, color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: 1 }}>{l}</div>
           </div>
@@ -112,28 +112,25 @@ export default function SmartNutritionModule({ onBack }) {
   return (
     <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
 
-      {/* Background glow */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 300, background: `radial-gradient(ellipse at 50% 0%, ${accentColor}15 0%, transparent 70%)`, pointerEvents: 'none', transition: 'background 1s ease', zIndex: 0 }} />
-
-      <div style={{ position: 'relative', zIndex: 1, padding: '0 16px 0' }}>
+      <div style={{ padding: '16px 16px 0' }}>
 
         {/* Mode badge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, paddingTop: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 10, height: 10, borderRadius: '50%', background: accentColor, boxShadow: `0 0 8px ${accentColor}` }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'DM Mono, monospace' }}>
-              {isRecharge ? 'Recharge · Post-Training' : 'Récupération · Maintenance'}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 6 }}>Nutrition</div>
+            <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              {isRecharge ? 'Recharge post-training' : 'Récupération · Maintenance'}
             </span>
           </div>
-          <button onClick={() => setShowProfileSetup(true)} style={{ background: 'var(--progress-track)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '6px 12px', fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'inherit' }}>
-            ⚙️ Profil
+          <button onClick={() => setShowProfileSetup(true)} style={{ background: 'var(--btn-ghost-bg)', border: '1px solid var(--btn-ghost-border)', borderRadius: 10, padding: '7px 12px', fontSize: 11, color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}>
+            Profil
           </button>
         </div>
 
         {/* Activité détectée */}
         {activity && (
-          <div style={{ background: `rgba(255,255,255,0.04)`, border: `1px solid ${accentColor}30`, borderRadius: 16, padding: '12px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `${accentColor}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div className="card" style={{ padding: '12px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="icon-tile" style={{ background: `${accentColor}14` }}>
               <Icon name="running" size={18} color={accentColor} />
             </div>
             <div style={{ flex: 1 }}>
@@ -147,8 +144,8 @@ export default function SmartNutritionModule({ onBack }) {
         )}
 
         {/* Conseil nutrition */}
-        <div style={{ background: 'var(--bg-card)', backdropFilter: 'blur(20px)', border: `1px solid ${accentColor}25`, borderRadius: 20, padding: '18px', marginBottom: 16 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10 }}>✦ Conseil</div>
+        <div className="card" style={{ padding: '18px', marginBottom: 16 }}>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>Conseil</div>
           <div style={{ fontSize: 13, lineHeight: 1.75, color: 'var(--text-secondary)', minHeight: 60 }}>
             {status === 'loading' ? 'Analyse de tes données...' : displayed}
             {status === 'done' && displayed.length < aiText.length && <span style={{ opacity: 0.5, animation: 'blink 1s infinite' }}>|</span>}
@@ -156,10 +153,10 @@ export default function SmartNutritionModule({ onBack }) {
         </div>
 
         {/* Objectif calorique */}
-        <div style={{ background: 'var(--bg-card)', backdropFilter: 'blur(20px)', border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 20, padding: '18px', marginBottom: 16 }}>
+        <div className="card" style={{ padding: '18px', marginBottom: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>Objectif du jour</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: accentColor, fontFamily: 'DM Mono, monospace' }}>{baseKcal} <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}>kcal</span></div>
+            <div className="eyebrow">Objectif du jour</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{baseKcal} <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-muted)' }}>kcal</span></div>
           </div>
           <MacroBar label="Protéines" value={baseProtein} max={300} color="#FF0040" />
           <MacroBar label="Glucides" value={baseCarbs} max={600} color={accentColor} />
@@ -168,7 +165,7 @@ export default function SmartNutritionModule({ onBack }) {
 
         {/* Suggestions repas */}
         <div style={{ marginBottom: 16 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 12 }}>Suggestions de repas</div>
+          <div className="eyebrow" style={{ marginBottom: 12 }}>Suggestions de repas</div>
           {meals.map((meal, i) => <MealCard key={i} meal={meal} tag={mealTag} color={accentColor} />)}
         </div>
 
@@ -177,22 +174,22 @@ export default function SmartNutritionModule({ onBack }) {
       {/* Profile setup modal */}
       {showProfileSetup && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setShowProfileSetup(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 480, background: 'var(--bg-modal)', borderRadius: '24px 24px 0 0', padding: '20px 20px 48px' }}>
-            <div style={{ width: 36, height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 99, margin: '0 auto 20px' }} />
+          <div onClick={e => e.stopPropagation()} className="sheet-enter" style={{ width: '100%', maxWidth: 480, background: 'var(--bg-modal)', borderRadius: '24px 24px 0 0', padding: '20px 20px 48px' }}>
+            <div style={{ width: 36, height: 4, background: 'rgba(255,255,255,0.15)', borderRadius: 999, margin: '0 auto 20px' }} />
             <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 20 }}>Mon profil nutritionnel</div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 8 }}>Poids (kg)</label>
-              <input type="number" value={weight} onChange={e => setWeight(+e.target.value)} style={{ width: '100%', background: 'var(--progress-track)', border: '1px solid var(--border-input)', borderRadius: 12, padding: '12px 14px', color: 'var(--text-primary)', fontSize: 16, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
+              <input type="number" value={weight} onChange={e => setWeight(+e.target.value)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-input)', borderRadius: 10, padding: '12px 14px', color: 'var(--text-primary)', fontSize: 16, fontFamily: 'DM Mono, monospace', outline: 'none' }} />
             </div>
             <div style={{ marginBottom: 24 }}>
               <label style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 8 }}>Objectif</label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                 {[['performance', '🏃 Performance'], ['prise', '💪 Prise de masse'], ['sante', '🌿 Santé']].map(([v, l]) => (
-                  <button key={v} onClick={() => setGoal(v)} style={{ padding: '10px 8px', borderRadius: 12, border: `1px solid ${goal === v ? accentColor : 'rgba(255,255,255,0.1)'}`, background: goal === v ? `${accentColor}15` : 'transparent', color: goal === v ? accentColor : 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>{l}</button>
+                  <button key={v} onClick={() => setGoal(v)} style={{ padding: '10px 8px', borderRadius: 10, border: `1px solid ${goal === v ? 'var(--accent)' : 'var(--border)'}`, background: goal === v ? 'var(--accent-soft)' : 'var(--bg-input)', color: goal === v ? 'var(--accent)' : 'var(--text-muted)', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>{l}</button>
                 ))}
               </div>
             </div>
-            <button onClick={saveProfile} style={{ width: '100%', background: accentColor, border: 'none', borderRadius: 14, padding: '14px', fontSize: 14, fontWeight: 800, color: '#000', cursor: 'pointer', fontFamily: 'inherit' }}>Enregistrer</button>
+            <button onClick={saveProfile} className="btn-ripple" style={{ width: '100%', background: 'var(--accent)', border: 'none', borderRadius: 14, padding: '14px', fontSize: 14, fontWeight: 800, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>Enregistrer</button>
           </div>
         </div>
       )}

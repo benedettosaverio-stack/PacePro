@@ -4,10 +4,10 @@ import { useState } from 'react';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const inp = (extra={}) => ({ background:'var(--bg-input)', border:'1px solid var(--border-input)', color:'var(--text-primary)', borderRadius:12, padding:'12px 16px', width:'100%', fontSize:14, fontFamily:'inherit', outline:'none', ...extra });
-const btnRed = { background:'#FF0040', color:'#fff', border:'none', borderRadius:12, padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit', width:'100%' };
-const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:12, padding:'14px', fontSize:14, fontWeight:600, cursor:'pointer', fontFamily:'inherit', width:'100%' };
-const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'24px' };
+const inp = (extra={}) => ({ background:'var(--bg-input)', border:'1px solid var(--border-input)', color:'var(--text-primary)', borderRadius:'var(--radius-md)', padding:'12px 16px', width:'100%', fontSize:14, fontFamily:'inherit', outline:'none', ...extra });
+const btnRed = { background:'var(--accent)', color:'#fff', border:'none', borderRadius:'var(--radius-md)', padding:'14px', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit', width:'100%' };
+const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:'var(--radius-md)', padding:'14px', fontSize:14, fontWeight:600, cursor:'pointer', fontFamily:'inherit', width:'100%' };
+const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:'var(--radius-lg)', padding:'24px' };
 
 async function supaFetch(path, options = {}) {
   try {
@@ -97,12 +97,12 @@ export default function AuthModule({ onAuth }) {
   if (mode === 'choice') {
     return (
       <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'0 24px 80px', position:'relative', overflow:'hidden' }}>
-        <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:'500px', height:'500px', borderRadius:'50%', background:'radial-gradient(circle, rgba(219,59,61,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:'280px', height:'280px', borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.06) 0%, transparent 70%)', pointerEvents:'none' }} />
 
-        <img src="/logo.svg" alt="PacePro" style={{ width:100, height:100, objectFit:'contain', filter:'drop-shadow(0 0 30px rgba(219,59,61,0.3))', marginBottom:16 }} />
-        <h1 style={{ fontSize:36, fontWeight:800, letterSpacing:'-0.04em', marginBottom:4 }}>PacePro</h1>
-        <p style={{ fontSize:12, fontFamily:'DM Mono, monospace', color:'var(--text-muted)', letterSpacing:'0.15em', textTransform:'uppercase', marginBottom:40 }}>
-          Powered by <span style={{ color:'#DB3B3D' }}>passion</span>
+        <img src="/logo.svg" alt="PacePro" style={{ width:100, height:100, objectFit:'contain', filter:'drop-shadow(0 0 14px rgba(255,0,64,0.2))', marginBottom:16 }} />
+        <h1 style={{ fontSize:30, fontWeight:800, letterSpacing:'-0.03em', marginBottom:4 }}>PacePro</h1>
+        <p style={{ fontSize:11, fontFamily:'DM Mono, monospace', color:'var(--text-muted)', letterSpacing:'0.06em', textTransform:'uppercase', marginBottom:40 }}>
+          Powered by <span style={{ color:'var(--accent)' }}>passion</span>
         </p>
 
         <div style={{ width:'100%', maxWidth:380, display:'flex', flexDirection:'column', gap:12 }}>
@@ -139,7 +139,7 @@ export default function AuthModule({ onAuth }) {
         <button onClick={() => setMode('choice')} style={{ ...btnGhost, width:'auto', padding:'8px 16px', fontSize:12, marginBottom:24 }}>← Retour</button>
 
         <div style={card}>
-          <h2 style={{ fontSize:22, fontWeight:800, marginBottom:6, letterSpacing:'-0.03em' }}>
+          <h2 style={{ fontSize:19, fontWeight:800, marginBottom:6, letterSpacing:'-0.02em' }}>
             {mode === 'signup' ? 'Créer un compte' : 'Se connecter'}
           </h2>
           <p style={{ fontSize:12, color:'var(--text-muted)', marginBottom:24 }}>
@@ -164,7 +164,7 @@ export default function AuthModule({ onAuth }) {
             </div>
 
             {error && (
-              <div style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:10, padding:'10px 14px', fontSize:12, color:'rgba(239,68,68,0.9)' }}>
+              <div style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:'var(--radius-sm)', padding:'10px 14px', fontSize:12, color:'rgba(239,68,68,0.9)' }}>
                 {error}
               </div>
             )}

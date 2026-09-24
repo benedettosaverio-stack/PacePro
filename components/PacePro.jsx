@@ -95,36 +95,36 @@ function ThemeStyles() {
   return (
     <style>{`
       :root {
-        --bg-primary: #07080b;
-        --bg-card: rgba(19,22,31,0.85);
-        --bg-surface: rgba(10,12,18,0.92);
-        --bg-input: rgba(255,255,255,0.04);
-        --bg-nav: rgba(7,8,11,0.88);
-        --bg-modal: #13161f;
-        --text-primary: #ffffff;
-        --text-secondary: rgba(255,255,255,0.45);
-        --text-muted: rgba(255,255,255,0.25);
-        --text-ultra-muted: rgba(255,255,255,0.15);
-        --border: rgba(255,255,255,0.07);
-        --border-input: rgba(255,255,255,0.10);
-        --border-nav: rgba(255,255,255,0.06);
+        --bg-primary: #0a0a0d;
+        --bg-card: #131318;
+        --bg-surface: #0e0e12;
+        --bg-input: rgba(255,255,255,0.05);
+        --bg-nav: rgba(10,10,13,0.92);
+        --bg-modal: #16161c;
+        --text-primary: #f5f5f7;
+        --text-secondary: rgba(245,245,247,0.55);
+        --text-muted: rgba(245,245,247,0.34);
+        --text-ultra-muted: rgba(245,245,247,0.18);
+        --border: rgba(255,255,255,0.08);
+        --border-input: rgba(255,255,255,0.12);
+        --border-nav: rgba(255,255,255,0.07);
         --btn-ghost-bg: rgba(255,255,255,0.05);
-        --btn-ghost-border: rgba(255,255,255,0.08);
-        --btn-ghost-color: rgba(255,255,255,0.4);
-        --onboarding-bg: #07080b;
-        --session-bg: rgba(10,12,18,0.9);
-        --session-border: rgba(255,255,255,0.06);
-        --week-tabs-inactive: rgba(255,255,255,0.04);
-        --week-tabs-border: rgba(255,255,255,0.07);
-        --week-tabs-color: rgba(255,255,255,0.35);
-        --next-session-bg: rgba(255,0,64,0.06);
-        --next-session-border: rgba(255,0,64,0.2);
-        --chip-bg: rgba(255,255,255,0.04);
-        --chip-border: rgba(255,255,255,0.07);
-        --progress-track: rgba(255,255,255,0.15);
-        --svg-text: rgba(255,255,255,0.25);
-        --svg-text-val: rgba(255,255,255,0.4);
-        --plans-bg: #07080b;
+        --btn-ghost-border: rgba(255,255,255,0.10);
+        --btn-ghost-color: rgba(245,245,247,0.55);
+        --onboarding-bg: #0a0a0d;
+        --session-bg: #101014;
+        --session-border: rgba(255,255,255,0.07);
+        --week-tabs-inactive: rgba(255,255,255,0.05);
+        --week-tabs-border: rgba(255,255,255,0.08);
+        --week-tabs-color: rgba(245,245,247,0.4);
+        --next-session-bg: rgba(255,0,64,0.07);
+        --next-session-border: rgba(255,0,64,0.22);
+        --chip-bg: rgba(255,255,255,0.05);
+        --chip-border: rgba(255,255,255,0.08);
+        --progress-track: rgba(255,255,255,0.12);
+        --svg-text: rgba(245,245,247,0.3);
+        --svg-text-val: rgba(245,245,247,0.45);
+        --plans-bg: #0a0a0d;
       }
 
       * { box-sizing: border-box; }
@@ -139,11 +139,6 @@ function ThemeStyles() {
         from { opacity: 0; }
         to   { opacity: 1; }
       }
-      @keyframes navPop {
-        0%   { transform: translateY(0) scale(1); }
-        45%  { transform: translateY(-5px) scale(1.25); }
-        100% { transform: translateY(0) scale(1); }
-      }
       @keyframes scaleIn {
         from { opacity: 0; transform: scale(0.96); }
         to   { opacity: 1; transform: scale(1); }
@@ -154,21 +149,17 @@ function ThemeStyles() {
       .modal-enter {
         animation: scaleIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
-      .nav-btn-active svg, .nav-btn-active span {
-        animation: navPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-      }
-
       @keyframes navActivate {
-        0%   { transform: scale(1); opacity: 0.5; }
-        50%  { transform: scale(1.15); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.14); }
+        100% { transform: scale(1); }
       }
       @keyframes navDot {
         from { transform: scaleX(0); opacity: 0; }
         to   { transform: scaleX(1); opacity: 1; }
       }
       .nav-btn-active svg {
-        animation: navActivate 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation: navActivate 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
       }
     `}</style>
   );
@@ -490,11 +481,11 @@ function applyFeedback(plan, sessionId, feedback) {
   }));
 }
 
-const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px 18px'};
-const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:12,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
-const lbl = {fontSize:9,fontWeight:700,color:'var(--text-muted)',display:'block',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.15em',fontFamily:'DM Mono, monospace'};
+const card = {background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px 18px'};
+const navBtnS = {background:'var(--btn-ghost-bg)',border:'1px solid var(--btn-ghost-border)',borderRadius:10,padding:'8px 12px',color:'var(--btn-ghost-color)',cursor:'pointer',fontFamily:'inherit',fontSize:16};
+const lbl = {fontSize:9,fontWeight:700,color:'var(--text-muted)',display:'block',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.06em',fontFamily:'DM Mono, monospace'};
 const inp = () => ({background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--text-primary)',borderRadius:10,padding:'14px 16px',width:'100%',fontSize:15,fontFamily:'Syne, sans-serif',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'});
-const tog = (a) => ({background:a?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.03)',border:`1px solid ${a?'rgba(255,0,64,0.6)':'rgba(255,255,255,0.08)'}`,color:a?'#FF0040':'var(--text-muted)',borderRadius:8,padding:'12px 10px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'DM Mono, monospace',transition:'all 0.15s',outline:'none',letterSpacing:'0.04em',boxShadow:a?'0 0 12px rgba(255,0,64,0.15)':'none'});
+const tog = (a) => ({background:a?'rgba(255,0,64,0.14)':'var(--chip-bg)',border:`1px solid ${a?'rgba(255,0,64,0.5)':'var(--chip-border)'}`,color:a?'#FF0040':'var(--text-secondary)',borderRadius:10,padding:'12px 10px',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'DM Mono, monospace',transition:'all 0.15s',outline:'none',letterSpacing:'0.04em'});
 
 const SessionIcons = {
   frac: () => (<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,0,64,0.12)"/><path d="M12 24 L18 10 L24 24" stroke="#FF0040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 20 L22 20" stroke="#FF0040" strokeWidth="1.5" strokeLinecap="round"/><circle cx="18" cy="10" r="2" fill="#FF0040"/></svg>),
@@ -615,7 +606,7 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 
         {/* Header */}
         <div style={{marginBottom:12,paddingBottom:12,borderBottom:'1px solid var(--border)'}}>
-          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6}}>{session.day} · {session.tag}</div>
+          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}>{session.day} · {session.tag}</div>
           <div style={{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',color:'var(--text-primary)',marginBottom:10}}>{session.title}</div>
           <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
             {estKm && <span style={{fontSize:11,padding:'4px 10px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',fontFamily:'DM Mono, monospace',fontWeight:700}}>~{estKm} km estimés</span>}
@@ -669,7 +660,7 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
         <div style={{background:'rgba(255,0,64,0.04)',border:'1px solid rgba(255,0,64,0.12)',borderRadius:14,padding:'12px',marginBottom:10}}>
           <div style={{fontSize:12,fontWeight:800,color:'#FF0040',marginBottom:8}}>{why.title}</div>
           <div style={{fontSize:11,color:'var(--text-secondary)',lineHeight:1.6,marginBottom:8}}>{why.text}</div>
-          <div style={{fontSize:10,fontFamily:'DM Mono, monospace',color:'var(--text-muted)',background:'var(--bg-input)',borderRadius:8,padding:'6px 10px'}}>{why.benefit}</div>
+          <div style={{fontSize:10,fontFamily:'DM Mono, monospace',color:'var(--text-muted)',background:'var(--bg-input)',borderRadius:10,padding:'6px 10px'}}>{why.benefit}</div>
         </div>
 
         {/* Feedback si dispo */}
@@ -677,18 +668,18 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
           <div style={{background:'var(--bg-input)',borderRadius:14,padding:'12px'}}>
             <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.12em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Ton feedback</div>
             <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
-              <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
+              <div style={{flex:1,background:'var(--bg-card)',borderRadius:14,padding:'12px',textAlign:'center'}}>
                 <div style={{fontSize:22,fontWeight:800,color:effortColors[feedback.effort],fontFamily:'DM Mono, monospace'}}>{feedback.effort}/10</div>
                 <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2}}>{effortLabels[feedback.effort]}</div>
               </div>
               {feedback.realPace && (
-                <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
+                <div style={{flex:1,background:'var(--bg-card)',borderRadius:14,padding:'12px',textAlign:'center'}}>
                   <div style={{fontSize:22,fontWeight:800,color:'var(--text-primary)',fontFamily:'DM Mono, monospace'}}>{feedback.realPace}</div>
                   <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2}}>min/km réel</div>
                 </div>
               )}
               {feedback.sensation && (
-                <div style={{flex:1,background:'var(--bg-card)',borderRadius:12,padding:'12px',textAlign:'center'}}>
+                <div style={{flex:1,background:'var(--bg-card)',borderRadius:14,padding:'12px',textAlign:'center'}}>
                   <div style={{fontSize:20}}>{feedback.sensation.split(' ')[0]}</div>
                   <div style={{fontSize:10,color:'var(--text-muted)',marginTop:2}}>{feedback.sensation.split(' ').slice(1).join(' ')}</div>
                 </div>
@@ -704,17 +695,17 @@ function SessionDetailModal({ session, feedback, vma, onClose }) {
 function SessionCard({ session, onComplete, onDetail, onLive }) {
   const IconComp = SessionIcons[session.type] || SessionIcons.ef;
   return (
-    <div onClick={onDetail} className='card-hover' style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:20,padding:'18px 16px',position:'relative',overflow:'hidden',cursor:'pointer'}}>
-      {session.completed && <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#22c55e',borderRadius:'20px 20px 0 0'}}/>}
+    <div onClick={onDetail} className='card-hover' style={{background:session.completed?'rgba(34,197,94,0.05)':'var(--session-bg)',border:`1px solid ${session.completed?'rgba(34,197,94,0.25)':'var(--session-border)'}`,borderRadius:18,padding:'18px 16px',position:'relative',overflow:'hidden',cursor:'pointer'}}>
+      {session.completed && <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#22c55e',borderRadius:'18px 18px 0 0'}}/>}
       {/* Header */}
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
         <div>
-          <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:6,fontFamily:'DM Mono, monospace'}}>{session.day}</div>
+          <div style={{fontSize:9,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6,fontFamily:'DM Mono, monospace'}}>{session.day}</div>
           <span style={{display:'inline-flex',alignItems:'center',gap:4,fontSize:9,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 10px',borderRadius:99,background:session.tagBg,color:session.tagColor,border:`1px solid ${session.tagColor}30`}}>{session.tag}</span>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           {session.completed
-            ? <div style={{width:36,height:36,borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:18}}>✓</div>
+            ? <div style={{width:36,height:36,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,197,94,0.15)',fontSize:18}}>✓</div>
             : <IconComp/>
           }
         </div>
@@ -737,18 +728,18 @@ function SessionCard({ session, onComplete, onDetail, onLive }) {
       {!session.completed && onComplete && (
         <div style={{display:'flex',gap:8}}>
           {onLive && (
-            <button onClick={e=>{e.stopPropagation();onLive();}} style={{flex:1,background:'linear-gradient(135deg,#FF0040,#cc0033)',border:'none',borderRadius:12,padding:'11px 10px',color:'#fff',fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'DM Mono, monospace',letterSpacing:'0.06em',boxShadow:'0 4px 16px rgba(255,0,64,0.3)',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+            <button onClick={e=>{e.stopPropagation();onLive();}} style={{flex:1,background:'linear-gradient(135deg,#FF0040,#cc0033)',border:'none',borderRadius:14,padding:'11px 10px',color:'#fff',fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'DM Mono, monospace',letterSpacing:'0.06em',boxShadow:'0 4px 16px rgba(255,0,64,0.3)',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
               <svg width={12} height={12} viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               GO
             </button>
           )}
-          <button onClick={e=>{e.stopPropagation();onComplete(session.id);}} style={{flex:2,background:'linear-gradient(135deg,rgba(255,0,64,0.12),rgba(255,0,64,0.06))',border:'1px solid rgba(255,0,64,0.25)',borderRadius:12,padding:'11px 16px',color:'#FF0040',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',letterSpacing:'0.02em'}}>
+          <button onClick={e=>{e.stopPropagation();onComplete(session.id);}} style={{flex:2,background:'linear-gradient(135deg,rgba(255,0,64,0.12),rgba(255,0,64,0.06))',border:'1px solid rgba(255,0,64,0.25)',borderRadius:14,padding:'11px 16px',color:'#FF0040',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:'inherit',letterSpacing:'0.02em'}}>
             Marquer comme terminé ✓
           </button>
         </div>
       )}
       {session.completed && onComplete && (
-        <button onClick={e=>{e.stopPropagation();onComplete(session.id, true);}} style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid var(--border)',borderRadius:12,padding:'9px 16px',color:'var(--text-muted)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+        <button onClick={e=>{e.stopPropagation();onComplete(session.id, true);}} style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid var(--border)',borderRadius:14,padding:'9px 16px',color:'var(--text-muted)',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
           ↩ Annuler la validation
         </button>
       )}
@@ -766,20 +757,13 @@ function FeedbackModal({ session, onClose, onSubmit }) {
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.75)',zIndex:200}} onClick={onClose}>
       <div onClick={e=>e.stopPropagation()} style={{position:'fixed',bottom:0,left:0,right:0,background:'var(--bg-modal)',borderRadius:'24px 24px 0 0',padding:'12px 20px calc(env(safe-area-inset-bottom,16px) + 24px)',maxHeight:'88vh',overflowY:'auto',zIndex:201,boxShadow:'0 -20px 60px rgba(0,0,0,0.8)'}}>
         <div style={{width:40,height:4,background:'var(--border)',borderRadius:99,margin:'0 auto 20px'}}/>
-        {/* Terminal header */}
-        <div style={{position:'relative',borderRadius:14,overflow:'hidden',marginBottom:16,border:'1px solid rgba(255,0,64,0.15)',background:'linear-gradient(135deg,rgba(255,0,64,0.06),transparent)'}}>
-          <div style={{padding:'10px 14px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
-            <div style={{display:'flex',gap:4}}>
-              <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(255,0,64,0.5)'}}/>
-              <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(245,158,11,0.4)'}}/>
-              <div style={{width:5,height:5,borderRadius:'50%',background:'rgba(34,197,94,0.4)'}}/>
+        <div style={{marginBottom:20,paddingBottom:16,borderBottom:'1px solid var(--border)'}}>
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12}}>
+            <div>
+              <div className="eyebrow" style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}>{session.tag} · Feedback</div>
+              <div style={{fontSize:19,fontWeight:800,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>{session.title}</div>
             </div>
-            <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.6)',letterSpacing:'0.15em'}}>FEEDBACK · SÉANCE</div>
-            <button onClick={onClose} style={{marginLeft:'auto',background:'none',border:'none',cursor:'pointer',color:'rgba(255,255,255,0.3)',fontSize:18,lineHeight:1}}>×</button>
-          </div>
-          <div style={{padding:'12px 14px'}}>
-            <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:3}}>{session.tag}</div>
-            <div style={{fontSize:18,fontWeight:900,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>{session.title}</div>
+            <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-muted)',fontSize:20,lineHeight:1,padding:2,flexShrink:0}}>×</button>
           </div>
         </div>
         <div style={{marginBottom:20}}>
@@ -789,7 +773,7 @@ function FeedbackModal({ session, onClose, onSubmit }) {
           </div>
           <div style={{display:'flex',gap:3,marginBottom:8}}>
             {[1,2,3,4,5,6,7,8,9,10].map(n => (
-              <button key={n} onClick={()=>setEffort(n)} style={{flex:1,height:36,borderRadius:8,border:'none',cursor:'pointer',fontWeight:800,fontSize:11,fontFamily:'DM Mono, monospace',background:n<=effort?effortColors[effort]:'var(--bg-input)',color:n<=effort?'#000':'var(--text-muted)',transition:'all 0.15s',transform:n===effort?'scale(1.1)':'scale(1)'}}>{n}</button>
+              <button key={n} onClick={()=>setEffort(n)} style={{flex:1,height:36,borderRadius:10,border:'none',cursor:'pointer',fontWeight:800,fontSize:11,fontFamily:'DM Mono, monospace',background:n<=effort?effortColors[effort]:'var(--bg-input)',color:n<=effort?'#000':'var(--text-muted)',transition:'all 0.15s',transform:n===effort?'scale(1.1)':'scale(1)'}}>{n}</button>
             ))}
           </div>
           <div style={{height:3,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
@@ -811,7 +795,7 @@ function FeedbackModal({ session, onClose, onSubmit }) {
               const s = `${emoji} ${label}`;
               const sel = sensation===s;
               return (
-                <button key={s} onClick={()=>setSensation(sel?'':s)} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 12px',borderRadius:12,border:`1px solid ${sel?'rgba(255,0,64,0.4)':'var(--border)'}`,background:sel?'rgba(255,0,64,0.08)':'var(--bg-input)',cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',textAlign:'left'}}>
+                <button key={s} onClick={()=>setSensation(sel?'':s)} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 12px',borderRadius:14,border:`1px solid ${sel?'rgba(255,0,64,0.4)':'var(--border)'}`,background:sel?'rgba(255,0,64,0.08)':'var(--bg-input)',cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',textAlign:'left'}}>
                   <span style={{fontSize:18,lineHeight:1}}>{emoji}</span>
                   <span style={{fontSize:11,fontWeight:600,color:sel?'#FF0040':'var(--text-secondary)'}}>{label}</span>
                 </button>
@@ -820,7 +804,7 @@ function FeedbackModal({ session, onClose, onSubmit }) {
           </div>
         </div>
         {(effort<=4||effort>=8) && (
-          <div style={{display:'flex',gap:10,alignItems:'flex-start',background:effort<=4?'rgba(34,197,94,0.06)':'rgba(255,0,64,0.06)',border:`1px solid ${effort<=4?'rgba(34,197,94,0.2)':'rgba(255,0,64,0.2)'}`,borderRadius:12,padding:'12px 14px',marginBottom:16}}>
+          <div style={{display:'flex',gap:10,alignItems:'flex-start',background:effort<=4?'rgba(34,197,94,0.06)':'rgba(255,0,64,0.06)',border:`1px solid ${effort<=4?'rgba(34,197,94,0.2)':'rgba(255,0,64,0.2)'}`,borderRadius:14,padding:'12px 14px',marginBottom:16}}>
             <span style={{fontSize:20}}>{effort<=4?'💪':'🛡️'}</span>
             <div>
               <div style={{fontSize:12,fontWeight:700,color:effort<=4?'#22c55e':'#FF0040',marginBottom:2}}>{effort<=4?'Plan intensifié':'Plan allégé'}</div>
@@ -862,7 +846,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
           { label:'Effort moyen', value:avgEff?`${avgEff}/10`:'—', sub:avgEff?(parseFloat(avgEff)<=4?'Très facile':parseFloat(avgEff)<=6?'Modéré':parseFloat(avgEff)<=8?'Difficile':'Extrême'):'Pas encore de feedback', color:avgEff?effortColor(parseFloat(avgEff)):'var(--text-muted)', icon:'⚡' },
           { label:'Semaines', value:`${weeks.filter(w=>w.done===w.total&&w.total>0).length}/${weeks.length}`, sub:'semaines complètes', color:'#6366f1', icon:'📅' },
         ].map(({label,value,sub,color,icon})=>(
-          <div key={label} style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'14px 12px',textAlign:'center'}}>
+          <div key={label} style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'14px 12px',textAlign:'center'}}>
             <div style={{fontSize:18,marginBottom:6}}>{icon}</div>
             <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>{label}</div>
             <div style={{fontSize:20,fontWeight:800,color,fontFamily:'DM Mono, monospace',lineHeight:1,marginBottom:4}}>{value}</div>
@@ -872,7 +856,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
       </div>
 
       {/* Barre de complétion globale */}
-      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
           <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace'}}>Progression du programme</div>
           <div style={{fontSize:12,fontWeight:800,color:'#22c55e',fontFamily:'DM Mono, monospace'}}>{completionPct}%</div>
@@ -894,7 +878,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
       </div>
 
       {/* Charge hebdomadaire */}
-      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px'}}>
         <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace',marginBottom:16}}>Charge hebdomadaire (km)</div>
         <div style={{display:'flex',gap:8,alignItems:'flex-end',height:80}}>
           {weeks.map((w,i)=>{
@@ -918,7 +902,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
 
       {/* Effort par semaine */}
       {allFbs.length>0 && (
-        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px'}}>
           <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Effort ressenti par semaine</div>
           <div style={{display:'flex',gap:8,alignItems:'center'}}>
             {weeks.map((w,i)=>{
@@ -946,7 +930,7 @@ function KpiCharts({ plan, feedbacks, completed }) {
       )}
 
       {/* Séances détail */}
-      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px'}}>
+      <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px'}}>
         <div style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.1em',fontFamily:'DM Mono, monospace',marginBottom:12}}>Détail par semaine</div>
         <div style={{display:'flex',flexDirection:'column',gap:8}}>
           {weeks.map((w,i)=>(
@@ -1123,7 +1107,7 @@ function Onboarding({ onComplete }) {
           </div>
         </div>
         {form.triFormat && (
-          <div style={{background:'var(--bg-input)',borderRadius:12,padding:'12px 14px',fontSize:12,color:'var(--text-secondary)'}}>
+          <div style={{background:'var(--bg-input)',borderRadius:14,padding:'12px 14px',fontSize:12,color:'var(--text-secondary)'}}>
             🏊 {TRI_FORMATS[form.triFormat].swim}m · 🚴 {TRI_FORMATS[form.triFormat].bike}km · 🏃 {TRI_FORMATS[form.triFormat].run}km
           </div>
         )}
@@ -1178,7 +1162,7 @@ function Onboarding({ onComplete }) {
               {(!form.discipline||form.discipline==='running') && [[1,'1 km'],[3,'3 km'],[5,'5 km'],[10,'10 km'],[15,'15 km'],[21.1,'Semi-marathon'],[42.2,'Marathon']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
             </select></div>
             <div><label style={lbl}>Chrono (en minutes)</label><input type="number" style={inp()} placeholder="ex: 55" value={form.raceTimeMins} onChange={e=>upd('raceTimeMins',e.target.value)}/></div>
-            {computedVma>0 && <div style={{background:'rgba(255,0,64,0.08)',border:'1px solid rgba(255,0,64,0.2)',borderRadius:12,padding:'10px 14px',fontSize:12,color:'var(--text-secondary)'}}>VMA estimée : <span style={{color:'#FF0040',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
+            {computedVma>0 && <div style={{background:'rgba(255,0,64,0.08)',border:'1px solid rgba(255,0,64,0.2)',borderRadius:14,padding:'10px 14px',fontSize:12,color:'var(--text-secondary)'}}>VMA estimée : <span style={{color:'#FF0040',fontWeight:700,fontFamily:'monospace'}}>{computedVma.toFixed(1)} km/h</span></div>}
           </div>
         )}
       </div>
@@ -1231,8 +1215,6 @@ function Onboarding({ onComplete }) {
 
       return (
     <div style={{minHeight:'100%',background:'var(--onboarding-bg)',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden'}}>
-      {/* Discipline glow */}
-      <div style={{position:'fixed',top:-100,right:-100,width:400,height:400,borderRadius:'50%',background:`radial-gradient(circle, ${theme.glow} 0%, transparent 70%)`,pointerEvents:'none',transition:'background 0.5s',zIndex:0}}/>
       {/* Discipline decor */}
       <div style={{position:'fixed',bottom:100,right:0,pointerEvents:'none',zIndex:0}}>{theme.decor}</div>
 
@@ -1262,7 +1244,7 @@ function Onboarding({ onComplete }) {
 
           {/* Title */}
           <div style={{marginBottom:28}}>
-            <div style={{fontSize:11,fontWeight:700,color:theme.accent,fontFamily:'DM Mono,monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:10}}>Étape {step+1}</div>
+            <div style={{fontSize:11,fontWeight:700,color:theme.accent,fontFamily:'DM Mono,monospace',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:10}}>Étape {step+1}</div>
             <h2 style={{fontSize:28,fontWeight:900,letterSpacing:'-0.04em',marginBottom:6,color:'var(--text-primary)',fontFamily:'Syne,sans-serif',lineHeight:1.1}}>{steps[step].title}</h2>
             <p style={{fontSize:13,color:'var(--text-muted)',lineHeight:1.5}}>{steps[step].sub}</p>
           </div>
@@ -1275,7 +1257,7 @@ function Onboarding({ onComplete }) {
             {step>0 && (
               <button onClick={()=>setStep(s=>s-1)} style={{width:48,height:48,borderRadius:14,background:'var(--bg-card)',border:'1px solid var(--border)',color:'var(--text-primary)',cursor:'pointer',fontFamily:'inherit',fontSize:18,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>←</button>
             )}
-            <button onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,height:52,background:steps[step].ok?theme.accent:'var(--progress-track)',color:steps[step].ok?'#fff':'var(--text-muted)',border:'none',borderRadius:14,fontSize:15,fontWeight:800,cursor:steps[step].ok?'pointer':'not-allowed',fontFamily:'Syne,sans-serif',letterSpacing:'-0.01em',transition:'all 0.2s',boxShadow:steps[step].ok?`0 4px 20px ${theme.glow}`:'none'}}>
+            <button className="btn-ripple" onClick={step<steps.length-1?()=>setStep(s=>s+1):handleFinish} disabled={!steps[step].ok} style={{flex:1,height:52,background:steps[step].ok?theme.accent:'var(--progress-track)',color:steps[step].ok?'#fff':'var(--text-muted)',border:'none',borderRadius:14,fontSize:15,fontWeight:800,cursor:steps[step].ok?'pointer':'not-allowed',fontFamily:'Syne,sans-serif',letterSpacing:'-0.01em',transition:'all 0.2s'}}>
               {step<steps.length-1?'Continuer →':'Générer mon programme'}
             </button>
           </div>
@@ -1405,7 +1387,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
     onSave && onSave(newPlan, completed, newFeedbacks);
   };
   const tabBtn = (v,l) => (
-    <button onClick={()=>setActiveTab(v)} style={{borderRadius:12,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
+    <button onClick={()=>setActiveTab(v)} style={{borderRadius:14,padding:'7px 16px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeTab===v?'rgba(255,0,64,0.15)':'var(--btn-ghost-bg)',border:`1px solid ${activeTab===v?'rgba(255,0,64,0.4)':'var(--btn-ghost-border)'}`,color:activeTab===v?'#FF0040':'var(--btn-ghost-color)'}}>{l}</button>
   );
   return (
     <div style={{minHeight:'100%',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
@@ -1414,30 +1396,20 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
       {detailSession && <SessionDetailModal session={detailSession} feedback={feedbacks[detailSession.id]} vma={profile.vma} onClose={()=>setDetailSession(null)}/>}
       {showNutrition && <RaceNutritionStrategy profile={profile} userSettings={JSON.parse(typeof window!=='undefined'?localStorage.getItem('pp_user_settings')||'{}':'{}')} onClose={()=>setShowNutrition(false)}/>}
       <main style={{maxWidth:1000,margin:'0 auto',padding:'20px 16px 60px'}}>
-        {/* Hero card — terminal premium */}
-        <div className='scan-card glow-border' style={{position:'relative',borderRadius:20,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, rgba(99,102,241,0.03) 50%, transparent 100%)'}}>
-          <div style={{position:'absolute',top:0,bottom:0,width:'40%',background:'linear-gradient(90deg,transparent,rgba(255,0,64,0.06),transparent)',animation:'scanLine 14s ease-in-out infinite',zIndex:2,pointerEvents:'none',left:0}}/>
-          <div style={{position:'absolute',top:-40,right:-40,width:200,height:200,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,0,64,0.08) 0%,transparent 70%)',pointerEvents:'none'}}/>
-          {/* Terminal header */}
-          <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
-            <div style={{display:'flex',gap:4}}>
-              <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,0,64,0.5)'}}/>
-              <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(245,158,11,0.5)'}}/>
-              <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(34,197,94,0.5)'}}/>
-            </div>
-            <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.5)',letterSpacing:'0.15em'}}>PACEPRO · {(profile.discipline||'running').toUpperCase()} PROGRAM</div>
-            <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6}}>
-              <div style={{width:5,height:5,borderRadius:'50%',background:'#22c55e',boxShadow:'0 0 6px #22c55e'}}/>
-              <span style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'#22c55e',letterSpacing:'0.1em'}}>ACTIF</span>
-            </div>
-          </div>
+        {/* Hero card */}
+        <div style={{position:'relative',borderRadius:18,overflow:'hidden',marginBottom:14,border:'1px solid rgba(255,0,64,0.18)',background:'linear-gradient(135deg, rgba(255,0,64,0.05) 0%, transparent 60%)'}}>
           <div style={{padding:'18px 16px'}}>
-            <div style={{fontSize:9,color:'rgba(255,0,64,0.6)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.2em',marginBottom:6}}>{'>'} OBJECTIF</div>
-            <div style={{fontSize:24,fontWeight:900,letterSpacing:'-0.03em',marginBottom:10,background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.5))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{profile.raceName||'Mon programme'}</div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}}>
+              <div className="eyebrow" style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em'}}>Objectif</div>
+              <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:9,fontWeight:700,color:'#22c55e',fontFamily:'DM Mono, monospace',letterSpacing:'0.06em',textTransform:'uppercase'}}>
+                <span style={{width:5,height:5,borderRadius:'50%',background:'#22c55e'}}/>Actif
+              </span>
+            </div>
+            <div style={{fontSize:24,fontWeight:900,letterSpacing:'-0.03em',marginBottom:10,color:'var(--text-primary)'}}>{profile.raceName||'Mon programme'}</div>
             <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:16}}>
-              <span style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'DM Mono, monospace',fontWeight:700}}>{profile.raceDistanceKm} km</span>
-              {profile.elevationM>0 && <span style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'DM Mono, monospace',fontWeight:700}}>D+{profile.elevationM}m</span>}
-              {profile.raceDate && <span style={{fontSize:9,padding:'3px 8px',borderRadius:6,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{new Date(profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>}
+              <span style={{fontSize:9,padding:'3px 8px',borderRadius:99,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'DM Mono, monospace',fontWeight:700}}>{profile.raceDistanceKm} km</span>
+              {profile.elevationM>0 && <span style={{fontSize:9,padding:'3px 8px',borderRadius:99,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'DM Mono, monospace',fontWeight:700}}>D+{profile.elevationM}m</span>}
+              {profile.raceDate && <span style={{fontSize:9,padding:'3px 8px',borderRadius:99,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{new Date(profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>}
             </div>
             {/* Progress */}
             <div style={{marginBottom:16}}>
@@ -1446,7 +1418,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                 <span style={{fontSize:10,fontFamily:'DM Mono, monospace',fontWeight:700,color:'var(--text-primary)'}}>{doneCount}/{totalSessions} · {progress}%</span>
               </div>
               <div style={{height:3,background:'rgba(255,255,255,0.05)',borderRadius:99,overflow:'hidden'}}>
-                <div style={{height:'100%',borderRadius:99,background:'linear-gradient(90deg,#FF0040,#fbbf24)',width:`${progress}%`,transition:'width 0.8s cubic-bezier(0.22,1,0.36,1)',boxShadow:'0 0 8px rgba(255,0,64,0.4)'}}/>
+                <div style={{height:'100%',borderRadius:99,background:'var(--accent)',width:`${progress}%`,transition:'width 0.8s cubic-bezier(0.22,1,0.36,1)'}}/>
               </div>
             </div>
             {/* KPIs */}
@@ -1456,8 +1428,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                 {label:'Séances/sem',value:`${profile.triSessions||profile.sessionsPerWeek}×`,unit:(profile.trainingDays||[]).slice(0,2).join(', ')||`${profile.triSessions||profile.sessionsPerWeek} fois/sem`,color:'#60a5fa'},
                 {label:'Programme',value:`${profile.weeks}`,unit:'semaines',color:'#f59e0b'},
               ].map(({label,value,unit,color})=>(
-                <div key={label} style={{position:'relative',borderRadius:10,border:`1px solid ${color}15`,background:`${color}06`,padding:'10px 8px',textAlign:'center',overflow:'hidden'}}>
-                  <div style={{position:'absolute',bottom:-8,right:-8,width:32,height:32,borderRadius:'50%',background:`radial-gradient(circle,${color}20,transparent)`,pointerEvents:'none'}}/>
+                <div key={label} style={{borderRadius:10,border:`1px solid ${color}15`,background:`${color}06`,padding:'10px 8px',textAlign:'center'}}>
                   <div style={{fontSize:8,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4}}>{label}</div>
                   <div className='count-up' style={{fontSize:18,fontWeight:900,color,fontFamily:'DM Mono, monospace',lineHeight:1}}>{value}</div>
                   <div style={{fontSize:8,color:`${color}80`,marginTop:3,fontFamily:'DM Mono, monospace'}}>{unit}</div>
@@ -1466,8 +1437,8 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
             </div>
           </div>
         </div>
-        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:16,padding:'16px',marginBottom:14}}>
-          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.15em',marginBottom:12}}>Tes allures personnalisées</div>
+        <div style={{background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:18,padding:'16px',marginBottom:14}}>
+          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:12}}>Tes allures personnalisées</div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:6}}>
             {(isTriathlonDash ? [
                 ['Nage CSS',paces.swim||'—','#38bdf8'],['Vélo Z2',paces.bike||'—','#f59e0b'],['Course EF',paces.run||'—','#22c55e'],['Course Seuil',paces.threshold,'#FF0040']
@@ -1489,10 +1460,10 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
           </div>
         </div>
         {nextSession && (
-          <div style={{background:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(255,0,64,0.03))',border:'1px solid rgba(255,0,64,0.2)',borderRadius:16,padding:'16px 18px',marginBottom:14,display:'flex',gap:14,alignItems:'center'}}>
+          <div style={{background:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(255,0,64,0.03))',border:'1px solid rgba(255,0,64,0.2)',borderRadius:18,padding:'16px 18px',marginBottom:14,display:'flex',gap:14,alignItems:'center'}}>
             <div style={{width:44,height:44,borderRadius:14,background:'rgba(255,0,64,0.15)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:22}}>⚡</div>
             <div style={{flex:1,minWidth:0}}>
-              <div style={{fontSize:9,color:'#FF0040',textTransform:'uppercase',letterSpacing:'0.15em',fontFamily:'DM Mono, monospace',marginBottom:4}}>Prochaine · S{nextSession.week} · {nextSession.day}</div>
+              <div style={{fontSize:9,color:'#FF0040',textTransform:'uppercase',letterSpacing:'0.06em',fontFamily:'DM Mono, monospace',marginBottom:4}}>Prochaine · S{nextSession.week} · {nextSession.day}</div>
               <div style={{fontSize:16,fontWeight:800,letterSpacing:'-0.02em',color:'var(--text-primary)',marginBottom:2}}>{nextSession.title}</div>
               <div style={{fontSize:11,color:'var(--text-secondary)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{nextSession.detail}</div>
             </div>
@@ -1509,7 +1480,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
           <div>
             <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:4,marginBottom:18}}>
               {livePlan.map((w,i)=>(
-                <button key={i} onClick={()=>setActiveWeek(i)} style={{flexShrink:0,borderRadius:12,padding:'6px 14px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeWeek===i?'rgba(255,0,64,0.15)':'var(--week-tabs-inactive)',border:`1px solid ${activeWeek===i?'rgba(255,0,64,0.4)':'var(--week-tabs-border)'}`,color:activeWeek===i?'#FF0040':'var(--week-tabs-color)'}}>
+                <button key={i} onClick={()=>setActiveWeek(i)} style={{flexShrink:0,borderRadius:10,padding:'6px 14px',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s',background:activeWeek===i?'rgba(255,0,64,0.15)':'var(--week-tabs-inactive)',border:`1px solid ${activeWeek===i?'rgba(255,0,64,0.4)':'var(--week-tabs-border)'}`,color:activeWeek===i?'#FF0040':'var(--week-tabs-color)'}}>
                   S{w.week}{w.isKey?' ★':''}
                 </button>
               ))}
@@ -1554,7 +1525,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                   {isTriathlonDash ? `${profile.triFormat||'olympic'} · ${profile.triSessions||3} séances/sem` : `${profile.raceDistanceKm} km${profile.elevationM>0?` · D+${profile.elevationM}m`:''} · Allure cible : `}
                   {!isTriathlonDash && <span style={{color:'var(--text-primary)',fontFamily:'monospace'}}>{paces.ef} /km</span>}
                 </div>
-                <button onClick={()=>setShowNutrition(true)} style={{display:'flex',alignItems:'center',gap:8,background:'rgba(245,158,11,0.1)',border:'1px solid rgba(245,158,11,0.3)',borderRadius:12,padding:'10px 14px',cursor:'pointer',fontFamily:'Syne,sans-serif',width:'100%'}}>
+                <button onClick={()=>setShowNutrition(true)} style={{display:'flex',alignItems:'center',gap:8,background:'rgba(245,158,11,0.1)',border:'1px solid rgba(245,158,11,0.3)',borderRadius:14,padding:'10px 14px',cursor:'pointer',fontFamily:'Syne,sans-serif',width:'100%'}}>
                   <span style={{fontSize:16}}>🥗</span>
                   <div style={{flex:1,textAlign:'left'}}>
                     <div style={{fontSize:12,fontWeight:700,color:'#f59e0b'}}>Stratégie nutritionnelle</div>
@@ -1576,14 +1547,11 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
     <div style={{minHeight:'100%',background:'var(--bg-primary)',color:'var(--text-primary)',fontFamily:'Syne,sans-serif'}}>
       <main style={{maxWidth:680,margin:'0 auto',padding:'28px 16px 40px'}}>
 
-        {/* Header terminal */}
+        {/* Header */}
         <div style={{marginBottom:24}}>
-          <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.2em',marginBottom:6,display:'flex',alignItems:'center',gap:6}}>
-            <div style={{width:5,height:5,borderRadius:'50%',background:'#FF0040',boxShadow:'0 0 6px #FF0040'}}/>
-            PACEPRO · TRAINING SYSTEM
-          </div>
-          <h1 style={{fontSize:28,fontWeight:900,letterSpacing:'-0.04em',marginBottom:4,background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.4))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Mes programmes</h1>
-          <p style={{fontSize:10,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>{plans.length} plan{plans.length>1?'s':''} · SYSTÈME ACTIF</p>
+          <div className="eyebrow" style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:8}}>PacePro</div>
+          <h1 style={{fontSize:28,fontWeight:900,letterSpacing:'-0.04em',marginBottom:4,color:'var(--text-primary)'}}>Mes programmes</h1>
+          <p style={{fontSize:12,color:'var(--text-muted)'}}>{plans.length} plan{plans.length>1?'s':''} en cours</p>
         </div>
 
         <div style={{display:'flex',flexDirection:'column',gap:12}}>
@@ -1593,46 +1561,36 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
             const pct = total>0?Math.round((done/total)*100):0;
             const nextPhase = p.plan?.find(w=>w.sessions.some(s=>!(p.completed||{})[s.id]));
             return (
-              <div key={i} onClick={()=>onSelect(i)} className="card-hover stagger-item" style={{position:'relative',borderRadius:20,overflow:'hidden',border:'1px solid rgba(255,0,64,0.2)',background:'linear-gradient(135deg, rgba(255,0,64,0.05) 0%, transparent 60%)',cursor:'pointer',transition:'all 0.2s'}}>
-                {/* Glow top */}
-                <div style={{position:'absolute',top:-30,right:-30,width:150,height:150,borderRadius:'50%',background:'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)',pointerEvents:'none'}}/>
-                {/* Terminal header */}
-                <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
-                  <div style={{display:'flex',gap:4}}>
-                    <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,0,64,0.5)'}}/>
-                    <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(245,158,11,0.5)'}}/>
-                    <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(34,197,94,0.5)'}}/>
-                  </div>
-                  <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.5)',letterSpacing:'0.15em'}}>PROGRAMME · {(p.profile.discipline||'running').toUpperCase()}</div>
-                  <div style={{marginLeft:'auto',fontSize:9,fontFamily:'DM Mono, monospace',color:pct===100?'#22c55e':pct>0?'#f59e0b':'var(--text-muted)'}}>{pct}% COMPLÉTÉ</div>
-                </div>
+              <div key={i} onClick={()=>onSelect(i)} className="card-hover stagger-item" style={{borderRadius:18,border:'1px solid var(--border)',background:'var(--bg-card)',cursor:'pointer',transition:'all 0.2s'}}>
                 <div style={{padding:'16px'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
-                    <div style={{flex:1}}>
-                      <div style={{fontSize:20,fontWeight:900,letterSpacing:'-0.03em',marginBottom:8,color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
-                      <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-                        <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(255,0,64,0.1)',color:'#FF0040',border:'1px solid rgba(255,0,64,0.2)',fontFamily:'DM Mono, monospace'}}>{p.profile.raceDistanceKm} km</span>
-                        {p.profile.elevationM>0 && <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'rgba(245,158,11,0.1)',color:'#f59e0b',border:'1px solid rgba(245,158,11,0.2)',fontFamily:'DM Mono, monospace'}}>D+{p.profile.elevationM}m</span>}
-                        <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{p.profile.weeks} sem.</span>
-                        {p.profile.type && <span style={{fontSize:9,fontWeight:700,padding:'3px 8px',borderRadius:6,background:'var(--bg-input)',color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>{p.profile.type==='trail'?'Trail':'Route'}</span>}
-                      </div>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12,gap:10}}>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div className="eyebrow" style={{fontSize:10,fontWeight:700,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:6}}>{(p.profile.discipline||'running')}</div>
+                      <div style={{fontSize:19,fontWeight:800,letterSpacing:'-0.02em',color:'var(--text-primary)'}}>{p.profile.raceName||'Mon programme'}</div>
                     </div>
+                    <span style={{flexShrink:0,fontSize:11,fontWeight:800,fontFamily:'DM Mono, monospace',color:pct===100?'#22c55e':'var(--accent)'}}>{pct}%</span>
+                  </div>
+                  <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:12}}>
+                    <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--chip-bg)',color:'var(--text-secondary)',border:'1px solid var(--chip-border)',fontFamily:'DM Mono, monospace'}}>{p.profile.raceDistanceKm} km</span>
+                    {p.profile.elevationM>0 && <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--chip-bg)',color:'var(--text-secondary)',border:'1px solid var(--chip-border)',fontFamily:'DM Mono, monospace'}}>D+{p.profile.elevationM}m</span>}
+                    <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--chip-bg)',color:'var(--text-secondary)',border:'1px solid var(--chip-border)',fontFamily:'DM Mono, monospace'}}>{p.profile.weeks} sem.</span>
+                    {p.profile.type && <span style={{fontSize:10,fontWeight:700,padding:'3px 8px',borderRadius:99,background:'var(--chip-bg)',color:'var(--text-secondary)',border:'1px solid var(--chip-border)',fontFamily:'DM Mono, monospace'}}>{p.profile.type==='trail'?'Trail':'Route'}</span>}
                   </div>
                   {/* Progress bar */}
                   <div style={{marginBottom:10}}>
                     <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
-                      <span style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.1em'}}>Progression</span>
+                      <span style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace',textTransform:'uppercase',letterSpacing:'0.06em'}}>Progression</span>
                       <span style={{fontSize:9,color:'var(--text-primary)',fontFamily:'DM Mono, monospace',fontWeight:700}}>{done}/{total} séances</span>
                     </div>
-                    <div style={{height:3,background:'rgba(255,255,255,0.05)',borderRadius:99,overflow:'hidden'}}>
-                      <div style={{height:'100%',width:`${pct}%`,background:'linear-gradient(90deg,#FF0040,#fbbf24)',borderRadius:99,transition:'width 0.6s',boxShadow:'0 0 8px rgba(255,0,64,0.4)'}}/>
+                    <div style={{height:3,background:'var(--progress-track)',borderRadius:99,overflow:'hidden'}}>
+                      <div style={{height:'100%',width:`${pct}%`,background:'var(--accent)',borderRadius:99,transition:'width 0.6s'}}/>
                     </div>
                   </div>
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                    <div style={{fontSize:9,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>
+                    <div style={{fontSize:10,color:'var(--text-muted)',fontFamily:'DM Mono, monospace'}}>
                       VMA {p.profile.vma?.toFixed(1)} km/h · {p.profile.sessionsPerWeek}×/sem{p.profile.raceDate?` · ${new Date(p.profile.raceDate).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}` : ''}
                     </div>
-                    <button onClick={e=>{e.stopPropagation();onDelete(i);}} style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.15)',borderRadius:8,padding:'4px 10px',color:'rgba(239,68,68,0.6)',fontSize:9,cursor:'pointer',fontFamily:'DM Mono, monospace',fontWeight:600}}>Supprimer</button>
+                    <button onClick={e=>{e.stopPropagation();onDelete(i);}} style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.15)',borderRadius:10,padding:'4px 10px',color:'rgba(239,68,68,0.7)',fontSize:10,cursor:'pointer',fontFamily:'DM Mono, monospace',fontWeight:600}}>Supprimer</button>
                   </div>
                 </div>
               </div>
@@ -1641,22 +1599,10 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
         </div>
 
         {plans.length === 0 && (
-          <div style={{position:'relative',borderRadius:20,overflow:'hidden',border:'1px solid rgba(255,0,64,0.15)',background:'linear-gradient(135deg, rgba(255,0,64,0.04) 0%, transparent 60%)'}}>
-            <div style={{padding:'12px 18px',borderBottom:'1px solid rgba(255,0,64,0.1)',display:'flex',alignItems:'center',gap:8}}>
-              <div style={{display:'flex',gap:4}}>
-                <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(255,0,64,0.4)'}}/>
-                <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(245,158,11,0.4)'}}/>
-                <div style={{width:6,height:6,borderRadius:'50%',background:'rgba(34,197,94,0.4)'}}/>
-              </div>
-              <div style={{fontSize:8,fontFamily:'DM Mono, monospace',color:'rgba(255,0,64,0.5)',letterSpacing:'0.15em'}}>TRAINING.SYSTEM · INIT</div>
-              <div style={{marginLeft:'auto',width:5,height:5,borderRadius:'50%',background:'#FF0040',boxShadow:'0 0 6px #FF0040'}}/>
-            </div>
-            <div style={{padding:'48px 24px',textAlign:'center'}}>
-              <div style={{fontSize:9,color:'rgba(255,255,255,0.12)',fontFamily:'DM Mono, monospace',letterSpacing:'0.1em',marginBottom:20}}>{'>'} AUCUN PROGRAMME DÉTECTÉ · EN ATTENTE</div>
-              <div style={{fontSize:22,fontWeight:900,letterSpacing:'-0.03em',marginBottom:8,color:'var(--text-primary)'}}>Crée ton programme</div>
-              <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:28,lineHeight:1.6}}>Lance-toi avec un plan personnalisé<br/>généré selon ton profil.</div>
-              <button onClick={onNew} style={{background:'linear-gradient(135deg, #FF0040, #cc0033)',color:'#fff',border:'none',borderRadius:12,padding:'14px 28px',fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'Syne, sans-serif',boxShadow:'0 4px 20px rgba(255,0,64,0.3)'}}>Créer un programme</button>
-            </div>
+          <div style={{borderRadius:18,border:'1px solid var(--border)',background:'var(--bg-card)',padding:'48px 24px',textAlign:'center'}}>
+            <div style={{fontSize:22,fontWeight:900,letterSpacing:'-0.03em',marginBottom:8,color:'var(--text-primary)'}}>Crée ton programme</div>
+            <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:28,lineHeight:1.6}}>Lance-toi avec un plan personnalisé<br/>généré selon ton profil.</div>
+            <button className="btn-ripple" onClick={onNew} style={{background:'var(--accent)',color:'#fff',border:'none',borderRadius:14,padding:'14px 28px',fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'Syne, sans-serif'}}>Créer un programme</button>
           </div>
         )}
       </main>
@@ -1673,13 +1619,13 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
   return (
     <>
       <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:200, backdropFilter:'blur(8px)' }} />
-      <div className='modal-enter' style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--bg-modal)', borderRadius:'28px 28px 0 0', padding:'12px 20px 48px', fontFamily:'Syne, sans-serif', maxHeight:'80vh', overflowY:'auto' }}>
+      <div className='modal-enter' style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--bg-modal)', borderRadius:'24px 24px 0 0', padding:'12px 20px 48px', fontFamily:'Syne, sans-serif', maxHeight:'80vh', overflowY:'auto' }}>
         {/* Handle */}
         <div style={{ width:40, height:4, background:'var(--border)', borderRadius:99, margin:'0 auto 24px' }} />
 
         {/* Hero user card */}
-        <div style={{ position:'relative', marginBottom:24, borderRadius:20, overflow:'hidden' }}>
-          <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(99,102,241,0.08))', borderRadius:20 }}/>
+        <div style={{ position:'relative', marginBottom:24, borderRadius:18, overflow:'hidden' }}>
+          <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg,rgba(255,0,64,0.08),rgba(99,102,241,0.08))', borderRadius:18 }}/>
           <div style={{ position:'relative', padding:'20px 18px', display:'flex', alignItems:'center', gap:16 }}>
             <div style={{ position:'relative', flexShrink:0 }}>
               {user?.photo
@@ -1700,7 +1646,7 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
         <div style={{ fontSize:10, fontWeight:700, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.12em', fontFamily:'DM Mono, monospace', marginBottom:12 }}>Navigation</div>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:24 }}>
           {stats.map(({ label, icon, tab, color }) => (
-            <button key={tab} onClick={() => { onNavigate(tab); onClose(); }} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:16, background:'var(--bg-input)', border:`1px solid var(--border)`, cursor:'pointer', fontFamily:'Syne, sans-serif', transition:'all 0.15s', textAlign:'left' }}>
+            <button key={tab} onClick={() => { onNavigate(tab); onClose(); }} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:14, background:'var(--bg-input)', border:`1px solid var(--border)`, cursor:'pointer', fontFamily:'Syne, sans-serif', transition:'all 0.15s', textAlign:'left' }}>
               <div style={{ width:36, height:36, borderRadius:10, background:`${color}15`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <Icon name={icon} size={18} color={color} />
               </div>
@@ -1710,11 +1656,11 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
         </div>
 
         {/* Settings */}
-        <button onClick={() => { onNavigate('settings'); onClose(); }} style={{ width:'100%', background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:16, padding:'14px', fontSize:13, fontWeight:700, color:'var(--text-secondary)', cursor:'pointer', fontFamily:'Syne, sans-serif', marginBottom:10, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
+        <button onClick={() => { onNavigate('settings'); onClose(); }} style={{ width:'100%', background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:14, padding:'14px', fontSize:13, fontWeight:700, color:'var(--text-secondary)', cursor:'pointer', fontFamily:'Syne, sans-serif', marginBottom:10, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
           ⚙️ Paramètres & Profil
         </button>
         {/* Logout */}
-        <button onClick={onLogout} style={{ width:'100%', background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:16, padding:'16px', fontSize:14, fontWeight:700, color:'rgba(239,68,68,0.8)', cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'0.01em' }}>
+        <button onClick={onLogout} style={{ width:'100%', background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:14, padding:'16px', fontSize:14, fontWeight:700, color:'rgba(239,68,68,0.8)', cursor:'pointer', fontFamily:'Syne, sans-serif', letterSpacing:'0.01em' }}>
           Se déconnecter
         </button>
       </div>
@@ -1875,7 +1821,7 @@ useEffect(() => {
         return (
           <button key={t} onClick={()=>setTab(t)} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-start',gap:3,background:'none',border:'none',cursor:'pointer',fontFamily:'DM Mono, monospace',padding:'4px 0 0',position:'relative',minHeight:44}}>
             {/* Ligne top active */}
-            <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',width:active?24:0,height:1.5,borderRadius:99,background:'#FF0040',boxShadow:active?'0 0 6px #FF0040':'none',transition:'width 0.3s cubic-bezier(0.22,1,0.36,1)'}}/>
+            <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',width:active?24:0,height:1.5,borderRadius:99,background:'#FF0040',transition:'width 0.3s cubic-bezier(0.22,1,0.36,1)'}}/>
             {/* Icône */}
             <div style={{position:'relative',width:24,height:24,display:'flex',alignItems:'center',justifyContent:'center'}}>
               <Icon name={icon} size={18} color={active?'#FF0040':'rgba(255,255,255,0.22)'}/>
@@ -1892,28 +1838,24 @@ useEffect(() => {
   const AppHeader = ({ actions }) => (
     <div style={{ position:'sticky', top:0, zIndex:100, background:'rgba(7,8,11,0.88)', backdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
       <div style={{ height:'env(safe-area-inset-top, 0px)', background:'transparent' }}/>
-      {/* Scan line subtile */}
-      <div style={{ position:'absolute', top:0, left:0, right:0, height:1, background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.3), transparent)', pointerEvents:'none' }}/>
       <div style={{ height:52, display:'flex', alignItems:'center', padding:'0 12px', gap:8, position:'relative' }}>
-        {/* Avatar avec ring glow */}
+        {/* Avatar */}
         <div style={{ width:36, flexShrink:0 }}>
           <button onClick={() => setShowProfile(true)} style={{ display:'flex', alignItems:'center', background:'none', border:'none', cursor:'pointer', padding:0 }}>
             <div style={{ position:'relative' }}>
               {user?.photo
-                ? <img src={user.photo} alt="" style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', border:'1.5px solid rgba(255,0,64,0.5)', boxShadow:'0 0 10px rgba(255,0,64,0.2)' }} />
-                : <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(255,0,64,0.12)', border:'1.5px solid rgba(255,0,64,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, boxShadow:'0 0 8px rgba(255,0,64,0.15)' }}>👤</div>
+                ? <img src={user.photo} alt="" style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', border:'1.5px solid rgba(255,0,64,0.4)' }} />
+                : <div style={{ width:32, height:32, borderRadius:'50%', background:'rgba(255,0,64,0.12)', border:'1.5px solid rgba(255,0,64,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14 }}>👤</div>
               }
-              <div style={{ position:'absolute', bottom:0, right:0, width:7, height:7, borderRadius:'50%', background:'#22c55e', border:'1.5px solid #07080b', boxShadow:'0 0 4px #22c55e' }}/>
+              <div style={{ position:'absolute', bottom:0, right:0, width:7, height:7, borderRadius:'50%', background:'#22c55e', border:'1.5px solid var(--bg-primary)' }}/>
             </div>
           </button>
         </div>
         {/* Logo centre */}
         <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:7, pointerEvents:'none' }}>
-          <div style={{ position:'relative', display:'flex', alignItems:'center', gap:7 }}>
-            <img src="/logo.svg" alt="PacePro" style={{ width:18, height:18, objectFit:'contain', filter:'drop-shadow(0 0 4px rgba(255,0,64,0.4))' }}/>
+          <div style={{ display:'flex', alignItems:'center', gap:7 }}>
+            <img src="/logo.svg" alt="PacePro" style={{ width:18, height:18, objectFit:'contain' }}/>
             <span style={{ fontSize:13, fontWeight:900, letterSpacing:'-0.02em', color:'#fff', fontFamily:'Syne, sans-serif' }}>PacePro</span>
-            {/* Dot status */}
-            <div style={{ width:4, height:4, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 5px #FF0040', animation:'dotBlink 2s step-start infinite' }}/>
           </div>
         </div>
         {/* Actions */}
@@ -1922,7 +1864,7 @@ useEffect(() => {
       {/* Barre de progression globale ultra-fine */}
       {activePlan && (
         <div style={{ height:1, background:'rgba(255,255,255,0.04)' }}>
-          <div style={{ height:'100%', width:`${progress}%`, background:'linear-gradient(90deg,#FF0040,#f59e0b)', transition:'width 1s', boxShadow:'0 0 6px rgba(255,0,64,0.4)' }}/>
+          <div style={{ height:'100%', width:`${progress}%`, background:'var(--accent)', transition:'width 1s' }}/>
         </div>
       )}
     </div>

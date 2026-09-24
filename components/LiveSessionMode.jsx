@@ -92,8 +92,8 @@ function RouteMap({ points }) {
       }
 
       // Marqueurs départ/arrivée
-      const startIcon = L.divIcon({ html: '<div style="width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid #07080b;box-shadow:0 0 6px #22c55e"></div>', className: '', iconSize: [12,12], iconAnchor: [6,6] });
-      const endIcon = L.divIcon({ html: '<div style="width:12px;height:12px;border-radius:50%;background:#FF0040;border:2px solid #07080b;box-shadow:0 0 6px #FF0040"></div>', className: '', iconSize: [12,12], iconAnchor: [6,6] });
+      const startIcon = L.divIcon({ html: '<div style="width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid var(--bg-primary);box-shadow:0 0 6px #22c55e"></div>', className: '', iconSize: [12,12], iconAnchor: [6,6] });
+      const endIcon = L.divIcon({ html: '<div style="width:12px;height:12px;border-radius:50%;background:#FF0040;border:2px solid var(--bg-primary);box-shadow:0 0 6px #FF0040"></div>', className: '', iconSize: [12,12], iconAnchor: [6,6] });
 
       L.marker([points[0].lat, points[0].lon], { icon: startIcon }).addTo(map);
       L.marker([points[points.length-1].lat, points[points.length-1].lon], { icon: endIcon }).addTo(map);
@@ -112,7 +112,7 @@ function RouteMap({ points }) {
   if (points.length < 2) return null;
 
   return (
-    <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+    <div style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border)' }}>
       <div ref={mapRef} style={{ width: '100%', height: 280 }}/>
       <div style={{ padding: '8px 12px', background: 'rgba(0,0,0,0.4)', display: 'flex', gap: 16, fontSize: 9, fontFamily: 'DM Mono, monospace' }}>
         <span style={{ color: '#22c55e' }}>● Départ</span>
@@ -144,29 +144,25 @@ function SessionSummary({ gpsPoints, elapsed, onComplete, onClose, session }) {
   const fmt = (s) => `${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#07080b', display: 'flex', flexDirection: 'column', fontFamily: 'Syne, sans-serif', overflowY: 'auto' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', fontFamily: 'Syne, sans-serif', overflowY: 'auto' }}>
       <div style={{ padding: 'calc(env(safe-area-inset-top, 16px) + 20px) 20px 20px' }}>
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap:8, marginBottom: 20 }}>
-          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }}/>
-          <div style={{ fontSize: 9, fontFamily: 'DM Mono, monospace', color: 'rgba(34,197,94,0.7)', letterSpacing: '0.2em' }}>SÉANCE TERMINÉE</div>
-        </div>
-        <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4 }}>{session.title}</div>
-        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Mono, monospace', marginBottom: 20 }}>{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+        <div className="eyebrow" style={{ marginBottom: 10 }}>Séance terminée</div>
+        <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4, color:'var(--text-primary)' }}>{session.title}</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 20 }}>{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
 
         {/* KPIs */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, marginBottom: 16 }}>
           {[
-            { label: 'Distance', value: distKm > 0 ? `${distKm.toFixed(2)}` : '—', unit: 'km', color: '#FF0040' },
-            { label: 'Durée', value: fmt(elapsed), unit: '', color: '#60a5fa' },
-            { label: 'Allure moy.', value: paceStr, unit: '/km', color: '#f59e0b' },
-            { label: 'Dénivelé +', value: elevGain > 0 ? `${Math.round(elevGain)}` : '—', unit: 'm', color: '#a78bfa' },
-          ].map(({ label, value, unit, color }) => (
-            <div key={label} style={{ position: 'relative', borderRadius: 14, border: `1px solid ${color}20`, background: `${color}08`, padding: '14px 12px', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', bottom: -8, right: -8, width: 40, height: 40, borderRadius: '50%', background: `radial-gradient(circle, ${color}20, transparent)`, pointerEvents: 'none' }}/>
-              <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{label}</div>
-              <div style={{ fontSize: 22, fontWeight: 900, color, fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{value}</div>
-              {unit && <div style={{ fontSize: 9, color: `${color}80`, fontFamily: 'DM Mono, monospace', marginTop: 2 }}>{unit}</div>}
+            { label: 'Distance', value: distKm > 0 ? `${distKm.toFixed(2)}` : '—', unit: 'km' },
+            { label: 'Durée', value: fmt(elapsed), unit: '' },
+            { label: 'Allure moy.', value: paceStr, unit: '/km' },
+            { label: 'Dénivelé +', value: elevGain > 0 ? `${Math.round(elevGain)}` : '—', unit: 'm' },
+          ].map(({ label, value, unit }) => (
+            <div key={label} style={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '14px 12px' }}>
+              <div className="eyebrow" style={{ marginBottom: 4 }}>{label}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color:'var(--text-primary)', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{value}</div>
+              {unit && <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', marginTop: 2 }}>{unit}</div>}
             </div>
           ))}
         </div>
@@ -174,26 +170,20 @@ function SessionSummary({ gpsPoints, elapsed, onComplete, onClose, session }) {
         {/* Carte GPS */}
         {gpsPoints.length > 2 && (
           <div style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <div style={{ width: 3, height: 14, background: '#60a5fa', borderRadius: 2, boxShadow: '0 0 8px #60a5fa' }}/>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>Tracé GPS · Couleur = allure</div>
-            </div>
+            <div className="eyebrow" style={{ marginBottom: 10 }}>Tracé GPS · couleur = allure</div>
             <RouteMap points={gpsPoints}/>
           </div>
         )}
         {gpsPoints.length <= 2 && (
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '16px', textAlign: 'center', marginBottom: 16 }}>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'DM Mono, monospace' }}>GPS non disponible — séance chronométrée uniquement</div>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px', textAlign: 'center', marginBottom: 16 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>GPS non disponible — séance chronométrée uniquement</div>
           </div>
         )}
 
         {/* Allures par km */}
         {distKm > 1 && (
           <div style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <div style={{ width: 3, height: 14, background: '#f59e0b', borderRadius: 2, boxShadow: '0 0 8px #f59e0b' }}/>
-              <div style={{ fontSize: 9, fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace' }}>Allures par km</div>
-            </div>
+            <div className="eyebrow" style={{ marginBottom: 10 }}>Allures par km</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {Array.from({ length: Math.floor(distKm) }, (_, kmIdx) => {
                 const kmStart = kmIdx * 1000;
@@ -212,8 +202,8 @@ function SessionSummary({ gpsPoints, elapsed, onComplete, onClose, session }) {
                 const barColor = `rgb(${Math.round(34+ratio*221)},${Math.round(197-ratio*197)},${Math.round(94-ratio*94)})`;
                 return (
                   <div key={kmIdx} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Mono, monospace', width: 28 }}>km {kmIdx+1}</div>
-                    <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', width: 28 }}>km {kmIdx+1}</div>
+                    <div style={{ flex: 1, height: 6, background: 'var(--bg-input)', borderRadius: 99, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${(1-ratio)*100}%`, background: barColor, borderRadius: 99 }}/>
                     </div>
                     <div style={{ fontSize: 11, fontFamily: 'DM Mono, monospace', fontWeight: 700, color: barColor, width: 40, textAlign: 'right' }}>
@@ -227,10 +217,10 @@ function SessionSummary({ gpsPoints, elapsed, onComplete, onClose, session }) {
         )}
 
         {/* Actions */}
-        <button onClick={() => { onComplete(); onClose(); }} style={{ width: '100%', height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #22c55e, #16a34a)', border: 'none', color: '#fff', fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'Syne, sans-serif', boxShadow: '0 4px 20px rgba(34,197,94,0.3)', marginBottom: 12 }}>
+        <button onClick={() => { onComplete(); onClose(); }} className="btn-ripple" style={{ width: '100%', height: 52, borderRadius: 'var(--radius-lg)', background: 'var(--accent)', border: 'none', color: '#fff', fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: 'Syne, sans-serif', marginBottom: 12 }}>
           ✓ Valider la séance
         </button>
-        <button onClick={onClose} style={{ width: '100%', height: 42, borderRadius: 14, background: 'none', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)', fontSize: 12, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em' }}>
+        <button onClick={onClose} style={{ width: '100%', height: 42, borderRadius: 'var(--radius-md)', background: 'var(--btn-ghost-bg)', border: '1px solid var(--btn-ghost-border)', color: 'var(--btn-ghost-color)', fontSize: 12, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em' }}>
           FERMER SANS VALIDER
         </button>
       </div>
@@ -359,12 +349,12 @@ export default function LiveSessionMode({ session, onComplete, onClose }) {
   const accent = currentBloc?.color || '#FF0040';
 
   return createPortal(
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#07080b', display: 'flex', flexDirection: 'column', fontFamily: 'Syne, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', fontFamily: 'Syne, sans-serif' }}>
       {/* Header */}
       <div style={{ padding: 'calc(env(safe-area-inset-top, 16px) + 12px) 16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 13, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em' }}>← QUITTER</button>
-        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace', letterSpacing: '0.15em', display: 'flex', alignItems: 'center', gap: 6 }}>
-          {gpsActive && <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 5px #22c55e' }}/>}
+        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 13, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em' }}>← QUITTER</button>
+        <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', letterSpacing: '0.15em', display: 'flex', alignItems: 'center', gap: 6 }}>
+          {gpsActive && <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e' }}/>}
           {gpsActive ? 'GPS ACTIF' : gpsError ? 'GPS INDISPO' : 'SESSION LIVE'}
         </div>
         <div style={{ width: 60 }}/>
@@ -372,21 +362,21 @@ export default function LiveSessionMode({ session, onComplete, onClose }) {
 
       {/* Session info */}
       <div style={{ padding: '12px 20px 0' }}>
-        <div style={{ fontSize: 9, color: `${accent}80`, fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>{session.tag}</div>
-        <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4 }}>{session.title}</div>
+        <div className="eyebrow" style={{ color: accent, marginBottom: 4 }}>{session.tag}</div>
+        <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 4, color: 'var(--text-primary)' }}>{session.title}</div>
       </div>
 
       {/* Live stats */}
       {(distKm > 0.05 || elapsed > 0) && (
         <div style={{ padding: '10px 20px 0', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
           {[
-            { label: 'Distance', value: distKm > 0.05 ? `${distKm.toFixed(2)}km` : '—', color: '#60a5fa' },
-            { label: 'Allure', value: paceStr, color: '#f59e0b' },
-            { label: 'D+', value: gpsPoints.length > 1 ? `${Math.round(gpsPoints.reduce((acc, p, i) => { if (i === 0 || !p.ele || !gpsPoints[i-1].ele) return acc; const d = p.ele - gpsPoints[i-1].ele; return acc + (d > 0 ? d : 0); }, 0))}m` : '—', color: '#a78bfa' },
-          ].map(({ label, value, color }) => (
-            <div key={label} style={{ background: `${color}08`, border: `1px solid ${color}15`, borderRadius: 10, padding: '8px', textAlign: 'center' }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color, fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{value}</div>
-              <div style={{ fontSize: 7, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>{label}</div>
+            { label: 'Distance', value: distKm > 0.05 ? `${distKm.toFixed(2)}km` : '—' },
+            { label: 'Allure', value: paceStr },
+            { label: 'D+', value: gpsPoints.length > 1 ? `${Math.round(gpsPoints.reduce((acc, p, i) => { if (i === 0 || !p.ele || !gpsPoints[i-1].ele) return acc; const d = p.ele - gpsPoints[i-1].ele; return acc + (d > 0 ? d : 0); }, 0))}m` : '—' },
+          ].map(({ label, value }) => (
+            <div key={label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '8px', textAlign: 'center' }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{value}</div>
+              <div style={{ fontSize: 7, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>{label}</div>
             </div>
           ))}
         </div>
@@ -396,51 +386,51 @@ export default function LiveSessionMode({ session, onComplete, onClose }) {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 20px' }}>
         {blocs && currentBloc ? (
           <div style={{ textAlign: 'center', width: '100%' }}>
-            <div style={{ fontSize: 11, color: accent, fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 16 }}>{currentBloc.label}</div>
+            <div className="eyebrow" style={{ color: accent, marginBottom: 16 }}>{currentBloc.label}</div>
             {/* Arc */}
             <div style={{ position: 'relative', width: 180, height: 180, margin: '0 auto 16px' }}>
               <svg width={180} height={180} style={{ transform: 'rotate(-90deg)' }}>
-                <circle cx={90} cy={90} r={80} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={8}/>
+                <circle cx={90} cy={90} r={80} fill="none" stroke="var(--bg-input)" strokeWidth={8}/>
                 <circle cx={90} cy={90} r={80} fill="none" stroke={accent} strokeWidth={8}
                   strokeDasharray={`${2 * Math.PI * 80}`}
                   strokeDashoffset={`${2 * Math.PI * 80 * (1 - blocPct/100)}`}
                   strokeLinecap="round"
-                  style={{ transition: 'stroke-dashoffset 1s linear', filter: `drop-shadow(0 0 8px ${accent})` }}/>
+                  style={{ transition: 'stroke-dashoffset 1s linear' }}/>
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ fontSize: 44, fontWeight: 900, fontFamily: 'DM Mono, monospace', color: accent, lineHeight: 1 }}>
                   {currentBlocSec > 0 ? fmt(Math.max(0, currentBlocSec - blocElapsed)) : fmt(blocElapsed)}
                 </div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace', marginTop: 4 }}>
+                <div style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', marginTop: 4 }}>
                   {currentBlocSec > 0 ? 'restant' : 'écoulé'}
                 </div>
               </div>
             </div>
             {/* Allure cible */}
             {session.allures?.slice(0,1).map((a,i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '8px 16px', marginBottom: 12 }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '8px 16px', marginBottom: 12 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: a.dot }}/>
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{a.label}</span>
-                <span style={{ fontSize: 16, fontFamily: 'DM Mono, monospace', fontWeight: 800, color: '#fff', marginLeft: 'auto' }}>{a.val}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{a.label}</span>
+                <span style={{ fontSize: 16, fontFamily: 'DM Mono, monospace', fontWeight: 800, color: 'var(--text-primary)', marginLeft: 'auto' }}>{a.val}</span>
               </div>
             ))}
             {/* Blocs progress */}
             <div style={{ display: 'flex', gap: 3 }}>
               {blocs.map((b, i) => (
-                <div key={i} style={{ flex: 1, height: 4, borderRadius: 99, background: i < blocIdx ? b.color : i === blocIdx ? `${b.color}60` : 'rgba(255,255,255,0.08)', transition: 'all 0.3s' }}/>
+                <div key={i} style={{ flex: 1, height: 4, borderRadius: 99, background: i < blocIdx ? b.color : i === blocIdx ? `${b.color}60` : 'var(--bg-input)', transition: 'all 0.3s' }}/>
               ))}
             </div>
           </div>
         ) : (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 72, fontWeight: 900, fontFamily: 'DM Mono, monospace', color: active ? '#FF0040' : 'rgba(255,255,255,0.6)', lineHeight: 1, transition: 'color 0.3s' }}>{fmt(elapsed)}</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace', marginTop: 8, letterSpacing: '0.1em' }}>TEMPS ÉCOULÉ</div>
+            <div style={{ fontSize: 72, fontWeight: 900, fontFamily: 'DM Mono, monospace', color: active ? 'var(--accent)' : 'var(--text-secondary)', lineHeight: 1, transition: 'color 0.3s' }}>{fmt(elapsed)}</div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace', marginTop: 8, letterSpacing: '0.1em' }}>TEMPS ÉCOULÉ</div>
             <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {session.allures?.map((a,i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '8px 16px' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '8px 16px' }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: a.dot }}/>
-                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{a.label}</span>
-                  <span style={{ fontSize: 16, fontFamily: 'DM Mono, monospace', fontWeight: 800, color: '#fff', marginLeft: 'auto' }}>{a.val}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{a.label}</span>
+                  <span style={{ fontSize: 16, fontFamily: 'DM Mono, monospace', fontWeight: 800, color: 'var(--text-primary)', marginLeft: 'auto' }}>{a.val}</span>
                 </div>
               ))}
             </div>
@@ -451,18 +441,18 @@ export default function LiveSessionMode({ session, onComplete, onClose }) {
       {/* Controls */}
       <div style={{ padding: '0 20px', paddingBottom: 'calc(env(safe-area-inset-bottom, 16px) + 16px)', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {/* Timer total */}
-        <div style={{ textAlign: 'center', fontSize: 13, fontFamily: 'DM Mono, monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+        <div style={{ textAlign: 'center', fontSize: 13, fontFamily: 'DM Mono, monospace', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
           {fmt(elapsed)} total
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={toggle} style={{ flex: 2, height: 56, borderRadius: 16, border: `1px solid ${active ? 'rgba(245,158,11,0.3)' : accent}30`, background: active ? 'rgba(245,158,11,0.15)' : `${accent}20`, color: active ? '#f59e0b' : accent, fontSize: active ? 20 : 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'DM Mono, monospace', fontWeight: 800, letterSpacing: '0.06em' }}>
+          <button onClick={toggle} className="btn-ripple" style={{ flex: 2, height: 56, borderRadius: 'var(--radius-lg)', border: active ? '1px solid var(--btn-ghost-border)' : 'none', background: active ? 'var(--btn-ghost-bg)' : 'var(--accent)', color: active ? 'var(--text-primary)' : '#fff', fontSize: active ? 18 : 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'DM Mono, monospace', fontWeight: 800, letterSpacing: '0.06em' }}>
             {active ? '⏸ PAUSE' : elapsed === 0 ? '▶ DÉMARRER' : '▶ REPRENDRE'}
           </button>
           {blocs && blocIdx < blocs.length - 1 && (
-            <button onClick={nextBloc} style={{ flex: 1, height: 56, borderRadius: 16, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', fontSize: 11, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.06em' }}>SUIVANT →</button>
+            <button onClick={nextBloc} style={{ flex: 1, height: 56, borderRadius: 'var(--radius-lg)', background: 'var(--btn-ghost-bg)', border: '1px solid var(--btn-ghost-border)', color: 'var(--text-secondary)', fontSize: 11, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.06em' }}>SUIVANT →</button>
           )}
         </div>
-        <button onClick={finish} style={{ width: '100%', height: 48, borderRadius: 14, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#22c55e', fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em' }}>
+        <button onClick={finish} className="btn-ripple" style={{ width: '100%', height: 48, borderRadius: 'var(--radius-md)', background: 'var(--accent)', border: 'none', color: '#fff', fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'DM Mono, monospace', letterSpacing: '0.08em' }}>
           ✓ TERMINER
         </button>
       </div>

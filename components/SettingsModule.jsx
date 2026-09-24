@@ -12,19 +12,19 @@ function saveSettings(s) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
 }
 
-function Toggle({ value, onChange, color = '#FF0040' }) {
+function Toggle({ value, onChange, color = 'var(--accent)' }) {
   return (
-    <div onClick={() => onChange(!value)} style={{ width: 44, height: 26, borderRadius: 99, background: value ? color : 'rgba(255,255,255,0.1)', cursor: 'pointer', position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
+    <div onClick={() => onChange(!value)} style={{ width: 44, height: 26, borderRadius: 'var(--radius-pill)', background: value ? color : 'rgba(255,255,255,0.1)', cursor: 'pointer', position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
       <div style={{ position: 'absolute', top: 3, left: value ? 21 : 3, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'left 0.3s', boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }}/>
     </div>
   );
 }
 
-function SegmentedControl({ options, value, onChange, color = '#FF0040' }) {
+function SegmentedControl({ options, value, onChange, color = 'var(--accent)' }) {
   return (
-    <div style={{ display: 'flex', background: 'var(--bg-input)', borderRadius: 12, padding: 3, gap: 2 }}>
+    <div style={{ display: 'flex', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', padding: 3, gap: 2 }}>
       {options.map(([v, l]) => (
-        <button key={v} onClick={() => onChange(v)} style={{ flex: 1, padding: '8px 4px', borderRadius: 9, border: 'none', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontSize: 11, fontWeight: 700, transition: 'all 0.2s', background: value === v ? color : 'transparent', color: value === v ? '#fff' : 'var(--text-muted)' }}>{l}</button>
+        <button key={v} onClick={() => onChange(v)} style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontFamily: 'Syne, sans-serif', fontSize: 11, fontWeight: 700, transition: 'all 0.2s', background: value === v ? color : 'transparent', color: value === v ? '#fff' : 'var(--text-muted)' }}>{l}</button>
       ))}
     </div>
   );
@@ -33,8 +33,8 @@ function SegmentedControl({ options, value, onChange, color = '#FF0040' }) {
 function Section({ title, children }) {
   return (
     <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10, paddingLeft: 4 }}>{title}</div>
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, overflow: 'hidden' }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'DM Mono, monospace', marginBottom: 10, paddingLeft: 4 }}>{title}</div>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
         {children}
       </div>
     </div>
@@ -56,12 +56,12 @@ function Row({ label, sub, children, last }) {
 function NumberInput({ value, onChange, min, max, unit }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <button onClick={() => onChange(Math.max(min, value - 1))} style={{ width: 28, height: 28, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+      <button onClick={() => onChange(Math.max(min, value - 1))} style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
       <div style={{ minWidth: 50, textAlign: 'center' }}>
         <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}</span>
         <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 3 }}>{unit}</span>
       </div>
-      <button onClick={() => onChange(Math.min(max, value + 1))} style={{ width: 28, height: 28, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+      <button onClick={() => onChange(Math.min(max, value + 1))} style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
     </div>
   );
 }
@@ -111,7 +111,7 @@ export default function SettingsModule({ onBack, user, onSync }) {
             <Icon name="arrow_left" size={22} color="var(--text-secondary)" />
           </button>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em' }}>Paramètres</div>
+            <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: '-0.02em' }}>Paramètres</div>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{user?.name || 'Mon profil'}</div>
           </div>
         </div>
@@ -148,7 +148,6 @@ export default function SettingsModule({ onBack, user, onSync }) {
               options={[['beginner','Déb.'],['intermediate','Inter.'],['advanced','Avancé']]}
               value={s.level}
               onChange={v => update('level', v)}
-              color="#6366f1"
             />
           </Row>
         </Section>
@@ -173,7 +172,6 @@ export default function SettingsModule({ onBack, user, onSync }) {
               options={[['metric','Métrique (kg, km)'],['imperial','Impérial (lb, mi)']]}
               value={s.units}
               onChange={v => update('units', v)}
-              color="#f59e0b"
             />
           </div>
           <div style={{ padding: '14px 16px' }}>
@@ -182,7 +180,6 @@ export default function SettingsModule({ onBack, user, onSync }) {
               options={[['auto','🌗 Auto'],['dark','🌙 Sombre'],['light','☀️ Clair']]}
               value={s.theme}
               onChange={v => update('theme', v)}
-              color="#a78bfa"
             />
           </div>
         </Section>
@@ -195,7 +192,6 @@ export default function SettingsModule({ onBack, user, onSync }) {
               options={[['inspirant','🌟 Inspirant'],['goggins','💀 Goggins mode']]}
               value={s.motivationTone || 'inspirant'}
               onChange={v => update('motivationTone', v)}
-              color={s.motivationTone === 'goggins' ? '#FF0040' : '#6366f1'}
             />
             <div style={{ fontSize:11, color:'var(--text-muted)', marginTop:8, lineHeight:1.5 }}>
               {s.motivationTone === 'goggins' 
@@ -211,15 +207,15 @@ export default function SettingsModule({ onBack, user, onSync }) {
             <Toggle value={s.notifTraining} onChange={v => update('notifTraining', v)} />
           </Row>
           <Row label="Hydratation" sub="Rappels toutes les 2h">
-            <Toggle value={s.notifHydration} onChange={v => update('notifHydration', v)} color="#38bdf8" />
+            <Toggle value={s.notifHydration} onChange={v => update('notifHydration', v)} />
           </Row>
           <Row label="Récupération" sub="Conseils post-séance" last>
-            <Toggle value={s.notifRecovery} onChange={v => update('notifRecovery', v)} color="#22c55e" />
+            <Toggle value={s.notifRecovery} onChange={v => update('notifRecovery', v)} />
           </Row>
         </Section>
 
         {/* Save */}
-        <button onClick={handleSave} style={{ width: '100%', background: saved ? '#22c55e' : '#FF0040', border: 'none', borderRadius: 16, padding: '16px', fontSize: 14, fontWeight: 800, color: '#fff', cursor: 'pointer', fontFamily: 'Syne, sans-serif', transition: 'background 0.3s', letterSpacing: '0.02em' }}>
+        <button onClick={handleSave} style={{ width: '100%', background: saved ? '#22c55e' : 'var(--accent)', border: 'none', borderRadius: 'var(--radius-md)', padding: '16px', fontSize: 14, fontWeight: 800, color: '#fff', cursor: 'pointer', fontFamily: 'Syne, sans-serif', transition: 'background 0.3s', letterSpacing: '0.02em' }}>
           {saved ? '✓ Paramètres sauvegardés' : 'Enregistrer les modifications'}
         </button>
 

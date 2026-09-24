@@ -61,8 +61,8 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
         <span style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'DM Mono, monospace' }}>{label}</span>
         <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'DM Mono, monospace' }}>{value}{unit}</span>
       </div>
-      <div style={{ height: 7, background: 'var(--progress-track)', borderRadius: 99, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 99, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)' }}/>
+      <div style={{ height: 6, background: 'var(--progress-track)', borderRadius: 999, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${w}%`, background: color, borderRadius: 999, transition: 'width 1.3s cubic-bezier(0.22,1,0.36,1)' }}/>
       </div>
     </div>
   );
@@ -71,25 +71,19 @@ function MacroBar({ label, value, max, color, unit = 'g' }) {
 // ── Meal card ────────────────────────────────────────────────────────────────
 function MealCard({ meal, tag, accent, onClick }) {
   return (
-    <div onClick={onClick} style={{ position:'relative', borderRadius:16, overflow:'hidden', border:`1px solid ${accent}20`, background:`linear-gradient(135deg, ${accent}05 0%, transparent 60%)`, cursor:'pointer' }}>
-      {/* Scan sweep */}
-      <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:`linear-gradient(90deg, transparent, ${accent}04, transparent)`, animation:'scanLine 14s ease-in-out infinite 1s', zIndex:1, pointerEvents:'none', left:0 }}/>
-      {/* Terminal header */}
-      <div style={{ padding:'8px 14px', borderBottom:`1px solid ${accent}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
-        <div style={{ display:'flex', gap:3 }}>
-          <div style={{ width:4, height:4, borderRadius:'50%', background:`${accent}60` }}/>
-          <div style={{ width:4, height:4, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-          <div style={{ width:4, height:4, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
+    <div onClick={onClick} className="card-hover" style={{ borderRadius:14, overflow:'hidden', border:'1px solid var(--border)', background:'var(--bg-card)', cursor:'pointer' }}>
+      <div style={{ padding:'12px 14px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8 }}>
+        <div style={{ width:28, height:28, borderRadius:8, background:`${accent}14`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+          <Icon name="nutrition" size={14} color={accent} />
         </div>
-        <div style={{ fontSize:7, fontFamily:'DM Mono, monospace', color:`${accent}70`, letterSpacing:'0.12em' }}>MEAL.SYS · NUTRITION</div>
-        <span style={{ marginLeft:'auto', fontSize:7, fontWeight:700, padding:'2px 6px', borderRadius:4, background:`${accent}15`, color:accent, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>{tag}</span>
+        <span style={{ fontSize:14, fontWeight:800, color:'var(--text-primary)', letterSpacing:'-0.02em', flex:1, minWidth:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{meal.name}</span>
+        <span style={{ flexShrink:0, fontSize:9, fontWeight:700, padding:'3px 8px', borderRadius:6, background:`${accent}14`, color:accent, textTransform:'uppercase', letterSpacing:'0.06em' }}>{tag}</span>
       </div>
-      <div style={{ padding:'12px 14px', position:'relative', zIndex:2 }}>
-        <div style={{ fontSize:14, fontWeight:800, color:'var(--text-primary)', marginBottom:4, letterSpacing:'-0.02em' }}>{meal.name}</div>
-        <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:12, lineHeight:1.5, fontFamily:'DM Mono, monospace' }}>{meal.desc}</div>
+      <div style={{ padding:'12px 14px' }}>
+        <div style={{ fontSize:11, color:'var(--text-muted)', marginBottom:12, lineHeight:1.5 }}>{meal.desc}</div>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:6 }}>
           {[['Kcal', meal.kcal, 'var(--text-primary)'], ['Prot', `${meal.prot}g`, '#FF0040'], ['Carbs', `${meal.carbs}g`, accent], ['Lip', `${meal.fat}g`, '#a78bfa']].map(([l, v, c]) => (
-            <div key={l} style={{ position:'relative', background:`rgba(255,255,255,0.02)`, border:`1px solid ${c === 'var(--text-primary)' ? 'rgba(255,255,255,0.08)' : c}18`, borderRadius:8, padding:'8px 4px', textAlign:'center', overflow:'hidden' }}>
+            <div key={l} style={{ background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:10, padding:'8px 4px', textAlign:'center' }}>
               <div style={{ fontSize:8, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.08em', fontFamily:'DM Mono, monospace', marginBottom:3 }}>{l}</div>
               <div style={{ fontSize:14, fontWeight:900, color:c, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{v}</div>
             </div>
@@ -101,12 +95,13 @@ function MealCard({ meal, tag, accent, onClick }) {
 }
 
 // ── Section header ───────────────────────────────────────────────────────────
-function SectionHeader({ label, color }) {
+function SectionHeader({ label, color, icon }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${color}60, transparent)` }}/>
-      <span style={{ fontSize: 9, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.2em', fontFamily: 'DM Mono, monospace', whiteSpace: 'nowrap' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(270deg, ${color}60, transparent)` }}/>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+      <div style={{ width:26, height:26, borderRadius:8, background:`${color}14`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        {icon}
+      </div>
+      <span className="section-title" style={{ fontSize: 15 }}>{label}</span>
     </div>
   );
 }
@@ -313,67 +308,56 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
   return (
     <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', paddingBottom: 100 }}>
 
-      {/* Background */}
-      <div style={{ position: 'fixed', top: 0, inset: 0, pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{ position: 'absolute', top: -100, left: '20%', width: 300, height: 300, borderRadius: '50%', background: `radial-gradient(circle, ${waterColor}10 0%, transparent 70%)`, filter: 'blur(40px)' }}/>
-        <div style={{ position: 'absolute', top: 50, right: '10%', width: 250, height: 250, borderRadius: '50%', background: `radial-gradient(circle, ${energyColor}10 0%, transparent 70%)`, filter: 'blur(40px)' }}/>
-      </div>
+      <div style={{ padding: '16px 16px 0' }}>
 
-      <div style={{ position: 'relative', zIndex: 1, padding: '16px 16px 0' }}>
-
-        {/* Terminal header */}
-        <div style={{ position:'relative', borderRadius:16, overflow:'hidden', marginBottom:16, border:'1px solid rgba(56,189,248,0.2)', background:'linear-gradient(135deg, rgba(56,189,248,0.04) 0%, transparent 60%)' }}>
-          <div style={{ padding:'10px 14px', display:'flex', alignItems:'center', gap:8 }}>
-            <div style={{ display:'flex', gap:4 }}>
-              <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(255,0,64,0.5)' }}/>
-              <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(245,158,11,0.5)' }}/>
-              <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(34,197,94,0.5)' }}/>
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:12, marginBottom:20, flexWrap:'wrap' }}>
+          <div>
+            <div className="eyebrow" style={{ marginBottom:6 }}>Nutrition</div>
+            <div style={{ fontSize:26, fontWeight:900, letterSpacing:'-0.03em', color:'var(--text-primary)' }}>
+              {isIntense ? 'Post-intensif' : isPostRun ? 'Post-entraînement' : 'Jour de repos'}
             </div>
-            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(56,189,248,0.6)', letterSpacing:'0.15em' }}>PACEPRO · NUTRITION LAB</div>
-            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:6 }}>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:energyColor, boxShadow:`0 0 6px ${energyColor}` }}/>
-              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:energyColor, letterSpacing:'0.1em', textTransform:'uppercase' }}>{isIntense ? 'POST-INTENSIF' : isPostRun ? 'POST-RUN' : 'REPOS'}</span>
-              {isPerte && <span style={{ fontSize:8, padding:'1px 6px', borderRadius:4, background:'rgba(249,115,22,0.15)', color:'#f97316', fontFamily:'DM Mono, monospace', fontWeight:700 }}>-{deficit} kcal</span>}
-              <span style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{kcal} kcal/j</span>
-            </div>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+            {isPerte && <span style={{ fontSize:10, padding:'4px 9px', borderRadius:999, background:'var(--chip-bg)', border:'1px solid var(--chip-border)', color:'var(--text-secondary)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>-{deficit} kcal</span>}
+            <span style={{ fontSize:12, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{kcal} kcal/j</span>
           </div>
         </div>
 
         {/* ── SCANNER PRODUITS ── */}
         <div style={{ marginBottom:14 }}>
-          <button onClick={() => onOpenScanner && onOpenScanner()} style={{ width:'100%', position:'relative', overflow:'hidden', borderRadius:14, border:'1px solid rgba(255,0,64,0.25)', background:'linear-gradient(135deg,rgba(255,0,64,0.1),rgba(255,0,64,0.04))', padding:'14px 18px', cursor:'pointer', display:'flex', alignItems:'center', gap:12, fontFamily:'Syne, sans-serif' }}>
-            <div style={{ width:38, height:38, borderRadius:10, background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#FF0040" strokeWidth={2} strokeLinecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="21" y2="19"/><line x1="16" y1="16" x2="16" y2="21"/></svg>
+          <button onClick={() => onOpenScanner && onOpenScanner()} className="card-hover btn-ripple" style={{ width:'100%', borderRadius:14, border:'1px solid var(--border)', background:'var(--bg-card)', padding:'14px 16px', cursor:'pointer', display:'flex', alignItems:'center', gap:12, fontFamily:'Syne, sans-serif' }}>
+            <div className="icon-tile" style={{ background:'var(--accent-soft)' }}>
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth={2} strokeLinecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="21" y2="19"/><line x1="16" y1="16" x2="16" y2="21"/></svg>
             </div>
             <div style={{ flex:1, textAlign:'left' }}>
-              <div style={{ fontSize:14, fontWeight:800, color:'#fff', marginBottom:2 }}>Scanner un produit</div>
-              <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>Code barre → Macros automatiques</div>
+              <div style={{ fontSize:14, fontWeight:800, color:'var(--text-primary)', marginBottom:2 }}>Scanner un produit</div>
+              <div style={{ fontSize:11, color:'var(--text-muted)' }}>Code-barre → macros automatiques</div>
             </div>
-            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="rgba(255,0,64,0.5)" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
 
         {/* Produits scannés aujourd'hui */}
         {scannedItems.filter(i => i.date === new Date().toLocaleDateString('fr-FR')).length > 0 && (
-          <div style={{ marginBottom:14, position:'relative', borderRadius:16, overflow:'hidden', border:'1px solid rgba(255,255,255,0.06)', background:'rgba(255,255,255,0.02)' }}>
-            <div style={{ padding:'10px 14px', borderBottom:'1px solid rgba(255,255,255,0.05)', display:'flex', alignItems:'center', gap:8 }}>
-              <div style={{ width:3, height:14, background:'#FF0040', borderRadius:2, boxShadow:'0 0 6px #FF0040' }}/>
-              <div style={{ fontSize:9, fontWeight:700, color:'rgba(255,255,255,0.5)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.12em' }}>Scannés aujourd'hui</div>
-              <div style={{ marginLeft:'auto', fontSize:9, color:'#FF0040', fontFamily:'DM Mono, monospace' }}>
+          <div className="card" style={{ marginBottom:14, padding:0, borderRadius:14, overflow:'hidden' }}>
+            <div style={{ padding:'10px 14px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8 }}>
+              <span className="eyebrow">Scannés aujourd'hui</span>
+              <div style={{ marginLeft:'auto', fontSize:11, color:'var(--text-secondary)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>
                 {scannedItems.filter(i => i.date === new Date().toLocaleDateString('fr-FR')).reduce((s,i) => s+i.kcal, 0)} kcal
               </div>
             </div>
             <div style={{ padding:'8px' }}>
               {scannedItems.filter(i => i.date === new Date().toLocaleDateString('fr-FR')).map((item, idx) => (
-                <div key={idx} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 8px', borderRadius:10, marginBottom:4, background:'rgba(255,255,255,0.02)' }}>
+                <div key={idx} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 8px', borderRadius:10, marginBottom:4, background:'var(--bg-input)' }}>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:11, fontWeight:700, color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.name}</div>
-                    <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace' }}>{item.desc}</div>
+                    <div style={{ fontSize:11, fontWeight:700, color:'var(--text-primary)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.name}</div>
+                    <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace' }}>{item.desc}</div>
                   </div>
                   <div style={{ display:'flex', gap:8, flexShrink:0 }}>
-                    {[['Kcal',item.kcal,'#fff'],['P',`${item.prot}g`,'#FF0040'],['C',`${item.carbs}g`,'#60a5fa'],['L',`${item.fat}g`,'#a78bfa']].map(([l,v,c]) => (
+                    {[['Kcal',item.kcal,'var(--text-primary)'],['P',`${item.prot}g`,'#FF0040'],['C',`${item.carbs}g`,'#60a5fa'],['L',`${item.fat}g`,'#a78bfa']].map(([l,v,c]) => (
                       <div key={l} style={{ textAlign:'center' }}>
-                        <div style={{ fontSize:7, color:'rgba(255,255,255,0.25)', fontFamily:'DM Mono, monospace', textTransform:'uppercase' }}>{l}</div>
+                        <div style={{ fontSize:7, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase' }}>{l}</div>
                         <div style={{ fontSize:11, fontWeight:800, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
                       </div>
                     ))}
@@ -382,7 +366,7 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
                     const updated = scannedItems.filter((_,i) => i !== scannedItems.indexOf(item));
                     setScannedItems(updated);
                     try { localStorage.setItem('pp_scanned_items', JSON.stringify(updated)); } catch {}
-                  }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.2)', cursor:'pointer', fontSize:14, padding:'2px 4px' }}>×</button>
+                  }} style={{ background:'none', border:'none', color:'var(--text-muted)', cursor:'pointer', fontSize:14, padding:'2px 4px' }}>×</button>
                 </div>
               ))}
             </div>
@@ -390,99 +374,79 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
         )}
 
         {/* ── HYDRATATION ── */}
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-          <div style={{ width:3, height:14, background:waterColor, borderRadius:2, boxShadow:`0 0 8px ${waterColor}` }}/>
-          <div style={{ fontSize:9, fontWeight:700, color:waterColor, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Hydratation</div>
-        </div>
-        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${waterColor}20`, background:`linear-gradient(135deg, ${waterColor}05 0%, transparent 60%)` }}>
-          {/* Scan sweep */}
-          <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:`linear-gradient(90deg, transparent, ${waterColor}05, transparent)`, animation:'scanLine 10s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
-          {/* Terminal header */}
-          <div style={{ padding:'10px 16px', borderBottom:`1px solid ${waterColor}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
-            <div style={{ display:'flex', gap:4 }}>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:`${waterColor}60` }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
-            </div>
-            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${waterColor}70`, letterSpacing:'0.15em' }}>HYDRATION.SYS · MONITORING</div>
-            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5 }}>
-              <div style={{ width:4, height:4, borderRadius:'50%', background: waterPct >= 100 ? '#22c55e' : waterPct > 50 ? waterColor : '#f59e0b', boxShadow:`0 0 5px ${waterPct >= 100 ? '#22c55e' : waterPct > 50 ? waterColor : '#f59e0b'}` }}/>
-              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:waterColor, letterSpacing:'0.1em' }}>{Math.round(waterPct)}%</span>
+        <SectionHeader label="Hydratation" color={waterColor} icon={<svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={waterColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 2s7 8 7 13a7 7 0 01-14 0c0-5 7-13 7-13z"/></svg>} />
+        <div className="card" style={{ marginBottom:16, padding:0, borderRadius:18, overflow:'hidden' }}>
+          {/* Header */}
+          <div style={{ padding:'12px 16px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8 }}>
+            <span style={{ fontSize:13, fontWeight:800, color:'var(--text-primary)' }}>Suivi hydrique</span>
+            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:6 }}>
+              <div style={{ width:6, height:6, borderRadius:'50%', background: waterPct >= 100 ? '#22c55e' : waterPct > 50 ? waterColor : '#f59e0b' }}/>
+              <span style={{ fontSize:11, fontFamily:'DM Mono, monospace', color:'var(--text-secondary)' }}>{Math.round(waterPct)}%</span>
             </div>
           </div>
-          <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
+          <div style={{ padding:'16px' }}>
             {/* Progress arc + value */}
             <div style={{ display:'flex', gap:16, alignItems:'center', marginBottom:16 }}>
               <div style={{ width:90, height:90, flexShrink:0, position:'relative' }}>
                 {/* Arc SVG */}
                 <svg viewBox="0 0 90 90" style={{ width:'100%', height:'100%', transform:'rotate(-90deg)' }}>
-                  <circle cx="45" cy="45" r="38" fill="none" stroke={`${waterColor}15`} strokeWidth="6"/>
+                  <circle cx="45" cy="45" r="38" fill="none" stroke="var(--progress-track)" strokeWidth="6"/>
                   <circle cx="45" cy="45" r="38" fill="none" stroke={waterColor} strokeWidth="6"
                     strokeDasharray={`${2 * Math.PI * 38}`}
                     strokeDashoffset={`${2 * Math.PI * 38 * (1 - waterPct/100)}`}
                     strokeLinecap="round"
-                    style={{ transition:'stroke-dashoffset 1s cubic-bezier(0.22,1,0.36,1)', filter:`drop-shadow(0 0 6px ${waterColor})` }}/>
+                    style={{ transition:'stroke-dashoffset 1s cubic-bezier(0.22,1,0.36,1)' }}/>
                 </svg>
                 <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
-                  <div style={{ fontSize:18, fontWeight:900, color:waterColor, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{(water/1000).toFixed(1)}</div>
-                  <div style={{ fontSize:7, color:`${waterColor}80`, fontFamily:'DM Mono, monospace', marginTop:2 }}>litres</div>
+                  <div style={{ fontSize:18, fontWeight:900, color:'var(--text-primary)', fontFamily:'DM Mono, monospace', lineHeight:1 }}>{(water/1000).toFixed(1)}</div>
+                  <div style={{ fontSize:7, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', marginTop:2 }}>litres</div>
                 </div>
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6 }}>Objectif journalier</div>
+                <div className="eyebrow" style={{ marginBottom:6 }}>Objectif journalier</div>
                 <div style={{ fontSize:22, fontWeight:900, color:'var(--text-primary)', fontFamily:'DM Mono, monospace', lineHeight:1, marginBottom:4 }}>{(waterGoalMl/1000).toFixed(1)}<span style={{ fontSize:11, color:'var(--text-muted)', fontWeight:400 }}>L</span></div>
-                <div style={{ height:3, background:`${waterColor}15`, borderRadius:99, overflow:'hidden', marginBottom:12 }}>
-                  <div style={{ height:'100%', width:`${waterPct}%`, background:`linear-gradient(90deg, ${waterColor}80, ${waterColor})`, borderRadius:99, transition:'width 1s cubic-bezier(0.22,1,0.36,1)', boxShadow:`0 0 8px ${waterColor}60` }}/>
+                <div style={{ height:4, background:'var(--progress-track)', borderRadius:999, overflow:'hidden', marginBottom:12 }}>
+                  <div style={{ height:'100%', width:`${waterPct}%`, background:waterColor, borderRadius:999, transition:'width 1s cubic-bezier(0.22,1,0.36,1)' }}/>
                 </div>
                 <div style={{ display:'flex', gap:6 }}>
                   {[[250,'+ 25cl'],[500,'+ 50cl']].map(([ml, label]) => (
-                    <button key={ml} onClick={() => addWater(ml)} style={{ flex:1, background:`${waterColor}12`, border:`1px solid ${waterColor}30`, borderRadius:8, padding:'9px 6px', fontSize:10, fontWeight:700, color:waterColor, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.05em', transition:'all 0.15s' }}>{label}</button>
+                    <button key={ml} onClick={() => addWater(ml)} style={{ flex:1, background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', borderRadius:10, padding:'9px 6px', fontSize:10, fontWeight:700, color:'var(--text-primary)', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.05em' }}>{label}</button>
                   ))}
-                  <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:8, padding:'9px 10px', fontSize:11, color:'var(--text-muted)', cursor:'pointer', fontFamily:'inherit' }}>↺</button>
+                  <button onClick={() => { setWater(0); try { localStorage.setItem('pp_water','0'); } catch {} }} style={{ background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:10, padding:'9px 10px', fontSize:11, color:'var(--text-muted)', cursor:'pointer', fontFamily:'inherit' }}>↺</button>
                 </div>
               </div>
             </div>
             {/* Stats row */}
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
               {[
-                { label:"Bu aujourd'hui", value:`${water}ml`, color:waterColor },
-                { label:'Restant', value:`${Math.max(0,waterGoalMl-water)}ml`, color: water >= waterGoalMl ? '#22c55e' : '#f59e0b' },
-                { label:'Statut', value: waterPct >= 100 ? 'Hydraté' : waterPct > 60 ? 'Bon' : 'À boire', color: waterPct >= 100 ? '#22c55e' : waterPct > 60 ? waterColor : '#f59e0b' },
-              ].map(({ label, value, color }) => (
-                <div key={label} style={{ background:`rgba(255,255,255,0.02)`, border:`1px solid ${color}15`, borderRadius:10, padding:'8px', textAlign:'center' }}>
-                  <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{label}</div>
-                  <div style={{ fontSize:11, fontWeight:800, color, fontFamily:'DM Mono, monospace' }}>{value}</div>
+                { label:"Bu aujourd'hui", value:`${water}ml` },
+                { label:'Restant', value:`${Math.max(0,waterGoalMl-water)}ml` },
+                { label:'Statut', value: waterPct >= 100 ? 'Hydraté' : waterPct > 60 ? 'Bon' : 'À boire' },
+              ].map(({ label, value }) => (
+                <div key={label} style={{ background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:10, padding:'8px', textAlign:'center' }}>
+                  <div className="eyebrow" style={{ fontSize:8, marginBottom:4 }}>{label}</div>
+                  <div style={{ fontSize:11, fontWeight:800, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{value}</div>
                 </div>
               ))}
             </div>
             {isIntense && (
-              <div style={{ marginTop:10, background:`${waterColor}08`, border:`1px solid ${waterColor}20`, borderRadius:10, padding:'8px 12px', display:'flex', alignItems:'center', gap:8 }}>
-                <div style={{ width:5, height:5, borderRadius:'50%', background:waterColor, boxShadow:`0 0 5px ${waterColor}`, flexShrink:0 }}/>
-                <span style={{ fontSize:10, color:waterColor, lineHeight:1.5, fontFamily:'DM Mono, monospace' }}>Ajoute des électrolytes post-effort pour optimiser la récupération.</span>
+              <div style={{ marginTop:10, background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:10, padding:'8px 12px', display:'flex', alignItems:'center', gap:8 }}>
+                <div style={{ width:5, height:5, borderRadius:'50%', background:waterColor, flexShrink:0 }}/>
+                <span style={{ fontSize:10, color:'var(--text-secondary)', lineHeight:1.5, fontFamily:'DM Mono, monospace' }}>Ajoute des électrolytes post-effort pour optimiser la récupération.</span>
               </div>
             )}
           </div>
         </div>
 
         {/* ── ÉNERGIE & MACROS ── */}
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-          <div style={{ width:3, height:14, background:energyColor, borderRadius:2, boxShadow:`0 0 8px ${energyColor}` }}/>
-          <div style={{ fontSize:9, fontWeight:700, color:energyColor, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Énergie & Macros</div>
-        </div>
-        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', marginBottom:16, border:`1px solid ${energyColor}20`, background:`linear-gradient(135deg, ${energyColor}05 0%, transparent 60%)` }}>
-          {/* Scan sweep */}
-          <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:`linear-gradient(90deg, transparent, ${energyColor}04, transparent)`, animation:'scanLine 12s ease-in-out infinite 2s', zIndex:1, pointerEvents:'none', left:0 }}/>
-          {/* Terminal header */}
-          <div style={{ padding:'10px 16px', borderBottom:`1px solid ${energyColor}15`, display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
-            <div style={{ display:'flex', gap:4 }}>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:`${energyColor}60` }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
-            </div>
-            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${energyColor}70`, letterSpacing:'0.15em' }}>ENERGY.SYS · METABOLIC ANALYSIS</div>
-            <div style={{ marginLeft:'auto', fontSize:8, fontFamily:'DM Mono, monospace', color:energyColor }}>{kcal} kcal/j</div>
+        <SectionHeader label="Énergie & macros" color={energyColor} icon={<svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke={energyColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>} />
+        <div className="card" style={{ marginBottom:16, padding:0, borderRadius:18, overflow:'hidden' }}>
+          {/* Header */}
+          <div style={{ padding:'12px 16px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8 }}>
+            <span style={{ fontSize:13, fontWeight:800, color:'var(--text-primary)' }}>Bilan du jour</span>
+            <span style={{ marginLeft:'auto', fontSize:11, fontFamily:'DM Mono, monospace', color:'var(--text-secondary)' }}>{kcal} kcal/j</span>
           </div>
-          <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
+          <div style={{ padding:'16px' }}>
             {/* KPI row */}
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:16 }}>
               {[
@@ -490,23 +454,19 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
                 { label:'Protéines', value:protein, unit:'g', color:'#FF0040', max:300 },
                 { label:'Lipides', value:fat, unit:'g', color:'#a78bfa', max:150 },
               ].map(({ label, value, unit, color, max }) => (
-                <div key={label} style={{ position:'relative', borderRadius:12, border:`1px solid ${color}20`, background:`${color}06`, padding:'10px 8px', textAlign:'center', overflow:'hidden' }}>
-                  <div style={{ position:'absolute', bottom:-6, right:-6, width:30, height:30, borderRadius:'50%', background:`radial-gradient(circle, ${color}20, transparent)`, pointerEvents:'none' }}/>
+                <div key={label} style={{ borderRadius:12, border:'1px solid var(--border)', background:'var(--bg-input)', padding:'10px 8px', textAlign:'center' }}>
                   <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{label}</div>
                   <div style={{ fontSize:20, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
-                  <div style={{ fontSize:7, color:`${color}80`, fontFamily:'DM Mono, monospace', marginBottom:6 }}>{unit}</div>
-                  <div style={{ height:2, background:`${color}15`, borderRadius:99, overflow:'hidden' }}>
-                    <div style={{ height:'100%', width:`${Math.min(value/max*100,100)}%`, background:color, borderRadius:99, boxShadow:`0 0 6px ${color}60` }}/>
+                  <div style={{ fontSize:7, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', marginBottom:6 }}>{unit}</div>
+                  <div style={{ height:3, background:'var(--progress-track)', borderRadius:999, overflow:'hidden' }}>
+                    <div style={{ height:'100%', width:`${Math.min(value/max*100,100)}%`, background:color, borderRadius:999 }}/>
                   </div>
                 </div>
               ))}
             </div>
             {/* Conseil nutrition */}
-            <div style={{ marginBottom:activity?12:0, background:'rgba(255,255,255,0.02)', borderRadius:12, padding:'10px 14px', border:`1px solid ${energyColor}15` }}>
-              <div style={{ fontSize:8, color:energyColor, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
-                <div style={{ width:4, height:4, borderRadius:'50%', background:energyColor, boxShadow:`0 0 4px ${energyColor}` }}/>
-                CONSEIL NUTRITION
-              </div>
+            <div style={{ marginBottom:activity?12:0, background:'var(--bg-input)', borderRadius:12, padding:'12px 14px', border:'1px solid var(--border)' }}>
+              <div className="eyebrow" style={{ marginBottom:6 }}>Conseil nutrition</div>
               <div style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.7, minHeight:32, fontFamily:'DM Mono, monospace' }}>
                 {status === 'loading' ? '> Analyse en cours...' : typedAI}
                 {status === 'done' && typedAI.length < aiText.length && <span style={{ opacity:0.5 }}>_</span>}
@@ -520,7 +480,7 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
               </button>
             )}
             {expanded && activity && (
-              <div style={{ background:'rgba(255,255,255,0.02)', borderRadius:10, padding:'10px 12px', marginBottom:0, border:`1px solid ${energyColor}10` }}>
+              <div style={{ background:'var(--bg-input)', borderRadius:10, padding:'10px 12px', marginBottom:0, border:'1px solid var(--border)' }}>
                 {[
                   ['Activité', activity.name],
                   ['Distance', `${distKm.toFixed(1)} km`],
@@ -529,7 +489,7 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
                   ['FC moy.', activity.average_heartrate ? `${Math.round(activity.average_heartrate)} bpm` : '—'],
                   ['Calories', activity.calories ? `${activity.calories} kcal` : '—'],
                 ].map(([k, v]) => (
-                  <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'4px 0', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                  <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'4px 0', borderBottom:'1px solid var(--border)' }}>
                     <span style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>{k}</span>
                     <span style={{ fontSize:10, color:'var(--text-primary)', fontFamily:'DM Mono, monospace', fontWeight:700 }}>{v}</span>
                   </div>
@@ -540,35 +500,25 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
         </div>
 
         {/* ── REPAS RECOMMANDÉ ── */}
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-          <div style={{ width:3, height:14, background:'#a78bfa', borderRadius:2, boxShadow:'0 0 8px #a78bfa' }}/>
-          <div style={{ fontSize:9, fontWeight:700, color:'#a78bfa', textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace' }}>Repas recommandé</div>
-        </div>
+        <SectionHeader label="Repas recommandé" color={energyColor} icon={<Icon name="nutrition" size={13} color={energyColor} />} />
         <MealCard meal={meals[0]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[0])} />
         {meals[1] && <div style={{marginTop:10}}><MealCard meal={meals[1]} tag={mealTag} accent={energyColor} onClick={() => setSelectedMeal(meals[1])} /></div>}
         {selectedMeal && <RecipeSheet meal={selectedMeal} tag={mealTag} accent={energyColor} onClose={() => setSelectedMeal(null)} />}
 
         {/* Suivi du poids */}
-        <div style={{ marginTop: 16, position:'relative', borderRadius: 20, overflow:'hidden', marginBottom: 16, border: '1px solid rgba(249,115,22,0.2)', background:'linear-gradient(135deg, rgba(249,115,22,0.05) 0%, transparent 60%)' }}>
-          {/* Scan */}
-          <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:'linear-gradient(90deg, transparent, rgba(249,115,22,0.04), transparent)', animation:'scanLine 16s ease-in-out infinite 3s', zIndex:1, pointerEvents:'none', left:0 }}/>
-          {/* Terminal header */}
-          <div style={{ padding:'10px 16px', borderBottom:'1px solid rgba(249,115,22,0.15)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
-            <div style={{ display:'flex', gap:4 }}>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(249,115,22,0.6)' }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
-            </div>
-            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(249,115,22,0.6)', letterSpacing:'0.15em' }}>WEIGHT.SYS · BODY TRACKING</div>
-            <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ marginLeft:'auto', background:'rgba(249,115,22,0.12)', border:'1px solid rgba(249,115,22,0.3)', borderRadius:6, padding:'4px 10px', fontSize:9, fontWeight:700, color:'#f97316', cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>
-              + PESER
+        <SectionHeader label="Suivi du poids" color="#f97316" icon={<Icon name="weight" size={13} color="#f97316" />} />
+        <div className="card" style={{ padding:0, borderRadius:18, overflow:'hidden', marginBottom:16 }}>
+          <div style={{ padding:'12px 16px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8 }}>
+            <span style={{ fontSize:13, fontWeight:800, color:'var(--text-primary)' }}>Évolution</span>
+            <button onClick={() => setShowWeightInput(!showWeightInput)} style={{ marginLeft:'auto', background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', borderRadius:8, padding:'5px 12px', fontSize:11, fontWeight:700, color:'var(--text-primary)', cursor:'pointer', fontFamily:'Syne, sans-serif' }}>
+              + Peser
             </button>
           </div>
-          <div style={{ padding:'14px 16px', position:'relative', zIndex:2 }}>
+          <div style={{ padding:'14px 16px' }}>
             {showWeightInput && (
               <div style={{ display:'flex', gap:8, marginBottom:14 }}>
-                <input type="number" inputMode="decimal" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex:1, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(249,115,22,0.3)', borderRadius:8, padding:'10px 12px', color:'var(--text-primary)', fontSize:16, fontFamily:'DM Mono, monospace', outline:'none' }} />
-                <button onClick={addWeight} style={{ background:'linear-gradient(135deg,#f97316,#ea580c)', border:'none', borderRadius:8, padding:'10px 18px', fontSize:12, fontWeight:800, color:'#fff', cursor:'pointer', fontFamily:'DM Mono, monospace', boxShadow:'0 4px 14px rgba(249,115,22,0.3)' }}>OK</button>
+                <input type="number" inputMode="decimal" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="Ex: 74.5" step="0.1" style={{ flex:1, background:'var(--bg-input)', border:'1px solid var(--border-input)', borderRadius:10, padding:'10px 12px', color:'var(--text-primary)', fontSize:16, fontFamily:'DM Mono, monospace', outline:'none' }} />
+                <button onClick={addWeight} className="btn-ripple" style={{ background:'var(--accent)', border:'none', borderRadius:10, padding:'10px 18px', fontSize:12, fontWeight:800, color:'#fff', cursor:'pointer', fontFamily:'DM Mono, monospace' }}>OK</button>
               </div>
             )}
 
@@ -599,15 +549,14 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
                       ['Évolution', `${diff > 0 ? '+' : ''}${diff} kg`, diff <= 0 ? '#22c55e' : '#FF0040'],
                       ['Mesures', `${sorted.length}j`, '#f97316'],
                     ].map(([l,v,col]) => (
-                      <div key={l} style={{ position:'relative', borderRadius:10, border:`1px solid ${col}18`, background:`${col}06`, padding:'10px 8px', textAlign:'center', overflow:'hidden' }}>
-                        <div style={{ position:'absolute', bottom:-6, right:-6, width:28, height:28, borderRadius:'50%', background:`radial-gradient(circle, ${col}20, transparent)`, pointerEvents:'none' }}/>
+                      <div key={l} style={{ borderRadius:10, border:'1px solid var(--border)', background:'var(--bg-input)', padding:'10px 8px', textAlign:'center' }}>
                         <div style={{ fontSize:8, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>{l}</div>
                         <div style={{ fontSize:16, fontWeight:900, color:col, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{v}</div>
                       </div>
                     ))}
                   </div>
                   {/* Courbe SVG */}
-                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: '8px', marginBottom: 10 }}>
+                  <div style={{ background: 'var(--bg-input)', border:'1px solid var(--border)', borderRadius: 12, padding: '8px', marginBottom: 10 }}>
                     <svg viewBox="0 0 300 90" style={{ width:'100%', height:90, display:'block' }}>
                       <defs>
                         <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
@@ -662,7 +611,6 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
 
       <style>{`
         @keyframes wave { 0%{transform:translateX(0)} 100%{transform:translateX(40px)} }
-        @keyframes fadeSlideUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
     </div>
   );

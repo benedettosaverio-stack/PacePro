@@ -113,10 +113,10 @@ export default function BarcodeScanner({ onAdd, onClose }) {
   };
 
   return (
-    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'#07080b', display:'flex', flexDirection:'column', fontFamily:'Syne, sans-serif', overflowY:'auto' }}>
+    <div style={{ position:'fixed', inset:0, zIndex:9999, background:'var(--bg-primary)', display:'flex', flexDirection:'column', fontFamily:'Syne, sans-serif', overflowY:'auto' }}>
       <div style={{ padding:'calc(env(safe-area-inset-top,16px) + 12px) 16px 0', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
-        <button onClick={() => { stopCamera(); onClose(); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', fontSize:13, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>FERMER</button>
-        <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', letterSpacing:'0.15em' }}>SCANNER PRODUIT</div>
+        <button onClick={() => { stopCamera(); onClose(); }} style={{ background:'none', border:'none', color:'var(--text-muted)', fontSize:13, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em' }}>Fermer</button>
+        <div style={{ fontSize:12, fontWeight:800, color:'#fff', fontFamily:'Syne, sans-serif' }}>Scanner un produit</div>
         <div style={{ width:60 }}/>
       </div>
 
@@ -124,18 +124,18 @@ export default function BarcodeScanner({ onAdd, onClose }) {
         <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', padding:'20px 16px' }}>
           {!scanning ? (
             <div style={{ width:'100%', maxWidth:340, textAlign:'center' }}>
-              <div style={{ width:80, height:80, borderRadius:20, background:'rgba(255,0,64,0.12)', border:'1px solid rgba(255,0,64,0.25)', display:'flex', alignItems:'center', justifyContent:'center', margin:'40px auto 24px' }}>
-                <svg width={36} height={36} viewBox="0 0 24 24" fill="none" stroke="#FF0040" strokeWidth={1.5} strokeLinecap="round">
+              <div className="icon-tile" style={{ width:72, height:72, borderRadius:18, background:'var(--accent-soft)', margin:'40px auto 24px' }}>
+                <svg width={32} height={32} viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth={1.5} strokeLinecap="round">
                   <rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/>
                   <line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="21" y2="19"/><line x1="16" y1="16" x2="16" y2="21"/>
                 </svg>
               </div>
               <div style={{ fontSize:18, fontWeight:800, color:'#fff', marginBottom:8 }}>Scanner un produit</div>
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.35)', fontFamily:'DM Mono, monospace', marginBottom:32, lineHeight:1.6 }}>
-                Pointe la camera vers le code barre du produit pour obtenir ses informations nutritionnelles
+              <div style={{ fontSize:11, color:'var(--text-muted)', marginBottom:32, lineHeight:1.6 }}>
+                Pointe la caméra vers le code-barre du produit pour obtenir ses informations nutritionnelles
               </div>
-              <button onClick={startScanner} style={{ width:'100%', height:52, borderRadius:14, background:'linear-gradient(135deg,#FF0040,#cc0033)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', boxShadow:'0 4px 20px rgba(255,0,64,0.3)', marginBottom:12 }}>
-                ACTIVER LA CAMERA
+              <button onClick={startScanner} className="btn-ripple" style={{ width:'100%', height:52, borderRadius:14, background:'linear-gradient(135deg,var(--accent),var(--accent-strong))', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', marginBottom:12 }}>
+                Activer la caméra
               </button>
             </div>
           ) : (
@@ -160,10 +160,10 @@ export default function BarcodeScanner({ onAdd, onClose }) {
           )}
 
           <div style={{ width:'100%', maxWidth:340 }}>
-            <div style={{ fontSize:9, color:'rgba(255,255,255,0.2)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', textAlign:'center', marginBottom:10 }}>ou saisir le code manuellement</div>
+            <div className="eyebrow" style={{ textAlign:'center', marginBottom:10 }}>ou saisir le code manuellement</div>
             <div style={{ display:'flex', gap:8 }}>
-              <input value={manualBarcode} onChange={e => setManualBarcode(e.target.value)} placeholder="Ex: 3017620422003" inputMode="numeric" style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, padding:'10px 12px', color:'#fff', fontSize:13, fontFamily:'DM Mono, monospace', outline:'none' }}/>
-              <button onClick={() => manualBarcode.trim() && fetchProduct(manualBarcode.trim())} disabled={loading} style={{ background:'rgba(255,0,64,0.15)', border:'1px solid rgba(255,0,64,0.3)', borderRadius:10, padding:'10px 14px', color:'#FF0040', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace' }}>
+              <input value={manualBarcode} onChange={e => setManualBarcode(e.target.value)} placeholder="Ex: 3017620422003" inputMode="numeric" style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'10px 12px', color:'#fff', fontSize:13, fontFamily:'DM Mono, monospace', outline:'none' }}/>
+              <button onClick={() => manualBarcode.trim() && fetchProduct(manualBarcode.trim())} disabled={loading} style={{ background:'var(--accent-soft)', border:'none', borderRadius:10, padding:'10px 14px', color:'var(--accent)', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace' }}>
                 {loading ? '...' : 'OK'}
               </button>
             </div>
@@ -173,7 +173,7 @@ export default function BarcodeScanner({ onAdd, onClose }) {
 
       {phase === 'confirm' && product && (
         <div style={{ flex:1, padding:'16px', overflowY:'auto' }}>
-          <div style={{ borderRadius:14, border:'1px solid rgba(34,197,94,0.2)', background:'rgba(34,197,94,0.05)', padding:'14px', marginBottom:14, display:'flex', gap:12, alignItems:'center' }}>
+          <div style={{ borderRadius:14, border:'1px solid rgba(255,255,255,0.1)', background:'rgba(255,255,255,0.03)', padding:'14px', marginBottom:14, display:'flex', gap:12, alignItems:'center' }}>
             {product.imageUrl && <img src={product.imageUrl} alt="" style={{ width:52, height:52, borderRadius:10, objectFit:'cover' }}/>}
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontSize:14, fontWeight:800, color:'#fff', marginBottom:2 }}>{product.name}</div>
@@ -182,27 +182,27 @@ export default function BarcodeScanner({ onAdd, onClose }) {
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginBottom:14 }}>
             {[['Kcal',product.kcalPer100,'#fff'],['Prot',`${product.protPer100}g`,'#FF0040'],['Carbs',`${product.carbsPer100}g`,'#60a5fa'],['Lip',`${product.fatPer100}g`,'#a78bfa']].map(([l,v,c]) => (
-              <div key={l} style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:10, padding:'8px 6px', textAlign:'center' }}>
+              <div key={l} style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, padding:'8px 6px', textAlign:'center' }}>
                 <div style={{ fontSize:7, color:'rgba(255,255,255,0.3)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', marginBottom:2 }}>{l}/100g</div>
                 <div style={{ fontSize:13, fontWeight:900, color:c, fontFamily:'DM Mono, monospace' }}>{v}</div>
               </div>
             ))}
           </div>
-          <div style={{ background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:14, padding:'14px', marginBottom:14 }}>
-            <div style={{ fontSize:9, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:10 }}>Quantite</div>
+          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:14, padding:'14px', marginBottom:14 }}>
+            <div className="eyebrow" style={{ marginBottom:10 }}>Quantité</div>
             <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:10 }}>
-              <input type="number" inputMode="decimal" value={quantity} onChange={e => setQuantity(e.target.value)} style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:10, padding:'12px', color:'#fff', fontSize:22, fontFamily:'DM Mono, monospace', fontWeight:900, outline:'none', textAlign:'center' }}/>
+              <input type="number" inputMode="decimal" value={quantity} onChange={e => setQuantity(e.target.value)} style={{ flex:1, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:10, padding:'12px', color:'#fff', fontSize:22, fontFamily:'DM Mono, monospace', fontWeight:900, outline:'none', textAlign:'center' }}/>
               <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)', fontFamily:'DM Mono, monospace' }}>g / ml</span>
             </div>
             <div style={{ display:'flex', gap:6 }}>
               {['50','100','150','200','250'].map(q => (
-                <button key={q} onClick={() => setQuantity(q)} style={{ flex:1, padding:'6px 0', borderRadius:8, background:quantity===q?'rgba(255,0,64,0.15)':'rgba(255,255,255,0.04)', border:`1px solid ${quantity===q?'rgba(255,0,64,0.3)':'rgba(255,255,255,0.07)'}`, color:quantity===q?'#FF0040':'rgba(255,255,255,0.4)', fontSize:10, fontFamily:'DM Mono, monospace', cursor:'pointer' }}>{q}</button>
+                <button key={q} onClick={() => setQuantity(q)} style={{ flex:1, padding:'6px 0', borderRadius:8, background:quantity===q?'var(--accent-soft)':'rgba(255,255,255,0.04)', border:'1px solid transparent', color:quantity===q?'var(--accent)':'rgba(255,255,255,0.4)', fontSize:10, fontFamily:'DM Mono, monospace', cursor:'pointer', fontWeight:quantity===q?700:400 }}>{q}</button>
               ))}
             </div>
           </div>
           {computed && (
-            <div style={{ background:'rgba(255,0,64,0.06)', border:'1px solid rgba(255,0,64,0.2)', borderRadius:14, padding:'14px', marginBottom:16 }}>
-              <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', marginBottom:10 }}>Pour {quantity}g</div>
+            <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:14, padding:'14px', marginBottom:16 }}>
+              <div className="eyebrow" style={{ marginBottom:10 }}>Pour {quantity}g</div>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8 }}>
                 {[['Kcal',computed.kcal,'#fff'],['Prot',`${computed.prot}g`,'#FF0040'],['Carbs',`${computed.carbs}g`,'#60a5fa'],['Lip',`${computed.fat}g`,'#a78bfa']].map(([l,v,c]) => (
                   <div key={l} style={{ textAlign:'center' }}>
@@ -213,8 +213,8 @@ export default function BarcodeScanner({ onAdd, onClose }) {
               </div>
             </div>
           )}
-          <button onClick={handleAdd} style={{ width:'100%', height:52, borderRadius:14, background:'linear-gradient(135deg,#FF0040,#cc0033)', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 20px rgba(255,0,64,0.3)', marginBottom:10 }}>+ Ajouter a mes macros</button>
-          <button onClick={() => { setPhase('scan'); setProduct(null); }} style={{ width:'100%', height:42, borderRadius:12, background:'none', border:'1px solid rgba(255,255,255,0.08)', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', marginBottom:20 }}>SCANNER UN AUTRE</button>
+          <button onClick={handleAdd} className="btn-ripple" style={{ width:'100%', height:52, borderRadius:14, background:'linear-gradient(135deg,var(--accent),var(--accent-strong))', border:'none', color:'#fff', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', marginBottom:10 }}>+ Ajouter à mes macros</button>
+          <button onClick={() => { setPhase('scan'); setProduct(null); }} style={{ width:'100%', height:42, borderRadius:12, background:'none', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.4)', fontSize:12, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.08em', marginBottom:20 }}>Scanner un autre</button>
         </div>
       )}
     </div>

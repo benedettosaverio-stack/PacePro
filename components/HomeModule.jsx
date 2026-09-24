@@ -120,35 +120,31 @@ export default function HomeModule({ onNavigate }) {
   return (
     <div style={{ minHeight: '100%', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif', padding: 'calc(env(safe-area-inset-top, 44px) + 16px) 16px calc(env(safe-area-inset-bottom, 20px) + 90px)', position: 'relative', overflow: 'hidden' }}>
 
-      {/* Glow background */}
-      <div style={{ position: 'fixed', top: -100, left: '50%', transform: 'translateX(-50%)', width: 600, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,0,64,0.06) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+      {/* Glow background — unique halo autorisé sur l'écran d'accueil, discret */}
+      <div style={{ position: 'fixed', top: -120, left: '50%', transform: 'translateX(-50%)', width: 480, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,0,64,0.05) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
 
         {/* HERO CARD — clock + stats + motivation */}
-        <div style={{ position:'relative', borderRadius:20, overflow:'hidden', border:'1px solid rgba(255,0,64,0.2)', background:'linear-gradient(135deg, rgba(255,0,64,0.07) 0%, rgba(0,0,0,0.95) 70%)', marginBottom:14 }}>
-          {/* Scan */}
-          <div style={{ position:'absolute', top:0, bottom:0, width:'40%', background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.04), transparent)', animation:'scanLine 10s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
-          {/* Ambient glow */}
-          <div style={{ position:'absolute', top:-40, right:-40, width:200, height:200, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.1) 0%, transparent 70%)', pointerEvents:'none' }}/>
+        <div style={{ position:'relative', borderRadius:18, overflow:'hidden', border:'1px solid var(--border)', background:'var(--bg-card)', marginBottom:14 }}>
           <div style={{ padding:'16px', position:'relative', zIndex:2 }}>
             {/* Top row: greeting + clock */}
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
               <div>
-                <div style={{ fontSize:9, color:'rgba(255,0,64,0.6)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:5, display:'flex', alignItems:'center', gap:6 }}>
-                  <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040', animation:'dotBlink 2s step-start infinite' }}/>
+                <div style={{ fontSize:10, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:5, display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040' }}/>
                   {greeting}
                 </div>
-                <div style={{ fontSize:30, fontWeight:900, letterSpacing:'-0.04em', lineHeight:1, background:'linear-gradient(135deg, #fff 60%, rgba(255,255,255,0.5))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{firstName}</div>
+                <div style={{ fontSize:28, fontWeight:900, letterSpacing:'-0.03em', lineHeight:1, color:'var(--text-primary)' }}>{firstName}</div>
               </div>
               <div style={{ textAlign:'right' }}>
-                <div style={{ fontSize:24, fontWeight:900, color:'#FF0040', fontFamily:'DM Mono, monospace', lineHeight:1 }}>{time.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
-                <div style={{ fontSize:8, color:'rgba(255,255,255,0.25)', fontFamily:'DM Mono, monospace', letterSpacing:'0.1em', marginTop:2 }}>{time.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase()}</div>
+                <div style={{ fontSize:22, fontWeight:800, color:'#FF0040', fontFamily:'DM Mono, monospace', lineHeight:1 }}>{time.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+                <div style={{ fontSize:9, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em', marginTop:2 }}>{time.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase()}</div>
               </div>
             </div>
             {/* Motivation */}
             {(motivation || motivLoading) && (
-              <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)', fontStyle:'italic', lineHeight:1.5, marginBottom:14, borderLeft:'2px solid rgba(255,0,64,0.4)', paddingLeft:10 }}>
+              <div style={{ fontSize:12, color:'var(--text-secondary)', fontStyle:'italic', lineHeight:1.5, marginBottom:14, borderLeft:'2px solid rgba(255,0,64,0.4)', paddingLeft:10 }}>
                 {motivLoading ? '...' : <>{displayed}<span style={{ opacity:showCursor?1:0, color:'#FF0040', fontStyle:'normal' }}>|</span></>}
               </div>
             )}
@@ -156,58 +152,42 @@ export default function HomeModule({ onNavigate }) {
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
               {[
                 { label:'Programme', value: activePlan ? `${progress}%` : '—', color:'#FF0040' },
-                { label:'Séances', value: activePlan ? `${doneSessions}/${totalSessions}` : '—', color:'#60a5fa' },
-                { label:'VMA', value: activePlan ? `${activePlan.profile?.vma?.toFixed(1)||'—'}` : '—', color:'#f59e0b' },
+                { label:'Séances', value: activePlan ? `${doneSessions}/${totalSessions}` : '—', color:'var(--text-primary)' },
+                { label:'VMA', value: activePlan ? `${activePlan.profile?.vma?.toFixed(1)||'—'}` : '—', color:'var(--text-primary)' },
               ].map(({label,value,color})=>(
-                <div key={label} style={{ background:`${color}10`, border:`1px solid ${color}20`, borderRadius:10, padding:'8px', textAlign:'center' }}>
-                  <div style={{ fontSize:16, fontWeight:900, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
-                  <div style={{ fontSize:7, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:3 }}>{label}</div>
+                <div key={label} style={{ background:'var(--bg-surface)', border:'1px solid var(--border)', borderRadius:10, padding:'8px', textAlign:'center' }}>
+                  <div style={{ fontSize:16, fontWeight:800, color, fontFamily:'DM Mono, monospace', lineHeight:1 }}>{value}</div>
+                  <div style={{ fontSize:9, color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.06em', marginTop:3 }}>{label}</div>
                 </div>
               ))}
             </div>
           </div>
           {/* Progress bar */}
-          <div style={{ height:2, background:'rgba(255,255,255,0.04)' }}>
-            <div style={{ height:'100%', width:`${activePlan?progress:0}%`, background:'linear-gradient(90deg,#FF0040,#f59e0b)', boxShadow:'0 0 8px rgba(255,0,64,0.5)', transition:'width 1s' }}/>
+          <div style={{ height:2, background:'var(--border)' }}>
+            <div style={{ height:'100%', width:`${activePlan?progress:0}%`, background:'#FF0040', transition:'width 1s' }}/>
           </div>
         </div>
 
         {/* Next session card */}
         {nextSession ? (
-          <div onClick={() => onNavigate('running')} style={{ borderRadius: 20, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(255,0,64,0.08) 0%, rgba(0,0,0,0.95) 60%)', border: '1px solid rgba(255,0,64,0.25)', minHeight: 160 }}>
-            {/* Glow top right */}
-            <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, borderRadius:'50%', background:'radial-gradient(circle, rgba(255,0,64,0.1) 0%, transparent 70%)', pointerEvents:'none' }}/>
+          <div onClick={() => onNavigate('running')} style={{ borderRadius: 18, marginBottom: 16, cursor: 'pointer', position: 'relative', overflow: 'hidden', background: 'var(--bg-card)', border: '1px solid var(--border)', minHeight: 160 }}>
             {/* SVG background */}
-            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:20, opacity:0.3 }} />
-            <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 100%)', borderRadius:20 }} />
-
-            {/* Terminal header */}
-            <div style={{ position:'relative', zIndex:1, padding:'10px 14px', borderBottom:'1px solid rgba(255,0,64,0.15)', display:'flex', alignItems:'center', gap:8 }}>
-              <div style={{ display:'flex', gap:4 }}>
-                <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(255,0,64,0.6)' }}/>
-                <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(245,158,11,0.6)' }}/>
-                <div style={{ width:6, height:6, borderRadius:'50%', background:'rgba(34,197,94,0.6)' }}/>
-              </div>
-              <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.6)', letterSpacing:'0.15em' }}>PROCHAINE SÉANCE · S{nextSession.week} · {nextSession.day}</div>
-              <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5 }}>
-                <div style={{ width:5, height:5, borderRadius:'50%', background:'#FF0040', boxShadow:'0 0 6px #FF0040' }}/>
-                <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(255,0,64,0.7)', letterSpacing:'0.1em' }}>LIVE</span>
-              </div>
-            </div>
+            <img src="/topo.svg" alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', borderRadius:18, opacity:0.25 }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 100%)', borderRadius:18 }} />
 
             {/* Content */}
-            <div style={{ position: 'relative', zIndex: 1, padding: '14px 14px 48px' }}>
+            <div style={{ position: 'relative', zIndex: 1, padding: '18px 14px 48px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 9, color: 'rgba(255,0,64,0.7)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>{'>'} {nextSession.tag}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6, color: '#fff', textShadow:'0 2px 20px rgba(0,0,0,0.5)' }}>{nextSession.title}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>{nextSession.detail}</div>
+                  <div style={{ fontSize: 10, color: '#FF0040', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>S{nextSession.week} · {nextSession.day} · {nextSession.tag}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6, color: '#fff' }}>{nextSession.title}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{nextSession.detail}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 12 }}>
-                  <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(255,0,64,0.3), rgba(255,0,64,0.1))', border: '1px solid rgba(255,0,64,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow:'0 0 16px rgba(255,0,64,0.2)' }}>
+                  <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,0,64,0.15)', border: '1px solid rgba(255,0,64,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width={14} height={14} viewBox="0 0 24 24" fill="#FF0040"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   </div>
-                  <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Go</span>
+                  <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Go</span>
                 </div>
               </div>
             </div>
@@ -241,8 +221,8 @@ export default function HomeModule({ onNavigate }) {
             </div>
           </div>
         ) : (
-          <div onClick={() => onNavigate('running')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '18px', marginBottom: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: 'rgba(255,0,64,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div onClick={() => onNavigate('running')} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '18px', marginBottom: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(255,0,64,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon name="running" size={24} color="#FF0040" />
             </div>
             <div>
@@ -257,14 +237,12 @@ export default function HomeModule({ onNavigate }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
 
           {/* Running */}
-          <button onClick={() => onNavigate('running')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(255,0,64,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(255,0,64,0.06) 0%, transparent 70%)' }}>
-            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(255,0,64,0.04), transparent)', animation:'scanLine 12s ease-in-out infinite', zIndex:1, pointerEvents:'none', left:0 }}/>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,0,64,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <button onClick={() => onNavigate('running')} style={{ position:'relative', border:'1px solid var(--border)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'var(--bg-card)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(255,0,64,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(255,0,64,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name="running" size={18} color="#FF0040" />
               </div>
-              {activePlan && <span style={{ fontSize: 18, fontWeight: 900, color: '#FF0040', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{progress}%</span>}
+              {activePlan && <span style={{ fontSize: 18, fontWeight: 800, color: '#FF0040', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{progress}%</span>}
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Running</div>
@@ -272,20 +250,18 @@ export default function HomeModule({ onNavigate }) {
             </div>
             {activePlan && (
               <div style={{ width: '100%', height: 3, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg,#FF0040,#fbbf24)', borderRadius: 99 }} />
+                <div style={{ height: '100%', width: `${progress}%`, background: '#FF0040', borderRadius: 99 }} />
               </div>
             )}
           </button>
 
           {/* Muscu */}
-          <button onClick={() => onNavigate('muscu')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(99,102,241,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 70%)' }}>
-            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.04), transparent)', animation:'scanLine 15s ease-in-out infinite 1s', zIndex:1, pointerEvents:'none', left:0 }}/>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <button onClick={() => onNavigate('muscu')} style={{ position:'relative', border:'1px solid var(--border)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'var(--bg-card)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name="muscle" size={18} color="#6366f1" />
               </div>
-              {workouts.length > 0 && <span style={{ fontSize: 18, fontWeight: 900, color: '#6366f1', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{workouts.length}</span>}
+              {workouts.length > 0 && <span style={{ fontSize: 18, fontWeight: 800, color: '#6366f1', fontFamily: 'DM Mono, monospace', lineHeight: 1 }}>{workouts.length}</span>}
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Muscu</div>
@@ -299,17 +275,14 @@ export default function HomeModule({ onNavigate }) {
           </button>
 
           {/* Nutrition */}
-          <button onClick={() => onNavigate('nutrition')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(56,189,248,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(56,189,248,0.06) 0%, transparent 70%)' }}>
-            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(56,189,248,0.04), transparent)', animation:'scanLine 16s ease-in-out infinite 3s', zIndex:1, pointerEvents:'none', left:0 }}/>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-            <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Icon name="nutrition" size={18} color="#6366f1" />
+          <button onClick={() => onNavigate('nutrition')} style={{ position:'relative', border:'1px solid var(--border)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'var(--bg-card)' }}>
+            <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(56,189,248,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="nutrition" size={18} color="#38bdf8" />
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Nutrition</div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>Macros · Hydratation</div>
             </div>
-            <div style={{ fontSize: 9, color: '#6366f1', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Fuel & Recovery</div>
           </button>
 
         </div>

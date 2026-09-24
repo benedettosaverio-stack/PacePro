@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:16, padding:'14px 16px' };
-const btnRed = { background:'#FF0040', color:'#000', border:'none', borderRadius:10, padding:'9px 16px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' };
-const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:10, padding:'9px 14px', fontSize:12, fontWeight:600, cursor:'pointer', fontFamily:'inherit' };
+const card = { background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:'var(--radius-lg)', padding:'14px 16px' };
+const btnRed = { background:'var(--accent)', color:'#fff', border:'none', borderRadius:'var(--radius-sm)', padding:'9px 16px', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' };
+const btnGhost = { background:'var(--btn-ghost-bg)', border:'1px solid var(--btn-ghost-border)', color:'var(--btn-ghost-color)', borderRadius:'var(--radius-sm)', padding:'9px 14px', fontSize:12, fontWeight:600, cursor:'pointer', fontFamily:'inherit' };
 
 // Client Supabase léger sans dépendance
 async function supaFetch(path, options = {}) {
@@ -64,7 +64,7 @@ function SessionCard({ session, onOpen, onDelete }) {
         </div>
         <div style={{ display:'flex', gap:6, alignItems:'center' }}>
           <button onClick={e => { e.stopPropagation(); onDelete(); }}
-            style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:8, padding:'4px 8px', color:'rgba(239,68,68,0.6)', fontSize:11, cursor:'pointer', fontFamily:'inherit' }}>
+            style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', borderRadius:'var(--radius-sm)', padding:'4px 8px', color:'rgba(239,68,68,0.6)', fontSize:11, cursor:'pointer', fontFamily:'inherit' }}>
             ✕
           </button>
         </div>
@@ -75,9 +75,9 @@ function SessionCard({ session, onOpen, onDelete }) {
           ['🔥 Volume', `${Math.round(session.total_volume || 0)} kg`],
           ['💪 Séries', Object.keys(session.completed_sets || {}).length],
         ].map(([label, value]) => (
-          <div key={label} style={{ background:'var(--bg-input)', borderRadius:10, padding:'8px', textAlign:'center' }}>
-            <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:2, fontFamily:'monospace' }}>{label}</div>
-            <div style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)', fontFamily:'monospace' }}>{value}</div>
+          <div key={label} style={{ background:'var(--bg-input)', borderRadius:'var(--radius-sm)', padding:'8px', textAlign:'center' }}>
+            <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:2, fontFamily:'DM Mono, monospace' }}>{label}</div>
+            <div style={{ fontSize:13, fontWeight:700, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{value}</div>
           </div>
         ))}
       </div>
@@ -108,8 +108,8 @@ function SessionDetail({ session, onBack }) {
           ['💪 Exercices', entries.length],
         ].map(([label, value]) => (
           <div key={label} style={{ ...card, textAlign:'center' }}>
-            <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:4, fontFamily:'monospace' }}>{label}</div>
-            <div style={{ fontSize:18, fontWeight:800, color:'var(--text-primary)', fontFamily:'monospace' }}>{value}</div>
+            <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:4, fontFamily:'DM Mono, monospace' }}>{label}</div>
+            <div style={{ fontSize:18, fontWeight:800, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{value}</div>
           </div>
         ))}
       </div>
@@ -128,9 +128,9 @@ function SessionDetail({ session, onBack }) {
             {setsForEx.length > 0 ? (
               <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
                 {setsForEx.map(s => (
-                  <div key={s.setNum} style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'var(--text-secondary)', background:'var(--bg-input)', borderRadius:8, padding:'6px 10px' }}>
+                  <div key={s.setNum} style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'var(--text-secondary)', background:'var(--bg-input)', borderRadius:'var(--radius-sm)', padding:'6px 10px' }}>
                     <span style={{ color:'var(--text-muted)' }}>Série {s.setNum}</span>
-                    <span style={{ fontFamily:'monospace' }}>{s.reps} reps × {s.weight} kg</span>
+                    <span style={{ fontFamily:'DM Mono, monospace' }}>{s.reps} reps × {s.weight} kg</span>
                   </div>
                 ))}
               </div>
@@ -153,14 +153,14 @@ function GlobalStats({ sessions }) {
   return (
     <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10, marginBottom:20 }}>
       {[
-        ['📅 Séances', sessions.length, '#FF0040'],
-        ['🔥 Volume total', `${Math.round(totalVol / 1000)}t`, '#f59e0b'],
-        ['⏱ Temps total', formatTime(totalTime), '#22c55e'],
-        ['💪 Séries totales', totalSets, '#6366f1'],
-      ].map(([label, value, color]) => (
+        ['📅 Séances', sessions.length],
+        ['🔥 Volume total', `${Math.round(totalVol / 1000)}t`],
+        ['⏱ Temps total', formatTime(totalTime)],
+        ['💪 Séries totales', totalSets],
+      ].map(([label, value]) => (
         <div key={label} style={{ ...card, textAlign:'center' }}>
-          <div style={{ fontSize:9, color:'var(--text-muted)', marginBottom:4, fontFamily:'monospace', textTransform:'uppercase' }}>{label}</div>
-          <div style={{ fontSize:20, fontWeight:800, color, fontFamily:'monospace' }}>{value}</div>
+          <div style={{ fontSize:10, color:'var(--text-muted)', marginBottom:4, fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em' }}>{label}</div>
+          <div style={{ fontSize:20, fontWeight:800, color:'var(--text-primary)', fontFamily:'DM Mono, monospace' }}>{value}</div>
         </div>
       ))}
     </div>
@@ -245,7 +245,7 @@ export default function HistoriqueModule() {
       <div style={{ minHeight:'100%', background:'var(--bg-primary)', color:'var(--text-primary)', fontFamily:'Syne, sans-serif', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
         <div style={{ maxWidth:380, width:'100%', textAlign:'center' }}>
           <div style={{ fontSize:56, marginBottom:16 }}>📊</div>
-          <h2 style={{ fontSize:22, fontWeight:800, marginBottom:8, letterSpacing:'-0.03em' }}>Historique des séances</h2>
+          <h2 style={{ fontSize:19, fontWeight:800, marginBottom:8, letterSpacing:'-0.02em' }}>Historique des séances</h2>
           <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:32, lineHeight:1.6 }}>
             Connecte-toi pour synchroniser tes séances sur tous tes appareils et accéder à ton historique complet.
           </p>
@@ -271,7 +271,7 @@ export default function HistoriqueModule() {
                 {user.photo && <img src={user.photo} alt="" style={{ width:40, height:40, borderRadius:'50%', objectFit:'cover' }} />}
                 <div>
                   <div style={{ fontSize:16, fontWeight:800, color:'var(--text-primary)' }}>{user.name}</div>
-                  <div style={{ fontSize:11, color:'#22c55e', fontWeight:600, fontFamily:'monospace' }}>● Connecté</div>
+                  <div style={{ fontSize:11, color:'#22c55e', fontWeight:600, fontFamily:'DM Mono, monospace' }}>● Connecté</div>
                 </div>
               </div>
               <button onClick={syncLocalSessions} disabled={syncing}
@@ -284,7 +284,7 @@ export default function HistoriqueModule() {
             {sessions.length > 0 && <GlobalStats sessions={sessions} />}
 
             {/* Liste séances */}
-            <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'monospace', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:10 }}>
+            <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:10 }}>
               {sessions.length} séance{sessions.length !== 1 ? 's' : ''} enregistrée{sessions.length !== 1 ? 's' : ''}
             </div>
 
