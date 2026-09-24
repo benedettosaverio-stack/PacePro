@@ -517,7 +517,7 @@ function WorkoutCard({ workout, onOpen, onDelete, onDuplicate }) {
           <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.5)' }}/>
           <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.5)' }}/>
         </div>
-        <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${accentColor}70`, letterSpacing:'0.15em' }}>MUSCU · {workout.aiGenerated ? 'IA GENERATED' : 'PROGRAMME'}</div>
+        <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:`${accentColor}70`, letterSpacing:'0.15em' }}>MUSCU · PROGRAMME</div>
         <div style={{ marginLeft:'auto', display:'flex', gap:6 }} onClick={e=>e.stopPropagation()}>
           <button onClick={onDuplicate} style={{ height:24, padding:'0 8px', borderRadius:6, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', color:'rgba(255,255,255,0.4)', fontSize:9, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>S+1</button>
           <button onClick={onDelete} style={{ width:24, height:24, borderRadius:6, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.15)', color:'rgba(239,68,68,0.5)', fontSize:12, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>×</button>
@@ -596,86 +596,6 @@ function WorkoutDetail({ workout, onBack, onEdit, onStart }) {
           </div>
         );
       })}
-    </div>
-  );
-}
-
-// ─── Générateur IA ─────────────────────────────────────────────────────────────
-function AIGenerator({ onSave, onCancel }) {
-  const [prompt, setPrompt] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [preview, setPreview] = useState(null);
-  const suggestions = [
-    'Séance pectoraux hypertrophie 60 min, 4 exercices',
-    'Full body force débutant sans rack ni barre de traction',
-    'Séance dos et biceps 45 min, focus épaisseur',
-    'Jambes complètes avec squat, leg curl, hip thrust',
-    'Push pull legs — jour Push 60 min',
-  ];
-
-  const generate = async () => {
-    if (!prompt.trim()) return;
-    setLoading(true); setError(''); setPreview(null);
-    try {
-      const fullPrompt = `Tu es coach musculation expert. Génère une séance en JSON UNIQUEMENT, zéro texte autour.
-Demande: ${prompt}
-JSON requis: {"name":"Nom","duration":60,"entries":[{"exercise":{"id":"custom","name":"Nom exercice","primary":"pecs","secondary":[],"equipment":[],"curve":"peak","difficulty":2,"tags":[]},"sets":4,"reps":"8-12","weight":0,"rest":90,"modifier":"normal","superset":false}]}
-Groupes musculaires valides: pecs, dos, epaules, biceps, triceps, quadris, ischio, fessiers, mollets, abdos, lombaires`;
-      const res = await fetch('/api/gemini', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:fullPrompt}) });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      const raw = data.text || '';
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Format JSON invalide (réponse: ' + raw.slice(0,80) + ')');
-      const workout = JSON.parse(jsonMatch[0]);
-      if (!workout.entries?.length) throw new Error('Aucun exercice généré');
-      setPreview({ ...workout, aiGenerated:true, id:Date.now() });
-    } catch(e) { setError('Erreur : ' + e.message); }
-    setLoading(false);
-  };
-
-  return (
-    <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-      <div style={{ ...card, background:'rgba(96,165,250,0.06)', borderColor:'rgba(96,165,250,0.2)' }}>
-        <div style={{ fontSize:11, color:'#60a5fa', fontWeight:700, marginBottom:4, textTransform:'uppercase', letterSpacing:'0.08em' }}>✨ Génération IA</div>
-        <p style={{ fontSize:12, color:'var(--text-secondary)', lineHeight:1.6, margin:0 }}>Décris ta séance, l'IA génère exercices, séries, reps et techniques d'intensité.</p>
-      </div>
-      <div>
-        <textarea style={{ ...inp(), width:'100%', minHeight:72, resize:'vertical', lineHeight:1.6 }}
-          placeholder="Ex: Séance pectoraux hypertrophie 60 min, 4 exercices, avec drop set sur le dernier..."
-          value={prompt} onChange={e=>setPrompt(e.target.value)} />
-      </div>
-      <div style={{ display:'flex', flexDirection:'column', gap:5 }}>
-        {suggestions.map(s => <button key={s} onClick={()=>setPrompt(s)} style={{ ...btnGhost, textAlign:'left', padding:'7px 12px', fontSize:11 }}>{s}</button>)}
-      </div>
-      {error && <div style={{ background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:10, padding:'8px 12px', fontSize:12, color:'rgba(239,68,68,0.9)' }}>{error}</div>}
-      {!preview && (
-        <div style={{ display:'flex', gap:10 }}>
-          <button onClick={onCancel} style={{ ...btnGhost, flex:1 }}>Annuler</button>
-          <button onClick={generate} disabled={loading||!prompt.trim()} style={{ ...btnRed, flex:2, opacity:loading||!prompt.trim()?0.5:1 }}>
-            {loading ? '⏳ Génération...' : '✨ Générer'}
-          </button>
-        </div>
-      )}
-      {preview && (
-        <div>
-          <div style={{ ...card, marginBottom:14 }}>
-            <div style={{ fontSize:15, fontWeight:700, color:'var(--text-primary)', marginBottom:4 }}>{preview.name}</div>
-            <div style={{ fontSize:11, color:'var(--text-muted)', marginBottom:10 }}>⏱ {preview.duration} min · {preview.entries?.length} exercices</div>
-            {(preview.entries||[]).map((e,i) => (
-              <div key={i} style={{ background:'var(--bg-input)', borderRadius:8, padding:'7px 10px', marginBottom:5 }}>
-                <div style={{ fontSize:12, fontWeight:600, color:'var(--text-primary)' }}>{e.exercise?.name}</div>
-                <div style={{ fontSize:10, color:'var(--text-muted)' }}>{e.sets}×{e.reps} — {INTENSITY_MODS.find(m=>m.id===e.modifier)?.label||'Normal'}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display:'flex', gap:10 }}>
-            <button onClick={()=>setPreview(null)} style={{ ...btnGhost, flex:1 }}>Régénérer</button>
-            <button onClick={()=>onSave(preview)} style={{ ...btnRed, flex:2 }}>💾 Sauvegarder</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -778,9 +698,8 @@ export default function MusculationModule({ onSync }) {
               <div style={{ padding:'40px 24px', textAlign:'center', position:'relative' }}>
                 <div style={{ fontSize:9, color:'rgba(255,255,255,0.15)', fontFamily:'DM Mono, monospace', letterSpacing:'0.1em', marginBottom:24 }}>{'>'} AUCUN PROGRAMME DÉTECTÉ · EN ATTENTE</div>
                 <div style={{ fontSize:22, fontWeight:900, letterSpacing:'-0.03em', marginBottom:8, color:'var(--text-primary)' }}>Commence ton programme</div>
-                <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:28, lineHeight:1.6 }}>Crée manuellement ou laisse l'IA générer<br/>un plan adapté à ton niveau.</p>
+                <p style={{ fontSize:13, color:'var(--text-muted)', marginBottom:28, lineHeight:1.6 }}>Crée ta première séance<br/>et suis ta progression.</p>
                 <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
-                  <button onClick={()=>setView('ai')} style={{ background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'13px 24px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.06em' }}>✦ IA</button>
                   <button onClick={()=>setView('create')} style={{ background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'13px 24px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 20px rgba(255,0,64,0.3)' }}>+ Créer</button>
                 </div>
               </div>
@@ -788,8 +707,7 @@ export default function MusculationModule({ onSync }) {
           ) : (
             <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
               <div style={{ display:'flex', gap:8, marginBottom:12 }}>
-                <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} className='btn-ripple' style={{ flex:2, background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'12px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 16px rgba(255,0,64,0.25)' }}>+ Nouvelle séance</button>
-                <button onClick={()=>setView('ai')} style={{ flex:1, background:'rgba(96,165,250,0.08)', border:'1px solid rgba(96,165,250,0.25)', color:'#60a5fa', borderRadius:12, padding:'12px', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'DM Mono, monospace', letterSpacing:'0.04em' }}>✦ IA</button>
+                <button onClick={()=>{setEditing(false);setSelected(null);setView('create');}} className='btn-ripple' style={{ flex:1, background:'linear-gradient(135deg, #FF0040, #cc0033)', border:'none', color:'#fff', borderRadius:12, padding:'12px', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'Syne, sans-serif', boxShadow:'0 4px 16px rgba(255,0,64,0.25)' }}>+ Nouvelle séance</button>
               </div>
               {workouts.map(w => (
                 <WorkoutCard key={w.id} workout={w}
@@ -811,9 +729,6 @@ export default function MusculationModule({ onSync }) {
         {view==='live'&&selected && (
           <LiveSession workout={selected} onEnd={()=>setView('detail')} />
         )}
-        {view==='ai' && (
-          <AIGenerator onSave={handleSave} onCancel={()=>setView('list')} />
-        )}
       </div>
     </div>
   );
@@ -830,7 +745,6 @@ function LiveSession({ workout, onEnd }) {
   const [elapsed, setElapsed] = useState(0);
   const [phase, setPhase] = useState('active'); // 'active' | 'done'
   const [rest, setRest] = useState(null); // {left, total} | null
-  const [stravaStatus, setStravaStatus] = useState('idle');
   const restTimerRef = useRef(null);
   const startRef = useRef(Date.now());
   const startTimeRef = useRef(new Date().toISOString());
@@ -939,24 +853,6 @@ function LiveSession({ workout, onEnd }) {
         localStorage.setItem('pp_session_logs', '[]');
       }
     } catch {}
-    const token = localStorage.getItem('strava_token');
-    const refreshToken = localStorage.getItem('strava_refresh_token');
-    const expiresAt = parseInt(localStorage.getItem('strava_expires_at') || '0');
-    if (!token) { setStravaStatus('no_token'); return; }
-    setStravaStatus('syncing');
-    const desc = (workout.entries||[]).map(e => (e.exercise?.name||'') + ': ' + e.sets + 'x' + e.reps + (e.weight ? ' @ ' + e.weight + 'kg' : '')).join('\n');
-    fetch('/api/strava', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'create_activity', token, refreshToken, expiresAt, name: workout.name, duration: elapsed, start_time: startTimeRef.current, description: 'Séance PacePro\n\n' + desc }),
-    })
-      .then(r => r.json())
-      .then(d => {
-        if (d.success) { setStravaStatus('ok'); if (d.newToken) localStorage.setItem('strava_token', d.newToken); if (d.newRefresh) localStorage.setItem('strava_refresh_token', d.newRefresh); if (d.newExpires) localStorage.setItem('strava_expires_at', String(d.newExpires)); }
-        else if (d.needsReauth) { setStravaStatus('reauth'); }
-        else { setStravaStatus('error'); }
-      })
-      .catch(() => setStravaStatus('error'));
   }, [phase]);
 
   if (phase === 'done') {
@@ -980,11 +876,6 @@ function LiveSession({ workout, onEnd }) {
             </div>
           ))}
         </div>
-        {stravaStatus === 'syncing' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(252,76,2,0.08)', border:'1px solid rgba(252,76,2,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'#FC4C02', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'#FC4C02' }}>Synchronisation Strava...</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Création de l'activité</div></div></div>}
-        {stravaStatus === 'ok' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'#22c55e', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'#22c55e' }}>Activité créée sur Strava</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>WeightTraining synchronisé</div></div></div>}
-        {stravaStatus === 'error' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(239,68,68,0.9)', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'rgba(239,68,68,0.9)' }}>Erreur Strava</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Séance sauvegardée localement</div></div></div>}
-        {stravaStatus === 'no_token' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'var(--bg-input)', border:'1px solid var(--border)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'var(--text-muted)', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'var(--text-primary)' }}>Strava non connecté</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Connecte Strava pour synchroniser</div></div></div>}
-        {stravaStatus === 'reauth' && <div style={{ width:'100%', maxWidth:340, marginBottom:10, background:'rgba(245,158,11,0.08)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10 }}><div style={{ width:8, height:8, borderRadius:'50%', background:'#f59e0b', flexShrink:0 }}/><div><div style={{ fontSize:12, fontWeight:700, color:'#f59e0b' }}>Session Strava expirée</div><div style={{ fontSize:11, color:'var(--text-muted)' }}>Reconnecte-toi dans l'onglet Strava</div></div></div>}
         <div style={{ width:'100%', maxWidth:340, marginBottom:10, fontSize:11, color:'var(--text-muted)', textAlign:'center', fontFamily:'DM Mono, monospace' }}>Séance sauvegardée</div>
         <button onClick={onEnd} style={{ ...btnRed, width:'100%', maxWidth:340, padding:14, fontSize:14 }}>
           Terminer la séance

@@ -146,9 +146,9 @@ export default function SmartNutritionModule({ onBack }) {
           </div>
         )}
 
-        {/* Conseil IA */}
+        {/* Conseil nutrition */}
         <div style={{ background: 'var(--bg-card)', backdropFilter: 'blur(20px)', border: `1px solid ${accentColor}25`, borderRadius: 20, padding: '18px', marginBottom: 16 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10 }}>✦ Conseil IA</div>
+          <div style={{ fontSize: 9, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: 'DM Mono, monospace', marginBottom: 10 }}>✦ Conseil</div>
           <div style={{ fontSize: 13, lineHeight: 1.75, color: 'var(--text-secondary)', minHeight: 60 }}>
             {status === 'loading' ? 'Analyse de tes données...' : displayed}
             {status === 'done' && displayed.length < aiText.length && <span style={{ opacity: 0.5, animation: 'blink 1s infinite' }}>|</span>}

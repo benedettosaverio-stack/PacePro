@@ -45,10 +45,8 @@ export default function HomeModule({ onNavigate }) {
 
   useEffect(() => {
     try {
-      const a = localStorage.getItem('strava_athlete');
       const ppUser = localStorage.getItem('pp_user');
-      if (a) setAthlete(JSON.parse(a));
-      else if (ppUser) setAthlete(JSON.parse(ppUser));
+      if (ppUser) setAthlete(JSON.parse(ppUser));
       const p = localStorage.getItem('pp_plans');
       if (p) setPlans(JSON.parse(p));
       const w = localStorage.getItem('pp_workouts_pro');
@@ -62,7 +60,7 @@ export default function HomeModule({ onNavigate }) {
     generateMotivation();
   }, []);
 
-  // Pool de citations statiques — plus de génération IA.
+  // Pool de citations statiques, tirées selon le ton choisi.
   // Une citation est tirée par jour, selon le ton choisi (goggins = dur, inspirant = bienveillant).
   const QUOTES_GOGGINS = [
     "{name}, personne ne va le faire à ta place. Lève-toi et bouge !",
@@ -89,8 +87,8 @@ export default function HomeModule({ onNavigate }) {
     try {
       const settings = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
       const tone = settings.motivationTone || 'inspirant';
-      const stravaAthlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
-      const name = stravaAthlete.name?.split(' ')[0] || 'Athlete';
+      const ppUser = JSON.parse(localStorage.getItem('pp_user') || '{}');
+      const name = ppUser.name?.split(' ')[0] || 'Athlete';
       const pool = tone === 'goggins' ? QUOTES_GOGGINS : QUOTES_INSPIRANT;
       // Index stable sur la journée, pour ne pas changer à chaque rendu
       const dayIndex = Math.floor(Date.now() / 86400000);
@@ -116,7 +114,6 @@ export default function HomeModule({ onNavigate }) {
   const nav = [
     { id: 'running', icon: 'running', label: 'Running', color: '#FF0040', desc: activePlan ? `${progress}% complété` : 'Créer un plan' },
     { id: 'muscu', icon: 'muscle', label: 'Muscu', color: '#6366f1', desc: `${workouts.length} séance${workouts.length !== 1 ? 's' : ''}` },
-    { id: 'strava', icon: 'strava', label: 'Strava', color: '#f59e0b', desc: athlete ? 'Connecté' : 'Se connecter' },
     { id: 'historique', icon: 'history', label: 'Historique', color: '#22c55e', desc: 'Voir tout' },
   ];
 
@@ -250,7 +247,7 @@ export default function HomeModule({ onNavigate }) {
             </div>
             <div>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>Créer un programme</div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Plan personnalisé avec IA</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Plan personnalisé selon ton profil</div>
             </div>
             <Icon name="arrow_right" size={16} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
           </div>
@@ -301,23 +298,6 @@ export default function HomeModule({ onNavigate }) {
             )}
           </button>
 
-          {/* Strava */}
-          <button onClick={() => onNavigate('strava')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(245,158,11,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 70%)' }}>
-            <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(245,158,11,0.04), transparent)', animation:'scanLine 13s ease-in-out infinite 2s', zIndex:1, pointerEvents:'none', left:0 }}/>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon name="strava" size={18} color="#f59e0b" />
-              </div>
-              {athlete && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', marginTop: 4 }} />}
-            </div>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 2 }}>Strava</div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{athlete ? athlete.name?.split(' ')[0] + ' · Connecté' : 'Se connecter'}</div>
-            </div>
-            {athlete && <div style={{ fontSize: 9, color: '#f59e0b', fontFamily: 'DM Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Sync activée</div>}
-          </button>
-
           {/* Nutrition */}
           <button onClick={() => onNavigate('nutrition')} style={{ position:'relative', overflow:'hidden', border:'1px solid rgba(56,189,248,0.2)', borderRadius:18, padding:'16px', cursor:'pointer', fontFamily:'Syne, sans-serif', display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, textAlign:'left', background:'linear-gradient(135deg, rgba(56,189,248,0.06) 0%, transparent 70%)' }}>
             <div style={{ position:'absolute', top:0, bottom:0, width:'35%', background:'linear-gradient(90deg, transparent, rgba(56,189,248,0.04), transparent)', animation:'scanLine 16s ease-in-out infinite 3s', zIndex:1, pointerEvents:'none', left:0 }}/>
@@ -333,35 +313,6 @@ export default function HomeModule({ onNavigate }) {
           </button>
 
         </div>
-
-        {/* Bilan Santé IA */}
-        <button onClick={() => onNavigate('bilan')} style={{ width: '100%', position:'relative', overflow:'hidden', background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(99,102,241,0.03))', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 18, padding: '0', cursor: 'pointer', fontFamily: 'Syne, sans-serif', textAlign:'left' }}>
-          {/* Scan sweep */}
-          <div style={{ position:'absolute', top:0, bottom:0, width:'30%', background:'linear-gradient(90deg, transparent, rgba(99,102,241,0.05), transparent)', animation:'scanLine 16s ease-in-out infinite 2s', zIndex:1, pointerEvents:'none', left:0 }}/>
-          {/* Terminal header */}
-          <div style={{ padding:'8px 14px', borderBottom:'1px solid rgba(99,102,241,0.12)', display:'flex', alignItems:'center', gap:8, position:'relative', zIndex:2 }}>
-            <div style={{ display:'flex', gap:3 }}>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(99,102,241,0.6)' }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(245,158,11,0.4)' }}/>
-              <div style={{ width:5, height:5, borderRadius:'50%', background:'rgba(34,197,94,0.4)' }}/>
-            </div>
-            <div style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'rgba(99,102,241,0.6)', letterSpacing:'0.15em' }}>HEALTH.AI · BILAN SANTÉ</div>
-            <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4 }}>
-              <div style={{ width:4, height:4, borderRadius:'50%', background:'#6366f1', boxShadow:'0 0 5px #6366f1' }}/>
-              <span style={{ fontSize:8, fontFamily:'DM Mono, monospace', color:'#6366f1' }}>ACTIF</span>
-            </div>
-          </div>
-          <div style={{ padding:'14px 16px', display:'flex', alignItems:'center', gap:14, position:'relative', zIndex:2 }}>
-            <div style={{ width:44, height:44, borderRadius:13, background:'rgba(99,102,241,0.12)', border:'1px solid rgba(99,102,241,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-              <Icon name="lightning" size={22} color="#6366f1" />
-            </div>
-            <div style={{ flex:1 }}>
-              <div style={{ fontSize:15, fontWeight:800, color:'var(--text-primary)', marginBottom:3, letterSpacing:'-0.02em' }}>Bilan Santé IA</div>
-              <div style={{ fontSize:9, color:'rgba(99,102,241,0.7)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.1em' }}>Profil · Composition corporelle · PDF</div>
-            </div>
-            <Icon name="arrow_right" size={16} color="rgba(99,102,241,0.5)" />
-          </div>
-        </button>
 
         {/* Logo footer */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 32, opacity: 0.3 }}>

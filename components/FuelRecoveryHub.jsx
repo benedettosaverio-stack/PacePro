@@ -3,14 +3,6 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icons';
 
-function getToken() {
-  try {
-    const exp = parseInt(localStorage.getItem('strava_expires_at') || '0');
-    if (Date.now() / 1000 < exp) return localStorage.getItem('strava_token');
-  } catch {}
-  return null;
-}
-
 function useTypewriter(text, speed = 22) {
   const [displayed, setDisplayed] = useState('');
   useEffect(() => {
@@ -222,17 +214,7 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
   });
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) { setStatus('done'); return; }
-    fetch(`/api/strava?action=activities&token=${token}`)
-      .then(r => r.json())
-      .then(data => {
-        if (!Array.isArray(data)) { setStatus('done'); return; }
-        const recent = data.find(a => (Date.now() - new Date(a.start_date).getTime()) < 24 * 3600000);
-        if (recent) setActivity(recent);
-        setStatus('done');
-      })
-      .catch(() => setStatus('done'));
+    setStatus('done');
   }, []);
 
   const addScannedItem = (item) => {
@@ -278,7 +260,7 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
   const waterColor = '#38bdf8';
   const energyColor = isIntense ? '#f59e0b' : isPostRun ? '#FF0040' : '#22c55e';
 
-  // AI advice
+  // Nutrition advice
   const aiText = isPerte
     ? isIntense
       ? `Séance intense avec objectif perte de poids — bravo ! Tu as brûlé environ ${Math.round(distKm*w*1.1)} kcal. Recharge avec ${carbs}g de glucides complexes et ${protein}g de protéines pour préserver ta masse musculaire. Objectif calorique du jour : ${kcal} kcal en déficit modéré.`
@@ -519,11 +501,11 @@ export default function FuelRecoveryHub({ onSync, onOpenScanner }) {
                 </div>
               ))}
             </div>
-            {/* Analyse IA */}
+            {/* Conseil nutrition */}
             <div style={{ marginBottom:activity?12:0, background:'rgba(255,255,255,0.02)', borderRadius:12, padding:'10px 14px', border:`1px solid ${energyColor}15` }}>
               <div style={{ fontSize:8, color:energyColor, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', fontFamily:'DM Mono, monospace', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
                 <div style={{ width:4, height:4, borderRadius:'50%', background:energyColor, boxShadow:`0 0 4px ${energyColor}` }}/>
-                ANALYSE IA
+                CONSEIL NUTRITION
               </div>
               <div style={{ fontSize:11, color:'var(--text-secondary)', lineHeight:1.7, minHeight:32, fontFamily:'DM Mono, monospace' }}>
                 {status === 'loading' ? '> Analyse en cours...' : typedAI}

@@ -80,14 +80,12 @@ async function loadAllUserData() {
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Muscu from './MusculationModule';
-import StravaModule from './StravaModule';
 import HomeModule from './HomeModule';
 import AuthModule from './AuthModule';
 import { Icon } from './Icons';
 import dynamic from 'next/dynamic';
 const BarcodeScanner = dynamic(() => import('./BarcodeScanner'), { ssr: false });
 import LiveSessionMode from './LiveSessionMode';
-import BilanModule from './BilanModule';
 import FuelRecoveryHub from './FuelRecoveryHub';
 import SettingsModule from './SettingsModule';
 import RaceNutritionStrategy from './RaceNutritionStrategy';
@@ -973,9 +971,8 @@ function Onboarding({ onComplete }) {
   const [form, setForm] = useState(() => {
     try {
       if (typeof window === 'undefined') return { name:'', discipline:'running', type:'trail', level:'intermediate', vmaMode:'direct', vma:'14', raceDistKm:'10', raceTimeMins:'', raceDistanceKm:'15', elevationM:'150', sessionsPerWeek:2, trainingDays:[], weeks:8, raceName:'', raceDate:'', cyclingBackground:'intermediate', cyclingInjuries:'none', cyclingWeeklyHours:8, cyclingHasPower:false, cyclingHasHR:true, cyclingProfile:'rouleur', cyclingStrongPoint:'endurance', cyclingWeakPoint:'climbs', cyclingMaterial:'road', cyclingTrainNight:false, cyclingSolo:true, cyclingLikesVariety:true, cyclingFCmax:'185', cyclingSleep:'good', cyclingStress:'medium', swimLevel:'intermediate', swimStrokes:'crawl', swimFloatability:'normal', swimHasTurns:false, swimBreathing:'one_side', swimCSS:'2:00', swimTime100:'2:00', swimTime400:'8:00', swimSwolf:'45', swimKick:'2beat', swimGoal:'pool', swimOpenWater:false, swimPool:'25m', swimMaterial:'basic', swimShoulderPain:false, swimPPG:false, swimMobility:'medium', swimWeeklyHours:4, swimSessions:3, triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12', triFormat:'olympic', triSwimLevel:'intermediate', triCyclingLevel:'intermediate', triRunLevel:'intermediate', triDominant:'cycling', triWeakDiscipline:'swimming', triHasCombinaiison:false, triHasTTBike:false, triTransition:'slow', triWeeklyHours:10, triSessions:5, triFCmax:'185', triSwimTime:'30', triCyclingFTP:'200', triRunVMA:'12' };
-      const athlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}');
       const user = JSON.parse(localStorage.getItem('pp_user') || '{}');
-      const firstName = athlete.name?.split(' ')[0] || user.name?.split(' ')[0] || '';
+      const firstName = user.name?.split(' ')[0] || '';
       const savedSettings = JSON.parse(localStorage.getItem('pp_user_settings') || '{}');
       const savedVma = savedSettings.vma ? String(savedSettings.vma) : '14';
       const savedLevel = savedSettings.level || 'intermediate';
@@ -1561,7 +1558,7 @@ function Dashboard({ profile, plan:initialPlan, onReset, onSave, initialComplete
                   <span style={{fontSize:16}}>🥗</span>
                   <div style={{flex:1,textAlign:'left'}}>
                     <div style={{fontSize:12,fontWeight:700,color:'#f59e0b'}}>Stratégie nutritionnelle</div>
-                    <div style={{fontSize:10,color:'rgba(245,158,11,0.6)',fontFamily:'DM Mono,monospace'}}>Plan adapté à ta course · IA</div>
+                    <div style={{fontSize:10,color:'rgba(245,158,11,0.6)',fontFamily:'DM Mono,monospace'}}>Plan adapté à ta course</div>
                   </div>
                   <span style={{color:'rgba(245,158,11,0.5)',fontSize:14}}>›</span>
                 </button>
@@ -1657,7 +1654,7 @@ function PlansList({ plans, onSelect, onNew, onDelete }) {
             <div style={{padding:'48px 24px',textAlign:'center'}}>
               <div style={{fontSize:9,color:'rgba(255,255,255,0.12)',fontFamily:'DM Mono, monospace',letterSpacing:'0.1em',marginBottom:20}}>{'>'} AUCUN PROGRAMME DÉTECTÉ · EN ATTENTE</div>
               <div style={{fontSize:22,fontWeight:900,letterSpacing:'-0.03em',marginBottom:8,color:'var(--text-primary)'}}>Crée ton programme</div>
-              <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:28,lineHeight:1.6}}>Lance-toi avec un plan personnalisé<br/>généré par l'IA selon ton profil.</div>
+              <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:28,lineHeight:1.6}}>Lance-toi avec un plan personnalisé<br/>généré selon ton profil.</div>
               <button onClick={onNew} style={{background:'linear-gradient(135deg, #FF0040, #cc0033)',color:'#fff',border:'none',borderRadius:12,padding:'14px 28px',fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'Syne, sans-serif',boxShadow:'0 4px 20px rgba(255,0,64,0.3)'}}>Créer un programme</button>
             </div>
           </div>
@@ -1672,8 +1669,6 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
   const stats = [
     { label: 'Running', icon: 'running', tab: 'running', color: '#FF0040' },
     { label: 'Muscu', icon: 'muscle', tab: 'muscu', color: '#6366f1' },
-    { label: 'Strava', icon: 'strava', tab: 'strava', color: '#f59e0b' },
-    
   ];
   return (
     <>
@@ -1691,12 +1686,11 @@ function ProfileSheet({ user, onClose, onLogout, onNavigate }) {
                 ? <img src={user.photo} alt="" style={{ width:64, height:64, borderRadius:'50%', objectFit:'cover', border:'3px solid rgba(255,0,64,0.3)' }} />
                 : <div style={{ width:64, height:64, borderRadius:'50%', background:'rgba(255,0,64,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>👤</div>
               }
-              {user?.strava && <div style={{ position:'absolute', bottom:0, right:0, width:22, height:22, borderRadius:'50%', background:'#f59e0b', display:'flex', alignItems:'center', justifyContent:'center', border:'2px solid var(--bg-modal)' }}><Icon name="strava" size={12} color="#fff"/></div>}
             </div>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontSize:20, fontWeight:800, letterSpacing:'-0.03em', color:'var(--text-primary)', marginBottom:4, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Athlete'}</div>
               <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'DM Mono, monospace', textTransform:'uppercase', letterSpacing:'0.08em' }}>
-                {user?.strava ? 'Connecté via Strava' : user?.email || 'PacePro'}
+                {user?.email || 'PacePro'}
               </div>
             </div>
           </div>
@@ -1778,32 +1772,15 @@ useEffect(() => {
 }, []);
   const [user, setUser] = useState(() => {
     try {
-      // Vérifie d'abord pp_user (email auth)
       const u = localStorage.getItem('pp_user');
       if (u) return JSON.parse(u);
-      // Sinon vérifie Strava
-      const a = localStorage.getItem('strava_athlete');
-      if (a) {
-        const athlete = JSON.parse(a);
-        if (athlete?.id) {
-          // Assure que pp_user_id est défini pour la sync Supabase
-          if (!localStorage.getItem('pp_user_id')) {
-            // Map Strava ID -> Supabase UUID
-            const stravaToSupabase = { '72640323': 'a4ca6b86-652c-4cf4-8dcc-243412260f9c' };
-            const uuid = stravaToSupabase[String(athlete.id)];
-            if (uuid) localStorage.setItem('pp_user_id', uuid);
-          }
-          return { id: athlete.id, name: athlete.name, photo: athlete.photo, strava: true };
-        }
-      }
       return null;
     } catch { return null; }
   });
 
   const handleAuth = (u) => setUser(u);
   const handleLogout = () => {
-    ['pp_user','pp_user_id','strava_token','strava_access_token',
-     'strava_athlete','strava_expires_at','pp_plans','pp_motivation',
+    ['pp_user','pp_user_id','pp_plans','pp_motivation',
      'pp_water','pp_weight_log'].forEach(k => localStorage.removeItem(k));
     setUser(null);
     setPlans([]);
@@ -1816,7 +1793,7 @@ useEffect(() => {
   const [activePlan, setActivePlan] = useState(null);
   useEffect(()=>{
   const recalcWeeklyKm = (plans) => plans.map(p => {
-    // Ne pas recalculer les plans IA (vélo, natation, triathlon)
+    // Ne pas recalculer les plans générés par disciplines dédiées (vélo, natation, triathlon)
     const discipline = p.profile?.discipline || 'running';
     if (discipline === 'cycling' || discipline === 'swimming' || discipline === 'triathlon') return p;
     return ({
@@ -1880,7 +1857,7 @@ useEffect(() => {
 
   const handleOnboarding = (profile) => {
     // Génération 100% algorithmique — running, vélo, natation et triathlon
-    // utilisent chacun leur générateur dédié (voir generatePlan ci-dessus), plus d'IA.
+    // utilisent chacun leur générateur dédié (voir generatePlan ci-dessus).
     const plan = generatePlan(profile);
     const newPlans = [...plans, { profile, plan }];
     savePlans(newPlans);
@@ -1893,7 +1870,7 @@ useEffect(() => {
   const BottomNav = () => (
     <div className='bottom-nav' style={{position:'fixed',bottom:0,left:0,right:0,zIndex:100,background:'rgba(7,8,11,0.96)',backdropFilter:'blur(24px)',borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column'}}>
       <div style={{display:'flex',alignItems:'flex-start',paddingTop:6,paddingBottom:4}}>
-      {[['home','home','Accueil'],['running','running','Cardio'],['muscu','muscle','Muscu'],['strava','strava','Strava'],['nutrition','nutrition','Nutrition']].map(([t,icon,label])=>{
+      {[['home','home','Accueil'],['running','running','Cardio'],['muscu','muscle','Muscu'],['nutrition','nutrition','Nutrition']].map(([t,icon,label])=>{
         const active = tab===t;
         return (
           <button key={t} onClick={()=>setTab(t)} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-start',gap:3,background:'none',border:'none',cursor:'pointer',fontFamily:'DM Mono, monospace',padding:'4px 0 0',position:'relative',minHeight:44}}>
@@ -2027,15 +2004,6 @@ useEffect(() => {
       <BottomNav/>
     </div>
   );
-  if (tab === 'bilan') return (
-    <div className='app-shell'>
-      <ThemeStyles/>
-      {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
-      <AppHeader />
-      <div className='app-content tab-enter' style={{paddingBottom:80}}><BilanModule onBack={() => setTab('home')} /></div>
-      <BottomNav/>
-    </div>
-  );
   if (tab === 'home') {
     return (
       <div className='app-shell'>
@@ -2043,17 +2011,6 @@ useEffect(() => {
         {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
         <AppHeader />
         <div className='app-content tab-enter'><HomeModule onNavigate={setTab}/></div>
-        <BottomNav/>
-      </div>
-    );
-  }
-  if (tab === 'strava') {
-    return (
-      <div className='app-shell'>
-        <ThemeStyles/>
-        {showProfile && <ProfileSheet user={user} onClose={() => setShowProfile(false)} onLogout={() => { handleLogout(); setShowProfile(false); }} onNavigate={setTab} />}
-        <AppHeader />
-        <div className='app-content tab-enter' style={{paddingBottom:80}}><StravaModule/></div>
         <BottomNav/>
       </div>
     );
